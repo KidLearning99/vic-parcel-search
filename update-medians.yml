@@ -1,0 +1,47 @@
+# .github/workflows/update-medians.yml
+#
+# Refreshes data/suburb-medians.json from the Valuer-General.
+# The Victorian Property Sales Report is quarterly but lands late and
+# irregularly (the Dec 2025 quarter appeared in June 2026), so this runs monthly
+# and simply does nothing when the data hasn't moved.
+
+name: Update suburb medians
+
+on:
+  schedule:
+    - cron: "0 19 8 * *"     # 6am AEDT / 5am AEST on the 8th
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install xlrd
+        run: pip install --quiet xlrd
+
+      # build-medians.py shells out to curl on purpose: land.vic.gov.au is behind
+      # Cloudflare, which rejects Python's TLS fingerprint even with a valid
+      # clearance cookie. curl is preinstalled on ubuntu-latest.
+      - name: Build suburb medians
+        run: python3 build-medians.py -o data/suburb-medians.json
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- data/suburb-medians.json; then
+            echo "No change in the published medians."
+            exit 0
+          fi
+          git config user.name  "medians-bot"
+          git config user.email "actions@github.com"
+          git add data/suburb-medians.json
+          git commit -m "Update suburb medians ($(date -u +%Y-%m-%d))"
+          git push

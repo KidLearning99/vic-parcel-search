@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parcel — Victorian property search</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --film:#F2F4F3;           /* drafting film */
+  --film-2:#E8ECEA;
+  --ink:#16201C;            /* surveyor's ink */
+  --ink-soft:#5A6862;
+  --rule:#C3CCC6;
+  --rule-fine:#DCE2DF;
+  --survey:#0E6E7D;         /* annotation cyan */
+  --flag:#8C3A1E;           /* hazard */
+  --white:#FFFFFF;
+  --max:1120px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--film); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.55;
+}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+.wrap{max-width:var(--max); margin:0 auto; padding:0 24px}
+
+/* ---------- masthead ---------- */
+header{border-bottom:1px solid var(--rule); background:var(--white)}
+.masthead{display:flex; align-items:baseline; gap:16px; padding:22px 0 20px; flex-wrap:wrap}
+.mark{font-size:22px; font-weight:600; letter-spacing:-.015em}
+.mark span{color:var(--survey)}
+.blurb{color:var(--ink-soft); font-size:14.5px; max-width:56ch}
+
+/* ---------- search ---------- */
+.searchbar{background:var(--white); border-bottom:1px solid var(--rule); position:sticky; top:0; z-index:40}
+.searchbar .wrap{padding-top:16px; padding-bottom:16px}
+.field{position:relative}
+label.lede{display:block; font-size:14px; color:var(--ink-soft); margin-bottom:7px}
+input[type=text]{
+  width:100%; padding:13px 15px; font:inherit; font-size:17px; color:var(--ink);
+  background:var(--white); border:1.5px solid var(--rule); border-radius:2px;
+}
+input[type=text]:focus{outline:2px solid var(--survey); outline-offset:1px; border-color:var(--survey)}
+.suggest{
+  position:absolute; left:0; right:0; top:calc(100% + 4px); background:var(--white);
+  border:1px solid var(--rule); max-height:320px; overflow:auto; z-index:50; display:none;
+}
+.suggest.on{display:block}
+.suggest button{
+  display:block; width:100%; text-align:left; padding:11px 15px; font:inherit; font-size:15px;
+  background:none; border:0; border-bottom:1px solid var(--rule-fine); cursor:pointer; color:var(--ink);
+}
+.suggest button:last-child{border-bottom:0}
+.suggest button:hover,.suggest button:focus{background:var(--film-2); outline:none}
+.hint{font-size:13.5px; color:var(--ink-soft); margin-top:8px}
+
+/* ---------- status ---------- */
+.status{padding:56px 0; color:var(--ink-soft); font-size:15px}
+.status strong{display:block; color:var(--ink); font-size:17px; font-weight:500; margin-bottom:6px}
+
+/* ---------- dossier ---------- */
+main{padding:34px 0 80px}
+.hero{display:grid; grid-template-columns:minmax(0,300px) minmax(0,1fr); gap:34px; align-items:start}
+.plan{background:var(--white); border:1px solid var(--rule); padding:18px}
+.plan svg{display:block; width:100%; height:auto}
+.plan figcaption{margin-top:12px; padding-top:11px; border-top:1px solid var(--rule-fine); font-size:13px; color:var(--ink-soft)}
+
+h1{font-size:27px; line-height:1.25; font-weight:600; letter-spacing:-.018em; margin:0 0 4px}
+.sub{color:var(--ink-soft); font-size:15px; margin:0 0 22px}
+
+.facts{border-top:1px solid var(--rule); margin:0}
+.facts div{display:grid; grid-template-columns:minmax(0,190px) minmax(0,1fr); gap:18px;
+  padding:10px 0; border-bottom:1px solid var(--rule-fine)}
+.facts dt{color:var(--ink-soft); font-size:14px}
+.facts dd{margin:0; font-size:15.5px}
+
+section{margin-top:44px}
+h2{font-size:13.5px; font-weight:600; color:var(--ink-soft); margin:0 0 14px;
+  padding-bottom:9px; border-bottom:1px solid var(--rule)}
+
+/* zone + overlays */
+.zone{display:flex; gap:16px; align-items:flex-start; background:var(--white);
+  border:1px solid var(--rule); padding:16px}
+.swatch{width:52px; height:52px; flex:0 0 52px; border:1px solid var(--ink); border-radius:1px}
+.zone-name{font-size:18px; font-weight:500; margin:0 0 2px}
+.zone-meta{font-size:14px; color:var(--ink-soft); margin:0}
+.zone a{color:var(--survey)}
+
+ul.tags{list-style:none; margin:14px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:8px}
+ul.tags li{background:var(--white); border:1px solid var(--rule); padding:8px 12px; font-size:14px}
+ul.tags li .code{font-weight:500}
+ul.tags li.hazard{border-color:var(--flag); color:var(--flag)}
+.none{color:var(--ink-soft); font-size:15px; background:var(--white);
+  border:1px dashed var(--rule); padding:14px 16px}
+
+/* amenity */
+.amen{columns:2; column-gap:34px}
+.amen ul{list-style:none; margin:0 0 18px; padding:0; break-inside:avoid}
+.amen h3{font-size:14px; font-weight:600; margin:0 0 7px}
+.amen li{display:flex; justify-content:space-between; gap:14px; font-size:14.5px;
+  padding:5px 0; border-bottom:1px solid var(--rule-fine)}
+.amen .d{color:var(--ink-soft); white-space:nowrap; font-variant-numeric:tabular-nums}
+
+/* market */
+.market{background:var(--white); border:1px solid var(--rule); padding:18px}
+.market table{width:100%; border-collapse:collapse; font-size:15px}
+.market th{text-align:left; font-weight:500; color:var(--ink-soft); font-size:13.5px;
+  padding-bottom:8px; border-bottom:1px solid var(--rule)}
+.market td{padding:9px 0; border-bottom:1px solid var(--rule-fine); font-variant-numeric:tabular-nums}
+.market td:not(:first-child){text-align:right}
+
+footer{border-top:1px solid var(--rule); margin-top:56px; padding:22px 0 44px;
+  font-size:13.5px; color:var(--ink-soft)}
+footer a{color:var(--survey)}
+.err{color:var(--flag); font-size:14px}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr; gap:24px}
+  .plan{max-width:300px}
+  .amen{columns:1}
+  .facts div{grid-template-columns:1fr; gap:1px; padding:9px 0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap masthead">
+    <div class="mark">Parcel<span>.</span></div>
+    <p class="blurb">Land, title and planning facts for any Victorian address, pulled live from Vicmap.</p>
+  </div>
+</header>
+
+<div class="searchbar">
+  <div class="wrap">
+    <div class="field">
+      <label class="lede" for="q">Street address</label>
+      <input type="text" id="q" autocomplete="off" spellcheck="false"
+             placeholder="10 Tottori Road Truganina"
+             aria-describedby="hint" role="combobox" aria-expanded="false" aria-controls="suggest">
+      <div class="suggest" id="suggest" role="listbox"></div>
+      <p class="hint" id="hint">Start typing a number and street. Pick an address from the list to run the search.</p>
+    </div>
+  </div>
+</div>
+
+<main class="wrap" id="out">
+  <div class="status"><strong>No address selected.</strong>
+  Search above to pull the lot boundary, land area, planning zone, overlays and nearby amenities.</div>
+</main>
+
+<footer class="wrap">
+  Land, parcel, planning and feature data © State of Victoria (Department of Transport and Planning),
+  served from <a href="https://discover.data.vic.gov.au/">Vicmap</a> under CC BY 4.0.
+  Zone and overlay results are indicative only — confirm against a
+  <a href="https://mapshare.vic.gov.au/vicplan/">VicPlan</a> planning property report before you rely on them.
+  This tool shows no sale prices or valuations for individual properties; those are not in any free dataset.
+</footer>
+
+<script>
+const VM = "https://services-ap1.arcgis.com/P744lA0wf4LlBZ84/ArcGIS/rest/services";
+const L = {
+  address : VM + "/Vicmap_Address/FeatureServer/0",
+  parcel  : VM + "/Vicmap_Parcel/FeatureServer/0",
+  zone    : VM + "/Vicmap_Planning/FeatureServer/3",
+  overlay : VM + "/Vicmap_Planning/FeatureServer/2",
+  ugb     : VM + "/Vicmap_Planning/FeatureServer/0",
+  bpa     : VM + "/Vicmap_Planning/FeatureServer/9",
+  lga     : VM + "/Vicmap_Admin/FeatureServer/9",
+  locality: VM + "/Vicmap_Admin/FeatureServer/11",
+  ward    : VM + "/Vicmap_Admin/FeatureServer/5",
+  foi     : VM + "/Vicmap_Features_of_Interest/FeatureServer/1",
+  building: VM + "/Vicmap_Features_of_Interest/FeatureServer/7"
+};
+
+/* Victoria Planning Provisions map colours, so swatches match VicPlan. */
+const ZONE_COLOUR = [
+  [/^(GRZ|NRZ|RGZ|MUZ|TZ|LDRZ)/, "#F6DCC4"],
+  [/^(C1Z|C2Z|B[1-5]Z)/,          "#EFA7A0"],
+  [/^(IN[123]Z|INZ)/,             "#C5AAD2"],
+  [/^(UGZ|UGB)/,                  "#DCD9A8"],
+  [/^(PPRZ|PCRZ|PUZ|PZ)/,         "#B9D4A4"],
+  [/^(RDZ|TRZ)/,                  "#D7D7D7"],
+  [/^(FZ|RCZ|RLZ|RAZ|GWZ|RUZ)/,   "#E2ECC7"],
+  [/^(SUZ|CDZ|PDZ|ACZ)/,          "#D3C7E0"],
+  [/^(UFZ|GRZ1)/,                 "#E8DCC8"]
+];
+const zoneColour = c => (ZONE_COLOUR.find(([re]) => re.test(c || "")) || [,"#E3E7E5"])[1];
+
+/* Overlay families that represent a constraint worth flagging. */
+const HAZARD = /^(LSIO|FO|SBO|BMO|EMO|SMO|ESO|SLO|EAO|LSIO1)/;
+const OVERLAY_FAMILY = {
+  HO:"Heritage", LSIO:"Land subject to inundation", FO:"Floodway", SBO:"Special building (overland flow)",
+  BMO:"Bushfire management", DDO:"Design and development", DPO:"Development plan",
+  ICO:"Infrastructure contributions", PAO:"Public acquisition", VPO:"Vegetation protection",
+  SLO:"Significant landscape", ESO:"Environmental significance", NCO:"Neighbourhood character",
+  EAO:"Environmental audit", DCPO:"Development contributions", RO:"Restructure",
+  PO:"Parking", SRO:"Salinity management", EMO:"Erosion management", AEO:"Airport environs"
+};
+
+/* ---------- ArcGIS helpers ---------- */
+async function agsQuery(layer, params){
+  const body = new URLSearchParams(Object.assign({f:"json", returnGeometry:"false"}, params));
+  const r = await fetch(layer + "/query", {
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body
+  });
+  if(!r.ok) throw new Error(layer + " HTTP " + r.status);
+  const j = await r.json();
+  if(j.error) throw new Error(j.error.message || "query failed");
+  return j.features || [];
+}
+const atPoint = (layer, lon, lat, extra={}) => agsQuery(layer, Object.assign({
+  geometry: lon + "," + lat, geometryType:"esriGeometryPoint", inSR:"4326",
+  spatialRel:"esriSpatialRelIntersects", outFields:"*"
+}, extra));
+
+const esc = s => String(s).replace(/'/g,"''");
+const titleCase = s => String(s||"").toLowerCase()
+  .replace(/\b([a-z])/g, (m,c)=>c.toUpperCase())
+  .replace(/\b(Of|The|And)\b/g, m=>m.toLowerCase());
+
+/* Shoelace area on VicGrid94 (EPSG:3111) — metres, so this is true ground area. */
+function ringArea(ring){
+  let a = 0;
+  for(let i=0;i<ring.length-1;i++) a += ring[i][0]*ring[i+1][1] - ring[i+1][0]*ring[i][1];
+  return Math.abs(a/2);
+}
+function haversine(lat1,lon1,lat2,lon2){
+  const R=6371000, t=Math.PI/180;
+  const dLat=(lat2-lat1)*t, dLon=(lon2-lon1)*t;
+  const h=Math.sin(dLat/2)**2 + Math.cos(lat1*t)*Math.cos(lat2*t)*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+
+/* ---------- address autocomplete ---------- */
+const q = document.getElementById("q");
+const sug = document.getElementById("suggest");
+let timer = null, lastToken = 0;
+
+q.addEventListener("input", () => {
+  clearTimeout(timer);
+  const v = q.value.trim();
+  if(v.length < 4){ closeSuggest(); return; }
+  timer = setTimeout(() => lookup(v), 260);
+});
+q.addEventListener("keydown", e => {
+  if(e.key === "Escape") closeSuggest();
+  if(e.key === "ArrowDown" && sug.classList.contains("on")){
+    e.preventDefault(); sug.querySelector("button")?.focus();
+  }
+});
+document.addEventListener("click", e => {
+  if(!sug.contains(e.target) && e.target !== q) closeSuggest();
+});
+function closeSuggest(){ sug.classList.remove("on"); q.setAttribute("aria-expanded","false"); }
+
+/* Road types are a separate Vicmap column, so they mark the split between
+   road name and suburb. Match the LAST one that still has a word after it:
+   that keeps "Studley Park Road Kew" and "Park Street Ascot Vale" both correct. */
+const ROAD_TYPES = new Set(("ROAD RD STREET ST AVENUE AVE AV DRIVE DR COURT CT CRESCENT CRES CR "+
+"PLACE PL PARADE PDE LANE LN TERRACE TCE CLOSE CL WAY BOULEVARD BVD CIRCUIT CCT GROVE GR GRV "+
+"RISE ESPLANADE ESP HIGHWAY HWY TRACK WALK MEWS PROMENADE SQUARE SQ GARDENS GDNS GREEN HEIGHTS "+
+"RETREAT RIDGE VIEW VISTA LOOP LINK CHASE BEND GATE PATH POINT ROW GLADE BANK COVE DALE GLEN "+
+"HILL MALL OUTLOOK PARK PASS PLAZA QUAY RESERVE STRAND TRAIL TURN VALE WATERS CRESENT "+
+"ENTRANCE END CIRCLE CORNER CREST CROSS DOWNS EDGE FLAT GAP GATEWAY GULLY JUNCTION LANDING "+
+"MEANDER PARKWAY QUADRANT RAMBLE REACH ROTARY ROUTE SLOPE SPUR STEPS VILLAGE WYND").split(" "));
+
+function parseAddress(text){
+  const up = text.toUpperCase().replace(/[.,]/g, " ").replace(/\s+/g, " ").trim();
+  // optional unit prefix (3/10, 101/85), then the house number
+  const m = up.match(/^(?:[A-Z0-9-]+\s*\/\s*)?(\d+)[A-Z]?\b\s*(.*)$/);
+  const houseNum = m ? parseInt(m[1], 10) : null;
+  const rest = (m ? m[2] : up).split(" ").filter(Boolean);
+
+  let splitAt = -1;
+  for(let i = rest.length - 2; i >= 1; i--){        // never the final word
+    if(ROAD_TYPES.has(rest[i])){ splitAt = i; break; }
+  }
+  if(splitAt > -1){
+    return { houseNum,
+             road: rest.slice(0, splitAt).join(" "),
+             roadType: rest[splitAt],
+             locality: rest.slice(splitAt + 1).join(" "),
+             words: rest };
+  }
+  return { houseNum, road:null, roadType:null, locality:null, words: rest };
+}
+
+const STOPWORDS = new Set(["THE","OF","AND"]);
+
+/* Some roads carry no road_type at all ("Esplanade", "Kings Way"), so a strict
+   road_name match can miss. Try the precise query first, then widen. */
+function buildWhereChain(p){
+  const num = p.houseNum !== null ? [`house_number_1=${p.houseNum}`] : [];
+  const chain = [];
+
+  if(p.road && p.locality){
+    chain.push([...num,
+      `road_name LIKE '${esc(p.road)}%'`,
+      `locality_name LIKE '${esc(p.locality)}%'`].join(" AND "));
+
+    // Widen: match any road word anywhere in the address, road type included.
+    const roadWords = [...p.road.split(" "), p.roadType]
+      .filter(w => w && w.length >= 3 && !STOPWORDS.has(w));
+    if(roadWords.length){
+      chain.push([...num,
+        `locality_name LIKE '${esc(p.locality)}%'`,
+        ...roadWords.map(w => `ezi_address LIKE '%${esc(w)}%'`)].join(" AND "));
+    }
+  } else {
+    const useful = (p.words || []).filter(w => w.length >= 3 && !STOPWORDS.has(w));
+    // Unanchored LIKE scans the whole state, so demand a house number first.
+    if(p.houseNum === null || !useful.length) return [];
+    chain.push([...num, ...useful.map(w => `ezi_address LIKE '%${esc(w)}%'`)].join(" AND "));
+  }
+  return chain;
+}
+
+async function lookup(text){
+  const token = ++lastToken;
+  const chain = buildWhereChain(parseAddress(text));
+  if(!chain.length){ closeSuggest(); return; }
+  try{
+    let fs = [];
+    for(const where of chain){
+      fs = await agsQuery(L.address, {
+        where,
+        outFields:"pfi,property_pfi,ezi_address,postcode,mesh_block,locality_name",
+        returnGeometry:"true", outSR:"4326",
+        resultRecordCount:"12"
+      });
+      if(token !== lastToken) return;
+      if(fs.length) break;
+    }
+    // The layer rejects orderByFields, so sort here — numerically on house number.
+    fs.sort((a,b) => {
+      const na = parseInt(a.attributes.ezi_address) || 0;
+      const nb = parseInt(b.attributes.ezi_address) || 0;
+      return na - nb || a.attributes.ezi_address.localeCompare(b.attributes.ezi_address);
+    });
+    render_suggestions(fs.slice(0,8));
+  }catch(err){
+    sug.innerHTML = `<button disabled class="err">Address lookup failed — ${err.message}</button>`;
+    sug.classList.add("on");
+  }
+}
+function render_suggestions(fs){
+  if(!fs.length){
+    sug.innerHTML = `<button disabled>No Victorian address matches that. Try "12 Smith St Werribee".</button>`;
+    sug.classList.add("on"); return;
+  }
+  sug.innerHTML = "";
+  fs.forEach(f => {
+    const b = document.createElement("button");
+    b.type = "button"; b.setAttribute("role","option");
+    b.textContent = titleCase(f.attributes.ezi_address);
+    b.onclick = () => {
+      q.value = titleCase(f.attributes.ezi_address);
+      closeSuggest();
+      runDossier(f);
+    };
+    sug.appendChild(b);
+  });
+  sug.classList.add("on");
+  q.setAttribute("aria-expanded","true");
+}
+
+/* ---------- the dossier ---------- */
+const out = document.getElementById("out");
+
+async function runDossier(addrFeature){
+  const a = addrFeature.attributes;
+  const lon = addrFeature.geometry.x, lat = addrFeature.geometry.y;
+  out.innerHTML = `<div class="status"><strong>Searching ${titleCase(a.ezi_address)}</strong>
+    Querying parcel, planning scheme and feature layers.</div>`;
+
+  const settle = p => p.then(v => ({ok:true, v})).catch(e => ({ok:false, e}));
+  const [parcelR, zoneR, ovR, ugbR, bpaR, lgaR, locR, wardR, foiR, bldR] = await Promise.all([
+    settle(atPoint(L.parcel, lon, lat, {returnGeometry:"true", outSR:"3111"})),
+    settle(atPoint(L.zone, lon, lat)),
+    settle(atPoint(L.overlay, lon, lat)),
+    settle(atPoint(L.ugb, lon, lat)),
+    settle(atPoint(L.bpa, lon, lat)),
+    settle(atPoint(L.lga, lon, lat)),
+    settle(atPoint(L.locality, lon, lat)),
+    settle(atPoint(L.ward, lon, lat)),
+    settle(atPoint(L.foi, lon, lat, {
+      distance:"1600", units:"esriSRUnit_Meter",
+      returnGeometry:"true", outSR:"4326", resultRecordCount:"300"
+    })),
+    settle(atPoint(L.building, lon, lat, {
+      distance:"30", units:"esriSRUnit_Meter", returnGeometry:"true", outSR:"3111"
+    }))
+  ]);
+
+  const one = r => (r.ok && r.v.length) ? r.v[0].attributes : null;
+  const many = r => r.ok ? r.v : [];
+
+  const parcel = parcelR.ok && parcelR.v.length ? parcelR.v[0] : null;
+  const zone = one(zoneR), lga = one(lgaR), loc = one(locR), ward = one(wardR);
+  const overlays = many(ovR).map(f => f.attributes);
+  const inUGB = ugbR.ok && ugbR.v.length > 0;
+  const inBPA = bpaR.ok && bpaR.v.length > 0;
+
+  const area = parcel ? ringArea(parcel.geometry.rings[0]) : null;
+  const footprint = bldR.ok && bldR.v.length
+    ? bldR.v.reduce((s,f) => s + ringArea(f.geometry.rings[0]), 0) : null;
+
+  out.innerHTML =
+      heroBlock(a, parcel, area, zone, lga, loc, ward, inUGB, footprint)
+    + planningBlock(zone, overlays, inBPA)
+    + amenityBlock(many(foiR), lat, lon, foiR)
+    + `<section id="market"><h2>Suburb market context</h2>
+         <div class="none" id="market-body">Loading suburb medians…</div></section>`;
+
+  loadMarket(a.locality_name);
+}
+
+/* --- hero: site plan drawn from the real survey coordinates --- */
+function heroBlock(a, parcel, area, zone, lga, loc, ward, inUGB, footprint){
+  const fill = zoneColour(zone && zone.zone_code);
+  const plan = parcel ? sitePlan(parcel.geometry.rings, fill) :
+    `<div class="none">No parcel polygon found at this point.</div>`;
+  const p = parcel ? parcel.attributes : {};
+
+  const rows = [
+    ["Lot and plan", p.parcel_lot_number ? `Lot ${p.parcel_lot_number} on ${p.parcel_plan_number}` : "—"],
+    ["Standard parcel identifier", p.parcel_spi ? `<span class="mono">${p.parcel_spi}</span>` : "—"],
+    ["Land area", area ? `${area.toFixed(0)} m²${area>=1000?` (${(area/10000).toFixed(3)} ha)`:""}` : "—"],
+    ["Building footprint", footprint ? `about ${footprint.toFixed(0)} m² (${(footprint/area*100).toFixed(0)}% site cover)`
+        : `<span style="color:var(--ink-soft)">not mapped here</span>`],
+    ["Council", lga ? titleCase(lga.lga_name) : "—"],
+    ["Ward", ward ? ward.ward_label || titleCase(ward.ward_name) : "—"],
+    ["Suburb", loc ? titleCase(loc.locality_name) : titleCase(a.locality_name)],
+    ["Postcode", a.postcode || "—"],
+    ["Urban growth boundary", inUGB ? "Inside the UGB" : "Outside the UGB"],
+    ["ABS mesh block", a.mesh_block ? `<span class="mono">${a.mesh_block}</span>` : "—"],
+    ["Vicmap property PFI", `<span class="mono">${a.property_pfi || "—"}</span>`]
+  ];
+
+  return `<div class="hero">
+    <figure class="plan" style="margin:0">
+      ${plan}
+      <figcaption>Lot boundary as surveyed, from Vicmap Parcel.
+        Fill shows the planning zone colour.</figcaption>
+    </figure>
+    <div>
+      <h1>${titleCase(a.ezi_address)}</h1>
+      <p class="sub">${p.parcel_spi ? "Parcel " + p.parcel_spi : "Parcel identifier unavailable"}</p>
+      <dl class="facts">
+        ${rows.map(([k,v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}
+      </dl>
+    </div>
+  </div>`;
+}
+
+/* Draw the lot as a survey plan: outline, hatched north arrow, edge lengths. */
+function sitePlan(rings, fill){
+  const pts = rings[0];
+  const xs = pts.map(p=>p[0]), ys = pts.map(p=>p[1]);
+  const minX=Math.min(...xs), maxX=Math.max(...xs), minY=Math.min(...ys), maxY=Math.max(...ys);
+  const w = maxX-minX || 1, h = maxY-minY || 1;
+  const pad = Math.max(w,h)*0.16;
+  const size = Math.max(w,h) + pad*2;
+  const ox = minX - (size-w)/2, oy = minY - (size-h)/2;
+  // ArcGIS y grows north; SVG y grows down — flip.
+  const X = x => (x-ox)/size*100;
+  const Y = y => (1-(y-oy)/size)*100;
+  const d = pts.map((p,i) =>
+    (i?"L":"M") + X(p[0]).toFixed(2) + " " + Y(p[1]).toFixed(2)).join(" ") + " Z";
+
+  // label the boundary edges that are long enough to read
+  let labels = "";
+  for(let i=0;i<pts.length-1;i++){
+    const len = Math.hypot(pts[i+1][0]-pts[i][0], pts[i+1][1]-pts[i][1]);
+    if(len < Math.max(w,h)*0.22) continue;
+    const mx = (pts[i][0]+pts[i+1][0])/2, my = (pts[i][1]+pts[i+1][1])/2;
+    const txt = len.toFixed(1);
+    const fs = 4.2, wBox = txt.length * fs * 0.62 + 1.6, hBox = fs * 1.25;
+    labels += `<rect x="${(X(mx)-wBox/2).toFixed(2)}" y="${(Y(my)-hBox/2).toFixed(2)}"
+        width="${wBox.toFixed(2)}" height="${hBox.toFixed(2)}" fill="#FFFFFF" fill-opacity="0.88"/>
+      <text x="${X(mx).toFixed(2)}" y="${(Y(my)+fs*0.36).toFixed(2)}" font-size="${fs}" fill="#5A6862"
+        text-anchor="middle" font-family="IBM Plex Mono, monospace">${txt}</text>`;
+  }
+
+  return `<svg viewBox="0 0 100 100" role="img"
+      aria-label="Site plan of the lot boundary with edge lengths in metres">
+    <defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="#E8ECEA" stroke-width=".5"/></pattern></defs>
+    <rect width="100" height="100" fill="url(#grid)"/>
+    <path d="${d}" fill="${fill}" stroke="#16201C" stroke-width="0.9" stroke-linejoin="round"/>
+    ${labels}
+    <g transform="translate(91,9)">
+      <path d="M0 -5 L2.4 4 L0 2.2 L-2.4 4 Z" fill="#16201C"/>
+      <text y="9" font-size="3.6" fill="#5A6862" text-anchor="middle"
+        font-family="IBM Plex Sans, sans-serif">N</text>
+    </g>
+  </svg>`;
+}
+
+/* --- planning --- */
+function planningBlock(zone, overlays, inBPA){
+  let html = `<section><h2>Planning scheme</h2>`;
+  if(zone){
+    const code = zone.zone_code, colour = zoneColour(code);
+    const scheme = titleCase(zone.lga || "");
+    html += `<div class="zone">
+      <div class="swatch" style="background:${colour}"></div>
+      <div>
+        <p class="zone-name">${titleCase(zone.zone_description)}</p>
+        <p class="zone-meta"><span class="mono">${code}</span> · ${scheme} Planning Scheme ·
+          <a href="https://planning-schemes.app.planning.vic.gov.au/Schemes" target="_blank" rel="noopener">read the ordinance</a></p>
+      </div></div>`;
+  } else {
+    html += `<div class="none">No planning zone returned for this point.</div>`;
+  }
+
+  html += `<h2 style="margin-top:30px">Overlays affecting the land</h2>`;
+  if(overlays.length){
+    html += `<ul class="tags">` + overlays
+      .sort((x,y)=> x.zone_code.localeCompare(y.zone_code))
+      .map(o => {
+        const fam = (o.zone_code.match(/^[A-Z]+/)||[""])[0];
+        const label = OVERLAY_FAMILY[fam] || titleCase(o.zone_description);
+        const haz = HAZARD.test(o.zone_code) ? " hazard" : "";
+        return `<li class="${haz.trim()}"><span class="code mono">${o.zone_code}</span> — ${label}</li>`;
+      }).join("") + `</ul>`;
+  } else {
+    html += `<div class="none">No planning overlays sit over this parcel.</div>`;
+  }
+
+  html += `<h2 style="margin-top:30px">Bushfire</h2>`;
+  html += inBPA
+    ? `<ul class="tags"><li class="hazard">Designated Bushfire Prone Area — BAL assessment and
+       AS 3959 construction requirements apply</li></ul>`
+    : `<div class="none">Not in a designated Bushfire Prone Area.</div>`;
+
+  return html + `</section>`;
+}
+
+/* --- nearby features --- */
+const AMENITY_GROUPS = [
+  ["Education", /school|education|college|university|tafe|kindergarten|child care|childcare/i],
+  ["Transport", /railway|station|tram|bus|interchange|airport/i],
+  ["Health and emergency", /hospital|medical|ambulance|police|fire|clinic|health/i],
+  ["Recreation", /park|playground|reserve|sport|oval|pool|recreation|golf|library/i],
+  ["Retail and community", /shop|centre|center|market|community|hall|church|post/i]
+];
+
+function amenityBlock(fs, lat, lon, foiR){
+  let html = `<section><h2>Within 1.6 km</h2>`;
+  if(!foiR.ok){
+    return html + `<div class="none err">Feature lookup failed — ${foiR.e.message}</div></section>`;
+  }
+  const items = fs.map(f => ({
+    name: f.attributes.name || f.attributes.name_label || "Unnamed",
+    type: (f.attributes.feature_subtype || f.attributes.feature_type || "").toLowerCase(),
+    d: haversine(lat, lon, f.geometry.y, f.geometry.x)
+  })).filter(i => i.name !== "Unnamed");
+
+  const used = new Set();
+  let cols = "";
+  for(const [title, re] of AMENITY_GROUPS){
+    const group = items.filter(i => !used.has(i) && re.test(i.type + " " + i.name))
+                       .sort((a,b)=>a.d-b.d).slice(0,6);
+    group.forEach(i => used.add(i));
+    if(!group.length) continue;
+    cols += `<ul><h3>${title}</h3>` + group.map(i =>
+      `<li><span>${titleCase(i.name)}</span><span class="d">${
+        i.d < 950 ? Math.round(i.d/10)*10 + " m" : (i.d/1000).toFixed(1) + " km"}</span></li>`
+    ).join("") + `</ul>`;
+  }
+  html += cols ? `<div class="amen">${cols}</div>`
+               : `<div class="none">Vicmap lists no named features within 1.6 km of this address.</div>`;
+  return html + `</section>`;
+}
+
+/* --- suburb medians, pre-baked into the repo by build-medians.py --- */
+async function loadMarket(suburb){
+  const body = document.getElementById("market-body");
+  if(!body) return;
+  try{
+    const r = await fetch("./data/suburb-medians.json", {cache:"no-cache"});
+    if(!r.ok) throw new Error("not published");
+    const data = await r.json();
+    const rec = data.suburbs[(suburb||"").toUpperCase()];
+    if(!rec) throw new Error(
+      `The Valuer-General publishes no median for ${titleCase(suburb)} — usually too few sales.`);
+
+    const money = v => v ? "$" + v.toLocaleString() : "—";
+    const rows = rec.quarters.map(qr => `<tr>
+        <td>${qr.quarter}${qr.unreliable ? ' <abbr title="Too few sales — the Valuer-General flags this figure as unreliable">^</abbr>' : ""}</td>
+        <td>${money(qr.house)}</td><td>${money(qr.unit)}</td><td>${money(qr.land)}</td>
+      </tr>`).join("");
+
+    const counts = [];
+    if(rec.latestQuarterHouseSales != null)
+      counts.push(`${rec.latestQuarterHouseSales} house sales in the latest quarter`);
+    if(rec.annualHouseSales != null)
+      counts.push(`${rec.annualHouseSales} over 12 months`);
+
+    // Units and land are often a quarter behind houses, because DTP's own
+    // data portal carries dead links for the newest release.
+    const lag = new Set(Object.values(data.sources).map(s => s.release));
+    const lagNote = lag.size > 1
+      ? ` Houses are current to ${data.sources.house.release}; units and vacant land to ${data.sources.unit.release}.`
+      : "";
+
+    body.outerHTML = `<div class="market" id="market-body">
+      <table><thead><tr><th>Quarter</th><th>House</th><th>Unit</th><th>Vacant land</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+      <p class="hint">${titleCase(suburb)} median sale prices — Victorian Property Sales Report,
+      ${data.released}.${counts.length ? " " + counts.join(", ") + "." : ""}${lagNote}
+      These are suburb medians, not a valuation of this property.</p></div>`;
+  }catch(err){
+    body.textContent = err.message === "not published"
+      ? "Suburb medians aren't published yet. Run build-medians.py to generate data/suburb-medians.json."
+      : err.message;
+  }
+}
+</script>
+</body>
+</html>
