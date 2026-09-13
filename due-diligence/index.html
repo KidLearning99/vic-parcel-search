@@ -1,0 +1,2106 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Full-indicator due diligence for an Australian residential address: sale history, suburb and street demand, zoned schools, transfer duty and land tax for all eight jurisdictions, cashflow under the 2027 negative gearing rules, CGT both ways, and subdivision feasibility.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%98%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<title>Paddock to Settlement</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#EDF0F1; --surface:#FDFDFC; --surface-2:#F4F7F7; --ink:#121A1D; --ink-2:#2C3A3F;
+  --muted:#5C6B70; --muted-2:#7A8A90; --line:#D3DAD9; --line-2:#E3E9E8;
+  --accent:#12566E; --accent-soft:#E2EDF1; --accent-ink:#0C3A4B; --btn-ink:#FFFFFF;
+  --ochre:#A8661F; --ochre-soft:#F6EADB;
+  --good:#2F7A4F; --good-soft:#E3F0E8; --warn:#9A6E10; --warn-soft:#F8EFD9; --bad:#A33329; --bad-soft:#F7E4E1;
+  --shadow:0 1px 2px rgba(18,26,29,.06), 0 8px 24px -16px rgba(18,26,29,.22);
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1518; --surface:#172024; --surface-2:#1D272B; --ink:#E7EDEB; --ink-2:#CCD8D6;
+    --muted:#93A4A6; --muted-2:#7E9092; --line:#27343A; --line-2:#202C31;
+    --accent:#5FB3CD; --accent-soft:#17333D; --accent-ink:#A8D7E6; --btn-ink:#08171D;
+    --ochre:#D79B4A; --ochre-soft:#32261A;
+    --good:#5FB483; --good-soft:#17291F; --warn:#D9AE4E; --warn-soft:#2B2414; --bad:#DD8478; --bad-soft:#2E1A18;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1518; --surface:#172024; --surface-2:#1D272B; --ink:#E7EDEB; --ink-2:#CCD8D6;
+  --muted:#93A4A6; --muted-2:#7E9092; --line:#27343A; --line-2:#202C31;
+  --accent:#5FB3CD; --accent-soft:#17333D; --accent-ink:#A8D7E6; --btn-ink:#08171D;
+  --ochre:#D79B4A; --ochre-soft:#32261A;
+  --good:#5FB483; --good-soft:#17291F; --warn:#D9AE4E; --warn-soft:#2B2414; --bad:#DD8478; --bad-soft:#2E1A18;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Public Sans","Helvetica Neue",Arial,sans-serif; font-size:15px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:Bitter,Georgia,serif; font-weight:600; text-wrap:balance; margin:0}
+.mono,input,select,td.n,th.n,.fig{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
+a{color:var(--accent); text-decoration-thickness:1px; text-underline-offset:2px}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+
+/* ---------- shell ---------- */
+.wrap{max-width:1220px; margin:0 auto; padding-inline:18px; padding-block:0}
+header.top{background:var(--surface); border-bottom:1px solid var(--line)}
+.brandrow{display:flex; align-items:flex-start; gap:18px; flex-wrap:wrap; padding-block:18px 14px}
+.brand{flex:1 1 280px; min-width:0}
+.eyebrow{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.brand h1{font-size:25px; line-height:1.15; margin-top:2px}
+.brand p{margin:6px 0 0; color:var(--muted); font-size:13px; max-width:62ch}
+.topacts{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+button{font-family:inherit; font-size:13px; cursor:pointer}
+.btn{background:var(--accent); color:var(--btn-ink); border:1px solid var(--accent); padding:7px 13px; border-radius:var(--r); font-weight:600}
+.btn.ghost{background:transparent; color:var(--ink); border-color:var(--line)}
+.btn.ghost:hover{background:var(--surface-2)}
+.btn.sm{padding:4px 9px; font-size:12px}
+
+/* address bar */
+.addrbar{display:grid; grid-template-columns:2.2fr 1.1fr .7fr .6fr; gap:10px; padding-bottom:14px}
+.addrbar .f{display:flex; flex-direction:column; gap:4px}
+label.lab{font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:600}
+input,select,textarea{
+  background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:var(--r);
+  padding:7px 9px; font-size:13.5px; width:100%; min-width:0;
+}
+input:hover,select:hover{border-color:var(--muted-2)}
+textarea{font-family:"Public Sans",sans-serif; line-height:1.5; resize:vertical}
+
+/* address lookup */
+.lookup{position:relative; padding-bottom:12px}
+.lookup .lrow{display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap}
+.lookup .lrow .f{flex:1 1 340px}
+.sugg{position:absolute; z-index:40; left:0; right:0; top:100%; margin-top:-6px; background:var(--surface);
+  border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); max-height:300px; overflow:auto}
+.sugg button{display:block; width:100%; text-align:left; background:none; border:0; border-bottom:1px solid var(--line-2);
+  padding:8px 11px; color:var(--ink); font-family:"IBM Plex Mono",monospace; font-size:12.5px}
+.sugg button:last-child{border-bottom:0}
+.sugg button:hover,.sugg button:focus{background:var(--accent-soft)}
+.lstatus{font-size:11.5px; color:var(--muted); min-height:16px; flex:1 1 100%; line-height:1.45}
+.lstatus b{color:var(--ink)}
+
+/* scoreboard */
+.board{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); background:var(--surface);
+  border-block:1px solid var(--line)}
+.sc{padding:11px 13px; display:flex; flex-direction:column; gap:3px; min-width:0;
+  border-right:1px solid var(--line-2); border-bottom:1px solid var(--line-2)}
+.sc .k{font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.sc .v{font-family:"IBM Plex Mono",monospace; font-size:20px; font-weight:500; letter-spacing:-.01em; font-variant-numeric:tabular-nums}
+.sc .s{font-size:11.5px; color:var(--muted)}
+.sc.lead{box-shadow:inset 3px 0 0 var(--accent)}
+.dot{display:inline-block; width:7px; height:7px; border-radius:50%; vertical-align:1px; margin-right:5px}
+.g{color:var(--good)} .w{color:var(--warn)} .b{color:var(--bad)}
+.bg-g{background:var(--good)} .bg-w{background:var(--warn)} .bg-b{background:var(--bad)} .bg-m{background:var(--muted)}
+
+/* nav */
+nav.tabs{position:sticky; top:0; z-index:30; background:var(--surface); border-bottom:1px solid var(--line)}
+.tabstrip{display:flex; gap:2px; overflow-x:auto; scrollbar-width:thin}
+.tabstrip button{
+  background:none; border:0; border-bottom:2px solid transparent; color:var(--muted);
+  padding:10px 12px; white-space:nowrap; font-weight:600; font-size:13px;
+}
+.tabstrip button[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--accent)}
+.tabstrip button:hover{color:var(--ink)}
+
+main{padding-block:22px 56px}
+section.tab{display:none}
+section.tab.on{display:block}
+.sechead{margin-bottom:14px}
+.sechead h2{font-size:20px}
+.sechead p{margin:4px 0 0; color:var(--muted); font-size:13.5px; max-width:72ch}
+
+/* panels */
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); margin-bottom:14px; overflow:hidden}
+.panel > .ph{display:flex; align-items:baseline; gap:10px; justify-content:space-between; padding:12px 14px 0; flex-wrap:wrap}
+.panel h3{font-size:15px}
+.panel .note{font-size:12px; color:var(--muted); max-width:70ch; padding:2px 14px 0; margin:0}
+.pb{padding:12px 14px 14px}
+.grid{display:grid; gap:10px 12px; grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.grid.wide{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.f{display:flex; flex-direction:column; gap:4px; min-width:0}
+.f .hint{font-size:11px; color:var(--muted-2); line-height:1.35}
+.cols{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); align-items:start}
+.row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.chk{display:flex; align-items:center; gap:7px; font-size:13px; color:var(--ink-2)}
+.chk input{width:15px; height:15px; accent-color:var(--accent)}
+
+/* readouts */
+table{width:100%; border-collapse:collapse; font-size:13px}
+.tscroll{overflow-x:auto}
+th{text-align:left; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; padding:6px 8px; border-bottom:1px solid var(--line)}
+td{padding:6px 8px; border-bottom:1px solid var(--line-2); vertical-align:top}
+td.n,th.n{text-align:right; white-space:nowrap}
+tr.tot td{border-top:1px solid var(--line); border-bottom:0; font-weight:600; background:var(--surface-2)}
+tr.sub td{color:var(--muted)}
+.kv{display:grid; grid-template-columns:1fr auto; gap:4px 12px; font-size:13.5px}
+.kv dt{color:var(--muted)} .kv dd{margin:0; text-align:right; font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
+.big{font-family:"IBM Plex Mono",monospace; font-size:27px; font-weight:500; letter-spacing:-.02em; line-height:1.1}
+.big.sm{font-size:21px}
+.tag{display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; padding:2px 7px; border-radius:99px; border:1px solid var(--line); color:var(--muted); background:var(--surface-2); white-space:nowrap}
+.tag.good{color:var(--good); background:var(--good-soft); border-color:transparent}
+.tag.warn{color:var(--warn); background:var(--warn-soft); border-color:transparent}
+.tag.bad{color:var(--bad); background:var(--bad-soft); border-color:transparent}
+.tag.acc{color:var(--accent-ink); background:var(--accent-soft); border-color:transparent}
+.meter{height:6px; border-radius:99px; background:var(--line); overflow:hidden}
+.meter > i{display:block; height:100%; border-radius:99px; background:var(--accent)}
+.scorerow{display:grid; grid-template-columns:minmax(120px,1.1fr) 58px minmax(90px,1.4fr); gap:10px; align-items:center; font-size:13px; padding:5px 0; border-bottom:1px solid var(--line-2)}
+.scorerow:last-child{border-bottom:0}
+.scorerow .sv{font-family:"IBM Plex Mono",monospace; text-align:right; font-variant-numeric:tabular-nums}
+.callout{border-left:3px solid var(--ochre); background:var(--ochre-soft); padding:10px 12px; border-radius:0 var(--r) var(--r) 0; font-size:13px; color:var(--ink-2)}
+.callout.acc{border-left-color:var(--accent); background:var(--accent-soft)}
+.callout strong{font-weight:600}
+.links{display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(215px,1fr))}
+.lk{display:block; border:1px solid var(--line); border-radius:var(--r); padding:8px 10px; text-decoration:none; color:var(--ink); background:var(--surface)}
+.lk:hover{border-color:var(--accent); background:var(--accent-soft)}
+.lk b{display:block; font-size:13px; font-weight:600}
+.lk span{display:block; font-size:11.5px; color:var(--muted); margin-top:1px}
+.src{font-size:11.5px; color:var(--muted-2)}
+.src a{color:var(--muted)}
+.stack{display:flex; flex-direction:column; gap:10px}
+.divider{height:1px; background:var(--line); margin:12px 0}
+.muted{color:var(--muted)}
+.chartbox{overflow-x:auto}
+svg.chart{display:block; max-width:100%; height:auto}
+ul.ck{list-style:none; margin:0; padding:0; display:grid; gap:6px}
+ul.ck li{display:flex; gap:9px; align-items:flex-start; font-size:13.5px; padding-bottom:6px; border-bottom:1px solid var(--line-2)}
+ul.ck input{width:15px; height:15px; margin-top:3px; accent-color:var(--accent); flex:0 0 auto}
+ul.ck .why{display:block; font-size:11.5px; color:var(--muted)}
+.pill-row{display:flex; gap:6px; flex-wrap:wrap}
+footer.foot{border-top:1px solid var(--line); padding-block:16px 30px; color:var(--muted); font-size:12px}
+@media (max-width:820px){
+  .addrbar{grid-template-columns:1fr 1fr}
+  .brand h1{font-size:22px}
+}
+@media (max-width:460px){ .addrbar{grid-template-columns:1fr} }
+</style>
+<style>
+html{color-scheme:light dark}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brandrow">
+      <div class="brand">
+        <div class="eyebrow">Australian residential due diligence</div>
+        <h1>Paddock to Settlement</h1>
+        <p>One address in, the whole picture out: sale history, suburb and street demand, zoned schools, duty and land tax for every state, cashflow under the 2027 negative-gearing rules, and strategy comparisons.</p>
+      </div>
+      <div class="topacts">
+        <button class="btn ghost sm" id="btn-theme" type="button">Theme</button>
+        <button class="btn ghost sm" id="btn-example" type="button">Load example</button>
+        <button class="btn ghost sm" id="btn-reset" type="button">Clear</button>
+        <button class="btn sm" id="btn-save" type="button">Save analysis</button>
+      </div>
+    </div>
+    <div class="lookup">
+      <div class="lrow">
+        <div class="f">
+          <label class="lab" for="f_lookup">Look up a Victorian address <span style="text-transform:none;letter-spacing:0">(Vicmap)</span></label>
+          <input id="f_lookup" autocomplete="off" placeholder="12 Tottori Road Truganina">
+        </div>
+        <button class="btn ghost sm" id="btn-lookup" type="button" style="margin-bottom:1px">Search</button>
+        <div class="lstatus" id="lookupstatus">Type a street number and name. Picking an address fills the land size, planning zone, overlays, council and nearby schools straight from Vicmap &mdash; everything else you still gather from the links on the Property tab.</div>
+      </div>
+      <div id="sugg"></div>
+    </div>
+    <div class="addrbar">
+      <div class="f"><label class="lab" for="f_address">Street address</label><input id="f_address" placeholder="12 Example Street"></div>
+      <div class="f"><label class="lab" for="f_suburb">Suburb</label><input id="f_suburb" placeholder="Truganina"></div>
+      <div class="f"><label class="lab" for="f_state">State</label>
+        <select id="f_state"><option>VIC</option><option>NSW</option><option>QLD</option><option>SA</option><option>WA</option><option>TAS</option><option>ACT</option><option>NT</option></select>
+      </div>
+      <div class="f"><label class="lab" for="f_postcode">Postcode</label><input id="f_postcode" placeholder="3029"></div>
+    </div>
+  </div>
+  <div class="board" id="board"></div>
+</header>
+
+<nav class="tabs"><div class="wrap"><div class="tabstrip" id="tabstrip" role="tablist"></div></div></nav>
+
+<main class="wrap" id="main"></main>
+
+<footer class="foot"><div class="wrap" id="foot"></div></footer>
+
+<script>
+/* =========================================================================
+   Paddock to Settlement — Australian property indicator engine
+   Rules verified against primary sources in September 2026. Each rule set
+   carries the date of the source page it came from; see the Rules tab.
+   ========================================================================= */
+"use strict";
+
+const RULES_ASOF = "12 September 2026";
+const S = {};            // flat state
+const OUT = {};          // render targets
+
+/* ---------------- helpers ---------------- */
+const $ = (s, r) => (r || document).querySelector(s);
+const el = (t, c, h) => { const n = document.createElement(t); if (c) n.className = c; if (h != null) n.innerHTML = h; return n; };
+const num = v => { const n = parseFloat(String(v == null ? "" : v).replace(/[^0-9.\-]/g, "")); return isFinite(n) ? n : 0; };
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const money = (n, d) => (n < 0 ? "-$" : "$") + Math.abs(Math.round(n * (d ? 100 : 1)) / (d ? 100 : 1)).toLocaleString("en-AU", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
+const k$ = n => Math.abs(n) >= 1e6 ? "$" + (n / 1e6).toFixed(2) + "m" : Math.abs(n) >= 1000 ? "$" + Math.round(n / 1000) + "k" : money(n);
+const pct = (n, d) => (isFinite(n) ? n.toFixed(d == null ? 1 : d) : "—") + "%";
+const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+const slug = s => String(s || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const dash = "—";
+
+/* score helper: map a value onto 0-100 where lo..hi are the "bad" and "good" anchors */
+function scoreBand(v, bad, good) {
+  if (v === "" || v == null || !isFinite(v)) return null;
+  const t = (v - bad) / (good - bad);
+  return clamp(Math.round(t * 100), 0, 100);
+}
+const scoreTone = s => s == null ? "m" : s >= 67 ? "g" : s >= 40 ? "w" : "b";
+const scoreWord = s => s == null ? "no data" : s >= 80 ? "very strong" : s >= 67 ? "strong" : s >= 50 ? "moderate" : s >= 34 ? "soft" : "weak";
+
+/* =========================================================================
+   1. TRANSFER (STAMP) DUTY — all 8 jurisdictions
+   ========================================================================= */
+function bracketDuty(v, table) {
+  // table rows: [threshold, base, ratePct] — rate applies to excess over threshold
+  let row = table[0];
+  for (const r of table) if (v > r[0]) row = r;
+  return row[1] + (v - row[0]) * row[2] / 100;
+}
+const VIC_GENERAL = [[0, 0, 1.4], [25000, 350, 2.4], [130000, 2870, 6]];
+const VIC_PPR = [[0, 0, 1.4], [25000, 350, 2.4], [130000, 2870, 5], [440000, 18370, 6]];
+const NSW_T = [[0, 0, 1.25], [18000, 225, 1.5], [38000, 525, 1.75], [103000, 1662, 3.5], [387000, 11602, 4.5], [1290000, 52237, 5.5]];
+const QLD_T = [[0, 0, 0], [5000, 0, 1.5], [75000, 1050, 3.5], [540000, 17325, 4.5], [1000000, 38025, 5.75]];
+const SA_T = [[0, 0, 1], [12000, 120, 2], [30000, 480, 3], [50000, 1080, 3.5], [100000, 2830, 4], [200000, 6830, 4.25], [250000, 8955, 4.75], [300000, 11330, 5], [500000, 21330, 5.5]];
+const WA_T = [[0, 0, 1.9], [120000, 2280, 2.85], [150000, 3135, 3.8], [360000, 11115, 4.75], [725000, 28453, 5.15]];
+const TAS_T = [[0, 50, 0], [3000, 50, 1.75], [25000, 435, 2.25], [75000, 1560, 3.5], [200000, 5935, 4], [375000, 12935, 4.25], [725000, 27810, 4.5]];
+const ACT_OO = [[0, 0, 0.28], [260000, 728, 2.2], [300000, 1608, 3.4], [500000, 8408, 4.32], [750000, 19208, 5.9], [1000000, 33958, 6.4]];
+const ACT_NOO = [[0, 0, 1.2], [200000, 2400, 2.2], [300000, 4600, 3.4], [500000, 11400, 4.32], [750000, 22200, 5.9], [1000000, 36950, 6.4]];
+
+function vicDuty(v, ppr) {
+  if (v <= 550000 && ppr) return bracketDuty(v, VIC_PPR);
+  if (v > 960000 && v <= 2000000) return v * 0.055;
+  if (v > 2000000) return 110000 + (v - 2000000) * 0.065;
+  return bracketDuty(v, VIC_GENERAL);
+}
+function qldHomeConcession(v) {
+  // first $350,000 at $1 per $100, balance at general rates
+  return 3500 + Math.max(0, bracketDuty(v, QLD_T) - bracketDuty(350000, QLD_T));
+}
+
+/**
+ * @returns {{duty:number, surcharge:number, gross:number, notes:string[], estimate:boolean, source:string}}
+ */
+function transferDuty(o) {
+  const st = o.state, fhb = !!o.fhb, ppr = !!o.ppr || fhb, land = !!o.vacantLand, nb = !!o.newBuild;
+  const otp = Math.max(0, num(o.otpDeduction));
+  const dvRaw = Math.max(0, num(o.price));
+  const dv = Math.max(0, dvRaw - otp);
+  const notes = []; let duty = 0, sur = 0, est = false, src = "";
+
+  if (otp > 0) notes.push("Off-the-plan: " + money(otp) + " of construction cost deducted, duty assessed on " + money(dv) + ".");
+
+  switch (st) {
+    case "VIC": {
+      src = "SRO Victoria, current rates (updated 10 Jul 2026)";
+      const full = vicDuty(dv, ppr);
+      if (fhb && dv <= 600000) { duty = 0; notes.push("First home buyer exemption: no duty up to $600,000 (home or vacant land)."); }
+      else if (fhb && dv <= 750000) { duty = full * (dv - 600000) / 150000; notes.push("First home buyer concession phases in pro-rata between $600,001 and $750,000."); }
+      else {
+        duty = full;
+        if (ppr && dv <= 550000) notes.push("Principal place of residence concessional scale applied (dutiable value ≤ $550,000).");
+        if (dv > 2000000) notes.push("Premium rate applies above $2m: $110,000 + 6.5% of the excess.");
+      }
+      if (o.foreign) { sur = dvRaw * 0.08; notes.push("Foreign purchaser additional duty 8%, assessed on the full price before any off-the-plan concession."); }
+      break;
+    }
+    case "NSW": {
+      src = "Revenue NSW, 2026–27 thresholds (updated 19 Aug 2026)";
+      const full = dv > 3870000 ? 194137 + (dv - 3870000) * 0.07 : bracketDuty(dv, NSW_T);
+      const capExempt = land ? 350000 : 800000, capConc = land ? 450000 : 1000000;
+      if (fhb && dv <= capExempt) { duty = 0; notes.push("First Home Buyers Assistance Scheme: full exemption up to " + money(capExempt) + "."); }
+      else if (fhb && dv < capConc) {
+        duty = full * (dv - capExempt) / (capConc - capExempt); est = true;
+        notes.push("FHBAS concessional range " + money(capExempt) + "–" + money(capConc) + ". Shown as a straight-line phase-out — check the exact figure with the Revenue NSW FHBAS calculator before you rely on it.");
+      } else {
+        duty = full;
+        if (dv > 3870000) notes.push("Premium property duty applies above $3,870,000.");
+      }
+      if (o.foreign) { sur = dvRaw * 0.09; notes.push("Surcharge purchaser duty 9% of dutiable value."); }
+      break;
+    }
+    case "QLD": {
+      src = "Queensland Revenue Office, current transfer duty rates";
+      const gen = bracketDuty(dv, QLD_T);
+      if (fhb && nb && !land) { duty = 0; notes.push("First home (new home) concession: full exemption, no value cap, for contracts dated 1 May 2025 or later."); }
+      else if (fhb && land) {
+        if (dv <= 500000) { duty = 0; notes.push("First home vacant land concession: nil duty up to $500,000."); }
+        else if (dv < 750000) { duty = gen * (dv - 500000) / 250000; est = true; notes.push("First home vacant land concession phases out to $750,000 — confirm against the QRO concession table."); }
+        else duty = gen;
+      } else if (fhb) {
+        const hc = qldHomeConcession(dv);
+        if (dv < 700000) { duty = 0; notes.push("First home concession: nil duty under $700,000 for an established home."); }
+        else if (dv < 800000) { duty = hc * (dv - 700000) / 100000; notes.push("First home concession phases out between $700,000 and $800,000."); }
+        else { duty = hc; notes.push("Above $800,000 the first home concession is unavailable; the home concession still applies."); }
+      } else if (ppr && !land) { duty = qldHomeConcession(dv); notes.push("Home concession: first $350,000 charged at $1 per $100, balance at general rates."); }
+      else duty = gen;
+      if (o.foreign) { sur = dvRaw * 0.08; notes.push("Additional foreign acquirer duty 8% on residential land."); }
+      break;
+    }
+    case "SA": {
+      src = "RevenueSA, rates of stamp duty";
+      const full = bracketDuty(dv, SA_T);
+      if (fhb && (nb || land)) { duty = 0; notes.push("Eligible first home buyers pay no stamp duty on a new home, an off-the-plan apartment, or vacant land to build on — no value cap for contracts from 6 June 2024."); }
+      else { duty = full; if (fhb) notes.push("SA first home buyer relief covers new builds, off-the-plan and vacant land only — an established home attracts full duty."); }
+      if (o.foreign) { sur = dvRaw * 0.07; notes.push("Foreign ownership surcharge 7% of the value of the interest acquired."); }
+      break;
+    }
+    case "WA": {
+      src = "RevenueWA, transfer duty rates + 2026–27 housing taxation package (from 7 May 2026)";
+      const full = bracketDuty(dv, WA_T);
+      if (fhb && !land) {
+        if (dv <= 600000) { duty = 0; notes.push("First home owner rate: no duty up to $600,000 (threshold lifted 7 May 2026)."); }
+        else if (dv <= 800000) { duty = (dv - 600000) * 0.1615; notes.push("First home owner rate: $16.15 per $100 above $600,000, to $800,000."); }
+        else { duty = full; notes.push("Above $800,000 the first home owner rate no longer applies."); }
+      } else if (fhb && land) {
+        if (dv <= 450000) { duty = 0; notes.push("First home owner rate on vacant land: no duty up to $450,000."); }
+        else if (dv <= 550000) { duty = (dv - 450000) * 0.2014; notes.push("Vacant land: $20.14 per $100 above $450,000, to $550,000."); }
+        else duty = full;
+      } else if (ppr && dv <= 200000) { duty = dv <= 120000 ? dv * 0.015 : 1800 + (dv - 120000) * 0.0404; notes.push("Concessional residence rate applies up to $200,000."); }
+      else duty = full;
+      if (o.foreign) { sur = dvRaw * 0.07; notes.push("Foreign buyers duty 7% on residential property."); }
+      break;
+    }
+    case "TAS": {
+      src = "State Revenue Office Tasmania, rates of duty";
+      duty = bracketDuty(dv, TAS_T);
+      if (fhb && !land && dv <= 750000) {
+        est = true;
+        notes.push("Tasmania's 100% first home buyer exemption for established homes up to $750,000 was legislated for 18 Feb 2024 – 30 Jun 2026. Confirm whether it has been extended before assuming nil duty — full duty is shown here.");
+      }
+      if (o.foreign) { sur = dvRaw * 0.08; notes.push("Foreign investor duty surcharge 8% on residential property."); }
+      break;
+    }
+    case "ACT": {
+      src = "ACT Revenue Office, conveyance duty + 2026–27 Budget (from 1 Jul 2026)";
+      duty = bracketDuty(dv, ppr ? ACT_OO : ACT_NOO);
+      if (dv > 1455000) duty = dv * 0.0454;
+      if (fhb) { duty = 0; est = true; notes.push("Home Buyer Concession Scheme: from 1 July 2026 the property price cap and income threshold are removed, so eligible buyers pay no conveyance duty. Confirm eligibility with the ACT Revenue Office."); }
+      else if (ppr) notes.push("Eligible owner-occupier rates applied."); else notes.push("Non-owner-occupier rates applied.");
+      break;
+    }
+    case "NT": {
+      src = "NT Territory Revenue Office, conveyance duty";
+      if (dv <= 525000) { const V = dv / 1000; duty = (0.06571441 * V * V) + 15 * V; notes.push("NT uses a formula below $525,000: (0.06571441 × V²) + 15V, where V is the value in thousands."); }
+      else if (dv <= 3000000) duty = dv * 0.0495;
+      else if (dv <= 5000000) duty = dv * 0.0575;
+      else duty = dv * 0.0595;
+      if (fhb) notes.push("NT has no first home buyer duty concession; the House and Land Package exemption runs to 30 June 2027 and there is a separate first home owner grant.");
+      break;
+    }
+  }
+  duty = Math.max(0, Math.round(duty));
+  sur = Math.round(sur);
+  return { duty, surcharge: sur, gross: duty + sur, notes, estimate: est, source: src };
+}
+
+/* =========================================================================
+   2. LAND TAX (annual holding tax on investment land)
+   ========================================================================= */
+const VIC_LT = [[0, 0, 0], [50000, 500, 0], [100000, 975, 0], [300000, 1350, 0.3], [600000, 2250, 0.6], [1000000, 4650, 0.9], [1800000, 11850, 1.65], [3000000, 31650, 2.65]];
+const QLD_LT = [[0, 0, 0], [600000, 500, 1], [1000000, 4500, 1.65], [3000000, 37500, 1.25], [5000000, 62500, 1.75], [10000000, 150000, 2.25]];
+const SA_LT = [[0, 0, 0], [936000, 0, 0.5], [1504000, 2840, 1], [2188000, 9680, 2], [3504000, 36000, 2.4]];
+const WA_LT = [[0, 0, 0], [300000, 300, 0], [420000, 300, 0.25], [1000000, 1750, 0.9], [1800000, 8950, 1.8], [5000000, 66550, 2], [11000000, 186550, 2.67]];
+const TAS_LT = [[0, 0, 0], [125000, 50, 0.45], [500000, 1737.5, 1.5]];
+
+function landTax(st, landValue, o) {
+  o = o || {};
+  const v = Math.max(0, num(landValue)); const out = { tax: 0, basis: "", notes: [], modelled: true };
+  if (o.ppr) { out.basis = "Principal place of residence — exempt in every state."; return out; }
+  switch (st) {
+    case "VIC":
+      out.basis = "Site value, aggregated across all Victorian land, as at 31 December. Rates for the 2024–2033 land tax years.";
+      out.tax = v < 50000 ? 0 : bracketDuty(v, VIC_LT);
+      if (v >= 50000 && v < 300000) out.tax = v < 100000 ? 500 : 975;
+      if (o.absentee) { out.tax += Math.max(0, v - 50000) * 0.04; out.notes.push("Absentee owner surcharge 4% included."); }
+      break;
+    case "NSW": {
+      out.basis = "Three-year average land value, aggregated. General threshold $1,075,000, premium $6,571,000 (both frozen from 2025).";
+      if (v > 6571000) out.tax = 88036 + (v - 6571000) * 0.02;
+      else if (v > 1075000) out.tax = 100 + (v - 1075000) * 0.016;
+      if (o.absentee) { out.tax += v * 0.05; out.notes.push("Surcharge land tax for foreign owners applies with no threshold — 5% assumed; confirm the current rate."); }
+      break;
+    }
+    case "QLD":
+      out.basis = "Statutory land value as at 30 June. Individuals are taxed above $600,000.";
+      out.tax = v >= 600000 ? bracketDuty(v, QLD_LT) : 0;
+      if (o.absentee && v >= 350000) { out.tax += (v - 350000) * 0.03; out.notes.push("Absentee surcharge 3% on value above $350,000 included."); }
+      break;
+    case "SA": out.basis = "Site value, 2026–27 thresholds. Tax-free to $936,000 for non-trust land."; out.tax = v > 936000 ? bracketDuty(v, SA_LT) : 0; break;
+    case "WA":
+      out.basis = "Aggregated unimproved value as at 30 June. Threshold $300,000.";
+      out.tax = v > 300000 ? bracketDuty(v, WA_LT) : 0;
+      if (v > 300000 && o.metro) { out.tax += (v - 300000) * 0.0014; out.notes.push("Metropolitan Region Improvement Tax (0.14%) included."); }
+      break;
+    case "TAS": out.basis = "Assessed land value as at 1 July. Threshold $125,000."; out.tax = v > 125000 ? bracketDuty(v, TAS_LT) : 0; break;
+    case "ACT":
+      out.basis = "ACT charges land tax on property that is not your home, as a fixed charge plus a marginal rate on average unimproved value, and rates/levies are billed separately.";
+      out.modelled = false; out.notes.push("Not modelled here — use the ACT Revenue Office calculator and enter the result as 'Other annual costs'.");
+      break;
+    case "NT": out.basis = "The Northern Territory does not levy land tax."; break;
+  }
+  out.tax = Math.round(out.tax);
+  return out;
+}
+
+/* Victorian emergency services and volunteers fund — a real, separate holding cost */
+function esvf(st, civ, type) {
+  if (st !== "VIC") return null;
+  const fixed = type === "nonres" ? 282 : 139;
+  const rate = type === "nonres" ? 0.00133 : 0.000173;
+  return { total: Math.round(fixed + num(civ) * rate), fixed, rate, label: "Emergency services and volunteers fund (2026–27)" };
+}
+
+/* Vacant residential land tax (VIC) */
+function vrlt(civ, years) {
+  const r = years >= 3 ? 3 : years === 2 ? 2 : 1;
+  return { rate: r, total: Math.round(num(civ) * r / 100) };
+}
+
+/* =========================================================================
+   3. FINANCE
+   ========================================================================= */
+function repayment(principal, annualRatePct, years, io) {
+  const r = annualRatePct / 100 / 12, n = years * 12;
+  if (principal <= 0) return 0;
+  if (io) return principal * r;
+  if (r === 0) return principal / n;
+  return principal * r / (1 - Math.pow(1 + r, -n));
+}
+function amortise(principal, ratePct, years, io, ioYears) {
+  // returns array of {year, opening, interest, principalPaid, closing}
+  const rows = []; let bal = principal; const r = ratePct / 100 / 12;
+  const pmtIO = principal * r, pmtPI = repayment(principal, ratePct, years, false);
+  for (let y = 1; y <= years; y++) {
+    const inIO = io && y <= (ioYears || years);
+    let interest = 0, paid = 0; const opening = bal;
+    const pmt = inIO ? pmtIO : repayment(bal, ratePct, years - y + 1, false);
+    for (let m = 0; m < 12; m++) { const i = bal * r; interest += i; const p = inIO ? 0 : Math.min(bal, pmt - i); bal -= p; paid += p; }
+    rows.push({ year: y, opening, interest, principalPaid: paid, closing: Math.max(0, bal), payment: pmt * 12 });
+    if (bal <= 0) break;
+  }
+  return rows;
+}
+/* Indicative LMI premium as % of loan, by LVR band and loan size band. Lenders vary — indicative only. */
+function lmiPct(lvr, loan) {
+  if (lvr <= 80) return 0;
+  const band = loan <= 300000 ? 0 : loan <= 600000 ? 1 : loan <= 1000000 ? 2 : 3;
+  const t = lvr <= 81 ? [0.48, 0.57, 0.70, 0.87] : lvr <= 85 ? [0.70, 0.83, 1.03, 1.27]
+    : lvr <= 90 ? [1.30, 1.62, 2.02, 2.40] : lvr <= 95 ? [2.25, 2.70, 3.35, 3.85] : [3.40, 3.90, 4.40, 4.80];
+  return t[band];
+}
+const TAX_BRACKETS = [[0, 0, 0], [18200, 0, 16], [45000, 4288, 30], [135000, 31288, 37], [190000, 51638, 45]];
+function incomeTax(ti) { return Math.max(0, bracketDuty(Math.max(0, ti), TAX_BRACKETS)); }
+function marginalRate(ti) { let r = 0; for (const b of TAX_BRACKETS) if (ti > b[0]) r = b[2]; return r; }
+const MEDICARE = 2;
+
+/* borrowing power: simple net-surplus capitalisation at the assessment rate */
+function borrowingPower(o) {
+  const gross = num(o.income1) + num(o.income2);
+  const tax = incomeTax(num(o.income1)) + incomeTax(num(o.income2)) + gross * MEDICARE / 100;
+  const rent = num(o.rentAssessed) * 52 * 0.8;
+  const netMonthly = (gross - tax + rent) / 12;
+  const avail = netMonthly - num(o.livingCosts) - num(o.otherRepayments) - num(o.cardLimits) * 0.038;
+  const assessRate = num(o.rate) + num(o.buffer);
+  const pmtPerDollar = repayment(1, assessRate, num(o.term) || 30, false);
+  const cap = avail > 0 && pmtPerDollar > 0 ? avail / pmtPerDollar : 0;
+  const dtiCap = gross > 0 ? gross * 6 : 0;
+  return { capacity: Math.max(0, Math.round(cap / 1000) * 1000), dtiCap: Math.round(dtiCap), avail, assessRate, binding: cap > dtiCap ? "debt-to-income (6×)" : "monthly surplus" };
+}
+
+/* =========================================================================
+   4. CGT — current regime and the legislated regime from 1 July 2027
+   ========================================================================= */
+const CGT_START = new Date("2027-07-01");
+function cgt(o) {
+  const gainTotal = Math.max(0, num(o.salePrice) - num(o.costBase));
+  const mr = num(o.marginalRate);
+  const held = Math.max(0, num(o.yearsHeld));
+  const out = { gainTotal, rows: [], tax: 0, notes: [] };
+  const mainRes = clamp(num(o.mainResidenceDays) / Math.max(1, num(o.ownedDays)), 0, 1);
+  const exempt = gainTotal * mainRes;
+  const assessable = gainTotal - exempt;
+  if (mainRes > 0) out.notes.push("Main residence exemption applied to " + pct(mainRes * 100) + " of the ownership period" + (o.sixYear ? ", using the six-year absence rule" : "") + ".");
+
+  const splitPost = clamp(num(o.postReformShare) / 100, 0, 1);
+  const preGain = assessable * (1 - splitPost), postGain = assessable * splitPost;
+
+  // pre-1 Jul 2027 accrual: 50% discount if held > 12 months
+  const disc = held >= 1 ? 0.5 : 0;
+  const preTaxable = preGain * (1 - disc);
+  const preTax = preTaxable * mr / 100;
+  out.rows.push({ label: "Gain accrued to 30 Jun 2027", gain: preGain, method: disc ? "50% CGT discount" : "No discount (held under 12 months)", taxable: preTaxable, tax: preTax });
+
+  // post-reform: indexation of cost base + 30% minimum tax rate
+  const infl = num(o.inflation) || 2.5;
+  const yearsPost = Math.max(0, num(o.yearsPostReform));
+  const indexRelief = 1 - Math.pow(1 / (1 + infl / 100), yearsPost);
+  let postTaxable, postMethod, postTax;
+  if (o.newBuildElection) {
+    postTaxable = postGain * 0.5; postTax = postTaxable * mr / 100;
+    postMethod = "New build: elected to keep the 50% discount";
+  } else {
+    postTaxable = postGain * (1 - clamp(indexRelief, 0, 0.9));
+    const rate = o.incomeSupport ? mr : Math.max(30, mr);
+    postTax = postTaxable * rate / 100;
+    postMethod = "Cost base indexation (" + pct(indexRelief * 100) + " of the gain treated as inflation) at " + pct(rate, 0) + (o.incomeSupport ? " — income support recipient, minimum rate waived" : " minimum rate");
+  }
+  out.rows.push({ label: "Gain accrued from 1 Jul 2027", gain: postGain, method: postMethod, taxable: postTaxable, tax: postTax });
+  out.exempt = exempt;
+  out.tax = Math.round(preTax + postTax);
+  out.effective = assessable > 0 ? out.tax / assessable * 100 : 0;
+  // comparison: everything under the old rules
+  out.taxOldRules = Math.round(assessable * (1 - disc) * mr / 100);
+  return out;
+}
+
+/* =========================================================================
+   5. FIELD PLUMBING
+   ========================================================================= */
+const F = {};  // key -> definition
+function defField(d) { F[d.k] = d; return d; }
+function fieldHTML(d) {
+  const id = "f_" + d.k, v = S[d.k];
+  let ctl;
+  if (d.t === "select") ctl = '<select id="' + id + '" data-k="' + d.k + '">' + d.opts.map(o => '<option value="' + esc(o) + '"' + (String(v) === String(o) ? " selected" : "") + ">" + esc(o) + "</option>").join("") + "</select>";
+  else if (d.t === "check") return '<label class="chk"><input type="checkbox" id="' + id + '" data-k="' + d.k + '"' + (v ? " checked" : "") + '><span>' + esc(d.l) + "</span></label>";
+  else if (d.t === "area") ctl = '<textarea id="' + id + '" data-k="' + d.k + '" rows="' + (d.rows || 4) + '" placeholder="' + esc(d.ph || "") + '">' + esc(v == null ? "" : v) + "</textarea>";
+  else ctl = '<input id="' + id + '" data-k="' + d.k + '" inputmode="' + (d.t === "text" ? "text" : "decimal") + '" value="' + esc(v == null ? "" : v) + '" placeholder="' + esc(d.ph || "") + '">';
+  return '<div class="f"><label class="lab" for="' + id + '">' + esc(d.l) + (d.u ? ' <span style="text-transform:none;letter-spacing:0">(' + esc(d.u) + ")</span>" : "") + "</label>" + ctl + (d.hint ? '<span class="hint">' + d.hint + "</span>" : "") + "</div>";
+}
+function fieldsHTML(keys, cls) {
+  const checks = keys.filter(k => F[k] && F[k].t === "check"), rest = keys.filter(k => !F[k] || F[k].t !== "check");
+  let h = rest.length ? '<div class="grid ' + (cls || "") + '">' + rest.map(k => fieldHTML(F[k])).join("") + "</div>" : "";
+  if (checks.length) h += '<div class="row" style="margin-top:10px">' + checks.map(k => fieldHTML(F[k])).join("") + "</div>";
+  return h;
+}
+const gv = k => num(S[k]);
+const gs = k => S[k] == null ? "" : String(S[k]);
+const gb = k => !!S[k];
+
+/* ---- definitions ---- */
+[
+  // property
+  { k: "street", l: "Street name only", t: "text", ph: "Example Street", hint: "Used for street-level demand and comparables." },
+  { k: "ptype", l: "Property type", t: "select", opts: ["House", "Townhouse", "Unit / apartment", "Vacant land", "Dual occupancy", "Acreage"] },
+  { k: "land", l: "Land size", u: "m²", t: "num" },
+  { k: "floor", l: "Internal floor area", u: "m²", t: "num" },
+  { k: "beds", l: "Bedrooms", t: "num" }, { k: "baths", l: "Bathrooms", t: "num" }, { k: "cars", l: "Car spaces", t: "num" },
+  { k: "built", l: "Year built", t: "num" },
+  { k: "zone", l: "Planning zone", t: "text", ph: "GRZ1 / NRZ / RGZ", hint: "From the state planning map — drives subdivision potential." },
+  { k: "overlays", l: "Overlays", t: "text", ph: "DDO, LSIO, BMO, HO…", hint: "Flood, bushfire, heritage and design overlays each change what you can build." },
+  { k: "council", l: "Council", t: "text", ph: "Wyndham City" },
+  { k: "price", l: "Purchase price / offer", u: "$", t: "money" },
+  { k: "civ", l: "Capital improved value", u: "$", t: "money", hint: "From the council rates notice. Drives VIC levies and VRLT." },
+  { k: "sitevalue", l: "Site (land) value", u: "$", t: "money", hint: "Unimproved land value — the land tax base." },
+  { k: "contractDate", l: "Contract date", t: "text", ph: "2026-09-30", hint: "Decides which duty concessions and tax rules apply." },
+
+  // buyer profile
+  { k: "profile", l: "Buying as", t: "select", opts: ["Owner-occupier", "Investor", "Rentvestor", "Developer / subdivider", "SMSF"] },
+  { k: "fhb", l: "First home buyer", t: "check" },
+  { k: "ppr", l: "Will be my home (PPR)", t: "check" },
+  { k: "newBuild", l: "New build / never occupied", t: "check" },
+  { k: "vacantLand", l: "Vacant land purchase", t: "check" },
+  { k: "foreign", l: "Foreign purchaser", t: "check" },
+  { k: "pensioner", l: "Pension / concession card", t: "check" },
+  { k: "otpDeduction", l: "Off-the-plan construction cost", u: "$", t: "money", hint: "VIC: deductible from dutiable value for strata contracts to 20 Apr 2027." },
+
+  // sales history / comparables
+  { k: "saleHistory", l: "Sale history for this property", t: "area", rows: 5, ph: "2016-11-12 | 420000 | first sale, house and land\n2021-03-04 | 585000 | private sale", hint: "One sale per line: <b>date | price | note</b>. Paste from the portal or the state sales report." },
+  { k: "comparables", l: "Comparable sales nearby", t: "area", rows: 6, ph: "8 Example St | 672000 | 2026-07-19 | 440 | 4\n22 Other Rd | 705000 | 2026-08-02 | 512 | 4", hint: "One per line: <b>address | price | date | land m² | beds</b>." },
+  { k: "streetSales", l: "Sales in this street, last 12 months", t: "area", rows: 4, ph: "4 Example St | 660000 | 2026-05-11\n18 Example St | 690000 | 2026-08-30", hint: "One per line: <b>address | price | date</b>. Drives the street demand read." },
+  { k: "streetDwellings", l: "Dwellings in the street", t: "num", hint: "Count from the map — turns sales into a turnover rate." },
+
+  // suburb demand
+  { k: "medianHouse", l: "Suburb median, this type", u: "$", t: "money" },
+  { k: "median12", l: "Median growth, 12 months", u: "%", t: "num" },
+  { k: "median10", l: "Median growth, 10 years p.a.", u: "%", t: "num" },
+  { k: "dom", l: "Days on market", t: "num", hint: "Under 25 is hot, over 60 is soft." },
+  { k: "discount", l: "Vendor discount", u: "%", t: "num", hint: "Average gap between first asking price and sale price." },
+  { k: "clearance", l: "Auction clearance", u: "%", t: "num" },
+  { k: "vacancy", l: "Rental vacancy", u: "%", t: "num", hint: "Under 2% is landlord's market; over 3% is tenant's market." },
+  { k: "listings", l: "Properties for sale now", t: "num" },
+  { k: "soldYear", l: "Properties sold, last 12 months", t: "num" },
+  { k: "dwellings", l: "Total dwellings in suburb", t: "num", hint: "From ABS census — turns listings into stock-on-market %." },
+  { k: "renters", l: "Rented dwellings", u: "%", t: "num", hint: "High renter share = more investor competition, thinner owner-occupier support." },
+  { k: "popGrowth", l: "Population growth p.a.", u: "%", t: "num" },
+  { k: "yieldSuburb", l: "Suburb gross yield", u: "%", t: "num" },
+  { k: "buyerDemandIndex", l: "Views per listing vs state average", u: "×", t: "num", hint: "realestate.com.au and Domain both publish this as 'demand'." },
+  { k: "daysToRent", l: "Days to lease a rental", t: "num" },
+
+  // schools
+  { k: "schoolPrimary", l: "Zoned primary school", t: "text" },
+  { k: "schoolPrimaryICSEA", l: "Primary ICSEA", t: "num", hint: "1000 is the national average; compare like with like." },
+  { k: "schoolPrimaryNaplan", l: "Primary NAPLAN vs similar schools", t: "select", opts: ["", "Well above", "Above", "Close to", "Below", "Well below"] },
+  { k: "schoolSecondary", l: "Zoned secondary school", t: "text" },
+  { k: "schoolSecondaryICSEA", l: "Secondary ICSEA", t: "num" },
+  { k: "schoolSecondaryNaplan", l: "Secondary NAPLAN vs similar schools", t: "select", opts: ["", "Well above", "Above", "Close to", "Below", "Well below"] },
+  { k: "schoolVCE", l: "Secondary median VCE / ATAR study score", t: "num", hint: "Median study score 30 is the state average." },
+  { k: "schoolDistance", l: "Walking distance to zoned primary", u: "km", t: "num" },
+  { k: "schoolOthers", l: "Other school options", t: "area", rows: 4, ph: "Westbourne Grammar | Private | 6.2km | $22,400/yr\nThomas Carr College | Catholic | 4.8km | $7,100/yr", hint: "One per line: <b>name | sector | distance | fees</b>." },
+  { k: "zoneRisk", l: "Zone boundary risk", t: "select", opts: ["", "Stable", "Under review", "Recently changed", "Growth area, likely to change"], hint: "New estates get re-zoned as schools fill." },
+
+  // upfront costs
+  { k: "deposit", l: "Cash deposit", u: "$", t: "money" },
+  { k: "conveyancing", l: "Conveyancing / legal", u: "$", t: "money" },
+  { k: "inspections", l: "Building, pest and survey", u: "$", t: "money" },
+  { k: "transferFee", l: "Title transfer + registration", u: "$", t: "money" },
+  { k: "loanFees", l: "Loan establishment fees", u: "$", t: "money" },
+  { k: "adjustments", l: "Rates and water adjustments", u: "$", t: "money" },
+  { k: "buyersAgent", l: "Buyer's agent", u: "$", t: "money" },
+  { k: "movingCosts", l: "Moving and immediate works", u: "$", t: "money" },
+
+  // loan
+  { k: "rate", l: "Interest rate", u: "% p.a.", t: "num", hint: "RBA cash rate is 4.35% as at Aug 2026." },
+  { k: "term", l: "Loan term", u: "years", t: "num" },
+  { k: "io", l: "Interest only", t: "check" },
+  { k: "ioYears", l: "Interest-only period", u: "years", t: "num" },
+  { k: "buffer", l: "Assessment buffer", u: "%", t: "num", hint: "APRA still requires at least 3 percentage points above the offered rate." },
+  { k: "income1", l: "Your taxable income", u: "$", t: "money" },
+  { k: "income2", l: "Partner taxable income", u: "$", t: "money" },
+  { k: "livingCosts", l: "Living costs", u: "$/month", t: "money" },
+  { k: "otherRepayments", l: "Other loan repayments", u: "$/month", t: "money" },
+  { k: "cardLimits", l: "Credit card limits", u: "$", t: "money" },
+
+  // holding / cashflow
+  { k: "rentWeek", l: "Market rent", u: "$/week", t: "money" },
+  { k: "vacancyWeeks", l: "Vacancy allowance", u: "weeks/yr", t: "num" },
+  { k: "mgmtPct", l: "Property management", u: "% of rent", t: "num" },
+  { k: "lettingFee", l: "Letting and advertising", u: "$/yr", t: "money" },
+  { k: "councilRates", l: "Council rates", u: "$/yr", t: "money" },
+  { k: "water", l: "Water service charges", u: "$/yr", t: "money" },
+  { k: "insurance", l: "Building and landlord insurance", u: "$/yr", t: "money" },
+  { k: "strata", l: "Owners corporation", u: "$/yr", t: "money" },
+  { k: "maintPct", l: "Maintenance allowance", u: "% of value", t: "num", hint: "0.5–1% of property value is the usual planning range." },
+  { k: "otherCosts", l: "Other annual costs", u: "$/yr", t: "money" },
+  { k: "depnBuilding", l: "Division 43 building write-off", u: "$/yr", t: "money", hint: "2.5% of qualifying construction cost for 40 years — only if built after 15 Sep 1987." },
+  { k: "depnPlant", l: "Division 40 plant and equipment", u: "$/yr", t: "money", hint: "Second-hand assets in a residential rental are not deductible for contracts after 9 May 2017 — new builds only." },
+
+  // CGT
+  { k: "salePrice", l: "Expected sale price", u: "$", t: "money" },
+  { k: "yearsHeld", l: "Years held at sale", t: "num" },
+  { k: "yearsPostReform", l: "Years held after 1 Jul 2027", t: "num" },
+  { k: "postReformShare", l: "Share of gain accruing after 1 Jul 2027", u: "%", t: "num", hint: "Gains are split at 1 July 2027: the old 50% discount covers the earlier slice." },
+  { k: "ownedDays", l: "Total days owned", t: "num" },
+  { k: "mainResidenceDays", l: "Days it was your main residence", t: "num" },
+  { k: "sixYear", l: "Using the six-year absence rule", t: "check" },
+  { k: "newBuildElection", l: "New build — elect to keep the 50% discount", t: "check" },
+  { k: "incomeSupport", l: "Income support recipient", t: "check" },
+  { k: "inflation", l: "Assumed inflation", u: "% p.a.", t: "num" },
+  { k: "sellingCosts", l: "Selling costs", u: "% of price", t: "num" },
+
+  // projection / strategy
+  { k: "growthAssumed", l: "Capital growth assumption", u: "% p.a.", t: "num" },
+  { k: "rentGrowth", l: "Rent growth", u: "% p.a.", t: "num" },
+  { k: "holdYears", l: "Holding period", u: "years", t: "num" },
+  { k: "renoCost", l: "Renovation budget", u: "$", t: "money" },
+  { k: "renoUplift", l: "Expected value uplift", u: "$", t: "money" },
+  { k: "renoRentUplift", l: "Rent uplift after reno", u: "$/week", t: "money" },
+
+  // feasibility
+  { k: "lots", l: "Lots or dwellings achievable", t: "num" },
+  { k: "buildCostM2", l: "Build cost", u: "$/m²", t: "money", hint: "Volume builder townhouses in Melbourne run roughly $2,200–$3,200/m² in 2026." },
+  { k: "buildArea", l: "Build area per dwelling", u: "m²", t: "num" },
+  { k: "civilCost", l: "Civil works, services, demolition", u: "$", t: "money" },
+  { k: "profCost", l: "Consultants, permits, council contributions", u: "$", t: "money" },
+  { k: "gaicHa", l: "GAIC liable land", u: "hectares", t: "num", hint: "VIC growth areas infrastructure contribution: $122,260/ha (type A) or $145,220/ha (B-1, B-2, C) in 2026–27." },
+  { k: "gaicType", l: "GAIC land type", t: "select", opts: ["None", "Type A", "Type B-1 / B-2 / C"] },
+  { k: "endValue", l: "End value per dwelling", u: "$", t: "money" },
+  { k: "feasMonths", l: "Project duration", u: "months", t: "num" },
+  { k: "marginScheme", l: "GST margin scheme applies", t: "check" }
+].forEach(defField);
+
+/* ---- example + defaults ---- */
+const EXAMPLE = {
+  address: "12 Example Street", suburb: "Truganina", state: "VIC", postcode: "3029", street: "Example Street",
+  ptype: "House", land: 448, floor: 168, beds: 4, baths: 2, cars: 2, built: 2016,
+  zone: "GRZ1", overlays: "DPO, DDO8", council: "Wyndham City",
+  price: 680000, civ: 695000, sitevalue: 385000, contractDate: "2026-10-04",
+  profile: "Investor", fhb: false, ppr: false,
+  saleHistory: "2016-11-12 | 398000 | house and land package\n2021-03-04 | 585000 | private sale",
+  comparables: "8 Example St | 672000 | 2026-07-19 | 440 | 4\n22 Other Rd | 705000 | 2026-08-02 | 512 | 4\n5 Third Ave | 648000 | 2026-06-14 | 400 | 4",
+  streetSales: "4 Example St | 660000 | 2026-05-11\n18 Example St | 690000 | 2026-08-30",
+  streetDwellings: 64,
+  medianHouse: 672000, median12: 3.4, median10: 5.6, dom: 38, discount: 3.2, clearance: 61,
+  vacancy: 1.4, listings: 182, soldYear: 640, dwellings: 9800, renters: 34, popGrowth: 4.1,
+  yieldSuburb: 4.3, buyerDemandIndex: 1.2, daysToRent: 18,
+  schoolPrimary: "Truganina P-9 College", schoolPrimaryICSEA: 985, schoolPrimaryNaplan: "Close to",
+  schoolSecondary: "Westbourne Park Secondary", schoolSecondaryICSEA: 1002, schoolSecondaryNaplan: "Above",
+  schoolVCE: 29, schoolDistance: 1.1, zoneRisk: "Growth area, likely to change",
+  schoolOthers: "Westbourne Grammar | Private | 6.2km | $22,400/yr\nThomas Carr College | Catholic | 4.8km | $7,100/yr",
+  deposit: 140000, conveyancing: 1800, inspections: 900, transferFee: 1650, loanFees: 600, adjustments: 1200, buyersAgent: 0, movingCosts: 2500,
+  rate: 6.39, term: 30, io: false, ioYears: 5, buffer: 3,
+  income1: 135000, income2: 78000, livingCosts: 4200, otherRepayments: 650, cardLimits: 10000,
+  rentWeek: 560, vacancyWeeks: 2, mgmtPct: 6.6, lettingFee: 1100, councilRates: 2050, water: 780,
+  insurance: 1450, strata: 0, maintPct: 0.6, otherCosts: 0, depnBuilding: 4100, depnPlant: 0,
+  salePrice: 980000, yearsHeld: 10, yearsPostReform: 9, postReformShare: 88, ownedDays: 3650, mainResidenceDays: 0,
+  inflation: 2.7, sellingCosts: 2.2,
+  growthAssumed: 4.5, rentGrowth: 3, holdYears: 10, renoCost: 45000, renoUplift: 80000, renoRentUplift: 60,
+  lots: 2, buildCostM2: 2600, buildArea: 145, civilCost: 120000, profCost: 85000, gaicHa: 0, gaicType: "None",
+  endValue: 720000, feasMonths: 18, marginScheme: false
+};
+const BLANK_KEEP = ["rate", "term", "buffer", "mgmtPct", "maintPct", "vacancyWeeks", "inflation", "sellingCosts", "growthAssumed", "rentGrowth", "holdYears", "state", "buildCostM2", "feasMonths", "gaicType", "zoneRisk", "schoolPrimaryNaplan", "schoolSecondaryNaplan"];
+
+/* =========================================================================
+   6. PARSERS + DERIVED MEASURES
+   ========================================================================= */
+function rows(key, cols) {
+  return gs(key).split("\n").map(l => l.trim()).filter(Boolean).map(l => {
+    const parts = l.split(/\s*[|\t]\s*|\s*,\s(?=[^ ])/).map(s => s.trim());
+    const o = {}; cols.forEach((c, i) => o[c] = parts[i] == null ? "" : parts[i]); o._raw = l; return o;
+  });
+}
+const history = () => rows("saleHistory", ["date", "price", "note"]).map(r => ({ ...r, p: num(r.price), y: parseFloat(String(r.date).slice(0, 4)) }));
+const comps = () => rows("comparables", ["addr", "price", "date", "land", "beds"]).map(r => ({ ...r, p: num(r.price), l: num(r.land) }));
+const strSales = () => rows("streetSales", ["addr", "price", "date"]).map(r => ({ ...r, p: num(r.price) }));
+const otherSchools = () => rows("schoolOthers", ["name", "sector", "dist", "fees"]);
+
+function cagr(a, b, years) { return years > 0 && a > 0 ? (Math.pow(b / a, 1 / years) - 1) * 100 : NaN; }
+function propertyCAGR() {
+  const h = history().filter(r => r.p > 0 && isFinite(r.y)).sort((x, y) => x.y - y.y);
+  if (h.length < 1) return null;
+  const first = h[0], lastP = gv("price") || (h[h.length - 1] && h[h.length - 1].p);
+  const thisYear = 2026, years = thisYear - first.y;
+  if (!(years > 0) || !first.p || !lastP) return null;
+  return { from: first, years, to: lastP, rate: cagr(first.p, lastP, years) };
+}
+function compStats() {
+  const c = comps().filter(r => r.p > 0);
+  if (!c.length) return null;
+  const ps = c.map(r => r.p).sort((a, b) => a - b);
+  const med = ps.length % 2 ? ps[(ps.length - 1) / 2] : (ps[ps.length / 2 - 1] + ps[ps.length / 2]) / 2;
+  const withLand = c.filter(r => r.l > 0);
+  const perM2 = withLand.length ? withLand.reduce((s, r) => s + r.p / r.l, 0) / withLand.length : NaN;
+  return { n: c.length, low: ps[0], high: ps[ps.length - 1], median: med, perM2 };
+}
+function streetStats() {
+  const s = strSales().filter(r => r.p > 0), dw = gv("streetDwellings"), med = gv("medianHouse");
+  if (!s.length) return null;
+  const avg = s.reduce((a, r) => a + r.p, 0) / s.length;
+  return { n: s.length, avg, turnover: dw > 0 ? s.length / dw * 100 : NaN, premium: med > 0 ? (avg / med - 1) * 100 : NaN };
+}
+
+/* ---- suburb demand score ---- */
+function demandScore() {
+  const listings = gv("listings"), sold = gv("soldYear"), dw = gv("dwellings");
+  const stockPct = dw > 0 ? listings / dw * 100 : NaN;
+  const invMonths = sold > 0 ? listings / (sold / 12) : NaN;
+  const absorb = listings > 0 ? sold / listings : NaN;
+  const parts = [
+    { k: "Days on market", s: scoreBand(gv("dom"), 75, 18), v: gv("dom") ? gv("dom") + " days" : dash, w: 1.4, why: "How long buyers take to commit." },
+    { k: "Vendor discount", s: scoreBand(gv("discount"), 9, 0), v: gs("discount") ? pct(gv("discount")) : dash, w: 1.1, why: "How far sellers move off asking." },
+    { k: "Auction clearance", s: scoreBand(gv("clearance"), 45, 80), v: gs("clearance") ? pct(gv("clearance"), 0) : dash, w: 1.1, why: "Live competition in the room." },
+    { k: "Rental vacancy", s: scoreBand(gv("vacancy"), 4, 0.8), v: gs("vacancy") ? pct(gv("vacancy")) : dash, w: 1.3, why: "Tenant scarcity. Under 2% means rents push up." },
+    { k: "Stock on market", s: scoreBand(stockPct, 2.6, 0.7), v: isFinite(stockPct) ? pct(stockPct, 2) : dash, w: 1.2, why: "Listings as a share of all dwellings." },
+    { k: "Months of inventory", s: scoreBand(invMonths, 8, 1.5), v: isFinite(invMonths) ? invMonths.toFixed(1) + " mths" : dash, w: 1.2, why: "How long current stock takes to clear." },
+    { k: "Growth, 12 months", s: scoreBand(gv("median12"), -4, 12), v: gs("median12") ? pct(gv("median12")) : dash, w: 1.0, why: "Recent direction of the median." },
+    { k: "Growth, 10 years p.a.", s: scoreBand(gv("median10"), 1, 9), v: gs("median10") ? pct(gv("median10")) : dash, w: 1.0, why: "Whether the suburb compounds over a cycle." },
+    { k: "Buyer interest index", s: scoreBand(gv("buyerDemandIndex"), 0.5, 2.2), v: gs("buyerDemandIndex") ? gv("buyerDemandIndex").toFixed(2) + "×" : dash, w: 0.9, why: "Views per listing against the state." },
+    { k: "Population growth", s: scoreBand(gv("popGrowth"), 0, 4), v: gs("popGrowth") ? pct(gv("popGrowth")) : dash, w: 0.8, why: "Underlying demand for dwellings." },
+    { k: "Days to lease", s: scoreBand(gv("daysToRent"), 45, 8), v: gs("daysToRent") ? gv("daysToRent") + " days" : dash, w: 0.8, why: "Rental depth — your vacancy risk." },
+    { k: "Gross yield", s: scoreBand(gv("yieldSuburb"), 2.5, 6), v: gs("yieldSuburb") ? pct(gv("yieldSuburb")) : dash, w: 0.7, why: "Income support for the price." }
+  ];
+  const live = parts.filter(p => p.s != null);
+  const total = live.length ? Math.round(live.reduce((a, p) => a + p.s * p.w, 0) / live.reduce((a, p) => a + p.w, 0)) : null;
+  return { parts, total, coverage: live.length + "/" + parts.length, stockPct, invMonths, absorb };
+}
+function streetScore() {
+  const st = streetStats();
+  const parts = [
+    { k: "Street turnover", s: st && isFinite(st.turnover) ? scoreBand(st.turnover, 9, 1.5) : null, v: st && isFinite(st.turnover) ? pct(st.turnover) : dash, w: 1, why: "Low turnover means people stay — usually a good sign." },
+    { k: "Street price premium", s: st && isFinite(st.premium) ? scoreBand(st.premium, -12, 15) : null, v: st && isFinite(st.premium) ? (st.premium > 0 ? "+" : "") + pct(st.premium) : dash, w: 1.2, why: "Street average against the suburb median." },
+    { k: "Recent street evidence", s: st ? scoreBand(st.n, 0, 4) : null, v: st ? st.n + " sales" : dash, w: 0.6, why: "How much comparable evidence you actually have." },
+    { k: "Land vs street", s: (() => { const c = compStats(); return c && isFinite(c.perM2) && gv("land") ? scoreBand(gv("land"), 250, 650) : null; })(), v: gv("land") ? gv("land") + " m²" : dash, w: 0.8, why: "Bigger land holds value and opens subdivision." }
+  ];
+  const live = parts.filter(p => p.s != null);
+  return { parts, total: live.length ? Math.round(live.reduce((a, p) => a + p.s * p.w, 0) / live.reduce((a, p) => a + p.w, 0)) : null };
+}
+function schoolScore() {
+  const nap = v => ({ "Well above": 95, "Above": 78, "Close to": 55, "Below": 30, "Well below": 12 })[v] || null;
+  const zr = { "Stable": 85, "Under review": 50, "Recently changed": 45, "Growth area, likely to change": 30 }[gs("zoneRisk")] || null;
+  const parts = [
+    { k: "Primary ICSEA", s: scoreBand(gv("schoolPrimaryICSEA"), 900, 1120), v: gs("schoolPrimaryICSEA") || dash, w: 1, why: "Socio-educational advantage of the zoned intake." },
+    { k: "Primary results", s: nap(gs("schoolPrimaryNaplan")), v: gs("schoolPrimaryNaplan") || dash, w: 1.1, why: "NAPLAN against statistically similar schools." },
+    { k: "Secondary ICSEA", s: scoreBand(gv("schoolSecondaryICSEA"), 900, 1120), v: gs("schoolSecondaryICSEA") || dash, w: 1, why: "" },
+    { k: "Secondary results", s: nap(gs("schoolSecondaryNaplan")), v: gs("schoolSecondaryNaplan") || dash, w: 1.3, why: "The zoned secondary school drives family resale demand." },
+    { k: "Median study score", s: scoreBand(gv("schoolVCE"), 24, 36), v: gs("schoolVCE") || dash, w: 1, why: "30 is the state median." },
+    { k: "Walk to primary", s: scoreBand(gv("schoolDistance"), 3.5, 0.4), v: gs("schoolDistance") ? gv("schoolDistance") + " km" : dash, w: 0.7, why: "Walkability is priced into family homes." },
+    { k: "Alternatives nearby", s: scoreBand(otherSchools().length, 0, 4), v: otherSchools().length + " listed", w: 0.6, why: "Private and Catholic options widen the buyer pool." },
+    { k: "Zone stability", s: zr, v: gs("zoneRisk") || dash, w: 0.9, why: "A zone you can lose is a premium you can lose." }
+  ];
+  const live = parts.filter(p => p.s != null);
+  return { parts, total: live.length ? Math.round(live.reduce((a, p) => a + p.s * p.w, 0) / live.reduce((a, p) => a + p.w, 0)) : null };
+}
+
+/* ---- money models ---- */
+function costsModel() {
+  const d = transferDuty({ state: gs("state"), price: gv("price"), fhb: gb("fhb"), ppr: gb("ppr"), newBuild: gb("newBuild"), vacantLand: gb("vacantLand"), foreign: gb("foreign"), otpDeduction: gv("otpDeduction") });
+  const price = gv("price"), deposit = gv("deposit");
+  const loan = Math.max(0, price - deposit);
+  const lvr = price > 0 ? loan / price * 100 : 0;
+  const lmiRate = lmiPct(lvr, loan), lmi = Math.round(loan * lmiRate / 100);
+  const fhbGuarantee = gb("fhb") && lvr > 80 && lvr <= 95;
+  const other = ["conveyancing", "inspections", "transferFee", "loanFees", "adjustments", "buyersAgent", "movingCosts"].reduce((a, k) => a + gv(k), 0);
+  const lmiPayable = fhbGuarantee ? 0 : lmi;
+  return { d, price, deposit, loan, lvr, lmi, lmiRate, lmiPayable, fhbGuarantee, other, cashNeeded: deposit + d.gross + other + (fhbGuarantee ? 0 : 0), totalAcq: price + d.gross + other };
+}
+function cashflowModel() {
+  const c = costsModel();
+  const rentGross = gv("rentWeek") * (52 - gv("vacancyWeeks"));
+  const mgmt = rentGross * gv("mgmtPct") / 100;
+  const maint = gv("price") * gv("maintPct") / 100;
+  const lt = landTax(gs("state"), gv("sitevalue"), { ppr: gb("ppr"), absentee: gb("foreign"), metro: true });
+  const levy = esvf(gs("state"), gv("civ"), "res");
+  const cashOps = mgmt + gv("lettingFee") + gv("councilRates") + gv("water") + gv("insurance") + gv("strata") + maint + gv("otherCosts") + lt.tax + (levy ? levy.total : 0);
+  const interest = c.loan * gv("rate") / 100;
+  const repay = repayment(c.loan, gv("rate"), gv("term") || 30, gb("io")) * 12;
+  const principal = Math.max(0, repay - interest);
+  const preTax = rentGross - cashOps - repay;
+  const depn = gv("depnBuilding") + gv("depnPlant");
+  const taxLoss = rentGross - cashOps - interest - depn;       // negative = rental loss
+  const income = gv("income1");
+  const mr = marginalRate(income) + MEDICARE;
+  const quarantined = !gb("newBuild") && isPostCutoff();
+  const taxEffect = taxLoss < 0 ? (quarantined ? 0 : -taxLoss * mr / 100) : -(taxLoss * mr / 100);
+  const afterTax = preTax + taxEffect;
+  return {
+    c, rentGross, mgmt, maint, lt, levy, cashOps, interest, repay, principal, preTax, depn, taxLoss, mr, taxEffect, afterTax, quarantined,
+    grossYield: c.price > 0 ? gv("rentWeek") * 52 / c.price * 100 : 0,
+    netYield: c.price > 0 ? (rentGross - cashOps) / c.price * 100 : 0,
+    breakEvenRent: (cashOps + repay) / (52 - gv("vacancyWeeks")),
+    perWeek: afterTax / 52
+  };
+}
+function isPostCutoff() {
+  const d = Date.parse(gs("contractDate"));
+  return isFinite(d) ? d > Date.parse("2026-05-12T19:30:00+10:00") : true;
+}
+
+/* =========================================================================
+   7. LOOKUP DEEP LINKS — the data this tool cannot compute for you
+   ========================================================================= */
+function lookupGroups() {
+  const st = gs("state") || "VIC", sub = gs("suburb"), pc = gs("postcode"), ad = gs("address");
+  const subSlug = slug(sub), full = [ad, sub, st, pc].filter(Boolean).join(" ");
+  const q = encodeURIComponent(full), qs = encodeURIComponent([sub, st, pc].filter(Boolean).join(" "));
+  const reaSuburb = subSlug && pc ? "https://www.realestate.com.au/neighbourhoods/" + subSlug + "-" + pc + "-" + st.toLowerCase() : "https://www.realestate.com.au/neighbourhoods/";
+  const reaSold = subSlug ? "https://www.realestate.com.au/sold/in-" + subSlug + "%2c+" + st.toLowerCase() + "+" + pc + "/list-1" : "https://www.realestate.com.au/sold/";
+  const domSuburb = subSlug && pc ? "https://www.domain.com.au/suburb-profile/" + subSlug + "-" + st.toLowerCase() + "-" + pc : "https://www.domain.com.au/suburb-profile/";
+  const domSold = subSlug && pc ? "https://www.domain.com.au/sold-listings/" + subSlug + "-" + st.toLowerCase() + "-" + pc + "/" : "https://www.domain.com.au/sold-listings/";
+
+  const schools = {
+    VIC: [["Find my School (VIC zones)", "https://www.findmyschool.vic.gov.au/", "Type the address for the exact zoned primary and secondary school."]],
+    NSW: [["School Finder (NSW)", "https://education.nsw.gov.au/school-finder", "Enrolment area lookup by address."]],
+    QLD: [["EdMap catchments (QLD)", "https://qed.qld.gov.au/about-us/maps/edmap", "Catchment boundaries by address."]],
+    SA: [["Find a school (SA)", "https://www.education.sa.gov.au/parents-and-families/enrol-school-or-preschool/find-school-or-preschool", "Zoned school search."]],
+    WA: [["School local-intake areas (WA)", "https://www.education.wa.edu.au/find-a-school", "Local-intake area by address."]],
+    TAS: [["Find a school (TAS)", "https://www.decyp.tas.gov.au/schools/", "Intake areas by address."]],
+    ACT: [["School priority areas (ACT)", "https://www.education.act.gov.au/public-school-life/enrolling-in-an-act-public-school", "Priority enrolment area lookup."]],
+    NT: [["Find a school (NT)", "https://nt.gov.au/learning/primary-and-secondary-students/find-a-school", "Enrolment zones."]]
+  }[st] || [];
+  const planning = {
+    VIC: [["VicPlan planning maps", "https://mapshare.vic.gov.au/vicplan/", "Zone, overlays, bushfire and flood layers for the exact parcel."],
+    ["Property sales statistics", "https://www.land.vic.gov.au/valuations/resources-and-reports/property-sales-statistics", "Official quarterly median by suburb — not a portal estimate."],
+    ["Landata title and plan", "https://www.landata.vic.gov.au/", "Title, plan of subdivision, covenants and easements."]],
+    NSW: [["NSW Planning Portal spatial viewer", "https://www.planningportal.nsw.gov.au/spatialviewer/", "Zoning, FSR, height, hazards."], ["NSW Valuer General land values", "https://www.valuergeneral.nsw.gov.au/", "Land value history, the land tax base."]],
+    QLD: [["Queensland Globe", "https://qldglobe.information.qld.gov.au/", "Zoning, flood, vegetation."], ["Titles Queensland", "https://www.titlesqld.com.au/", "Title search and survey plans."]],
+    SA: [["SA Property Location Browser", "https://location.sa.gov.au/lm/", "Zoning and overlays."], ["SAILIS land services", "https://www.sailis.sa.gov.au/", "Titles and plans."]],
+    WA: [["Landgate Map Viewer", "https://maps.landgate.wa.gov.au/", "Zoning, land values, titles."]],
+    TAS: [["LISTmap", "https://maps.thelist.tas.gov.au/listmap/app/list/map", "Zoning, hazard overlays, titles."]],
+    ACT: [["ACTmapi", "https://www.actmapi.act.gov.au/", "Zoning and block details."]],
+    NT: [["NT Atlas", "https://nrmaps.nt.gov.au/", "Zoning and hazard layers."]]
+  }[st] || [];
+  const duty = {
+    VIC: ["https://www.sro.vic.gov.au/calculators/land-transfer-duty-calculator", "SRO Victoria duty calculator"],
+    NSW: ["https://www.revenue.nsw.gov.au/help-centre/calculators", "Revenue NSW calculators"],
+    QLD: ["https://qro.qld.gov.au/duties/transfer-duty/calculate/", "QRO transfer duty calculator"],
+    SA: ["https://www.revenuesa.sa.gov.au/stamp-duty-land/calculate-stamp-duty", "RevenueSA stamp duty calculator"],
+    WA: ["https://www.wa.gov.au/organisation/department-of-treasury-and-finance/transfer-duty-assessment", "RevenueWA transfer duty"],
+    TAS: ["https://www.sro.tas.gov.au/property-transfer-duties", "SRO Tasmania duty"],
+    ACT: ["https://www.revenue.act.gov.au/duties/conveyance-duty", "ACT conveyance duty"],
+    NT: ["https://nt.gov.au/property/buying-and-selling-a-home/settle-the-sale/stamp-duty-buying-or-selling-a-home/conveyance-calculator", "NT conveyance calculator"]
+  }[st];
+
+  return [
+    {
+      t: "Price and sale history", n: "Sold prices are the one number nobody gives away free in bulk. These four cover it between them.",
+      items: [
+        ["realestate.com.au sold in " + (sub || "suburb"), reaSold, "Sold list with dates and prices."],
+        ["Domain sold listings", domSold, "Second opinion — the portals miss different sales."],
+        ["Property Value (CoreLogic)", "https://www.propertyvalue.com.au/search?q=" + q, "Per-address sale history and an estimate range."],
+        ["On The House", "https://www.onthehouse.com.au/search?q=" + q, "Free per-address history, including older sales."],
+        ["Title search for the real chain", duty ? (planning[2] ? planning[2][1] : duty[0]) : "#", "A title search is the only authoritative ownership and sale record."]
+      ]
+    },
+    {
+      t: "Suburb and street demand", n: "Listing counts, days on market, vacancy and the views-per-listing index.",
+      items: [
+        ["realestate.com.au suburb profile", reaSuburb, "Median, days on market, demand index, renter share."],
+        ["Domain suburb profile", domSuburb, "Median, clearance rate, rental yield."],
+        ["SQM Research vacancy rates", "https://sqmresearch.com.au/graph_vacancy.php?postcode=" + encodeURIComponent(pc) + "&t=1", "The vacancy series the industry actually quotes."],
+        ["ABS Census by suburb", "https://www.abs.gov.au/census/find-census-data/quickstats?q=" + qs, "Dwelling counts, tenure, income, household type."],
+        ["Auction results this weekend", "https://www.domain.com.au/auction-results/" + (st === "VIC" ? "melbourne" : st === "NSW" ? "sydney" : st === "QLD" ? "brisbane" : st === "SA" ? "adelaide" : st === "WA" ? "perth" : "melbourne") + "/", "Clearance rate for the metro and the suburb."]
+      ]
+    },
+    {
+      t: "Schools and catchment", n: "The zone is the asset. Confirm it by address, then check how the school actually performs.",
+      items: schools.concat([
+        ["My School (ACARA)", "https://www.myschool.edu.au/", "NAPLAN against similar schools, ICSEA, enrolment trend."],
+        ["School results by school", "https://www.google.com/search?q=" + encodeURIComponent((gs("schoolSecondary") || sub) + " median VCE study score results"), "Median study score and senior outcomes."],
+        ["Catchment overlay on the portal", reaSuburb + "#schools", "Portals map catchments, but the state tool is the authority."]
+      ]),
+    },
+    {
+      t: "Planning, title and risk", n: "What you can build, and what can flood, burn or be heritage-listed on you.",
+      items: planning.concat([
+        ["Flood and drainage advice", st === "VIC" ? "https://www.melbournewater.com.au/building-and-works/apply-builds-and-works/flood-information" : "https://www.google.com/search?q=" + encodeURIComponent(gs("council") + " flood information property"), "Ask the water authority, not the vendor."],
+        ["Bushfire planning", "https://www.google.com/search?q=" + encodeURIComponent(st + " bushfire prone area map " + (sub || "")), "BAL rating changes build cost materially."],
+        ["Council planning scheme and permits", "https://www.google.com/search?q=" + encodeURIComponent((gs("council") || st) + " planning scheme subdivision requirements"), "Minimum lot size, garden area, setbacks."],
+        ["Crime statistics", st === "VIC" ? "https://www.crimestatistics.vic.gov.au/crime-statistics/latest-victorian-crime-data" : "https://www.google.com/search?q=" + encodeURIComponent(st + " crime statistics by suburb"), "Offence rate per 100,000 by suburb."],
+        ["NBN and mobile coverage", "https://www.nbnco.com.au/connect-home-or-business/check-your-address", "Technology type at the address."]
+      ])
+    },
+    {
+      t: "Duty, tax and schemes", n: "Official calculators — always reconcile this tool's figures against them before you sign.",
+      items: [
+        [duty ? duty[1] : "State duty calculator", duty ? duty[0] : "#", "The authoritative duty figure for " + st + "."],
+        ["5% Deposit Scheme price caps", "https://firsthomebuyers.gov.au/australian-government-5-percent-deposit-scheme/property-price-caps", "Cap by location; no income caps since 1 Oct 2025."],
+        ["Help to Buy price caps", "https://firsthomebuyers.gov.au/help-buy-tools-and-resources/help-buy-property-price-caps", "Shared equity, 2% deposit, 30–40% government share."],
+        ["ATO rental property guide", "https://www.ato.gov.au/individuals-and-families/investments-and-assets/residential-rental-properties", "What is deductible and when."],
+        ["Negative gearing and CGT reform", "https://www.ato.gov.au/about-ato/new-legislation/in-detail/individuals/tax-reform-boosting-home-ownership-reforming-negative-gearing-and-capital-gains-tax", "The law that changes everything from 1 Jul 2027."]
+      ]
+    }
+  ];
+}
+function linksHTML(g) {
+  return '<div class="panel"><div class="ph"><h3>' + esc(g.t) + '</h3></div><p class="note">' + esc(g.n) + '</p><div class="pb"><div class="links">' +
+    g.items.map(i => '<a class="lk" href="' + esc(i[1]) + '" target="_blank" rel="noopener"><b>' + esc(i[0]) + "</b><span>" + esc(i[2]) + "</span></a>").join("") + "</div></div></div>";
+}
+
+/* =========================================================================
+   8. SHARED RENDER BITS
+   ========================================================================= */
+function scoreBlock(res, title, sub) {
+  const t = res.total;
+  return '<div class="panel"><div class="ph"><h3>' + esc(title) + '</h3><span class="tag ' + (t == null ? "" : t >= 67 ? "good" : t >= 40 ? "warn" : "bad") + '">' + (t == null ? "no data yet" : t + " / 100 · " + scoreWord(t)) + '</span></div>' +
+    (sub ? '<p class="note">' + sub + "</p>" : "") + '<div class="pb">' +
+    res.parts.map(p => '<div class="scorerow"><div><div>' + esc(p.k) + '</div>' + (p.why ? '<span class="hint">' + esc(p.why) + "</span>" : "") + '</div><div class="sv">' + esc(p.v) + '</div><div>' +
+      (p.s == null ? '<span class="src">no data</span>' : '<div class="meter"><i style="width:' + p.s + '%;background:var(--' + (p.s >= 67 ? "good" : p.s >= 40 ? "warn" : "bad") + ')"></i></div>') + "</div></div>").join("") +
+    "</div></div>";
+}
+function panel(title, note, body, tagHTML) {
+  return '<div class="panel"><div class="ph"><h3>' + esc(title) + "</h3>" + (tagHTML || "") + "</div>" + (note ? '<p class="note">' + note + "</p>" : "") + '<div class="pb">' + body + "</div></div>";
+}
+function kv(pairs) {
+  return '<dl class="kv">' + pairs.map(p => "<dt>" + p[0] + "</dt><dd>" + p[1] + "</dd>").join("") + "</dl>";
+}
+function table(head, body, foot) {
+  return '<div class="tscroll"><table><thead><tr>' + head.map((h, i) => '<th' + (i ? ' class="n"' : "") + ">" + h + "</th>").join("") + "</tr></thead><tbody>" + body + "</tbody>" + (foot || "") + "</table></div>";
+}
+function trow(cells, cls) {
+  return '<tr' + (cls ? ' class="' + cls + '"' : "") + ">" + cells.map((c, i) => "<td" + (i ? ' class="n"' : "") + ">" + c + "</td>").join("") + "</tr>";
+}
+
+/* =========================================================================
+   9. PROJECTION + STRATEGY
+   ========================================================================= */
+function projection(o) {
+  const years = Math.max(1, Math.round(num(o.years) || 10));
+  const g = num(o.growth) / 100, rg = num(o.rentGrowth) / 100;
+  let value = num(o.value), rent = num(o.rentAnnual), cum = 0;
+  const am = amortise(num(o.loan), num(o.rate), num(o.term) || 30, !!o.io, num(o.ioYears));
+  const series = [];
+  for (let y = 1; y <= years; y++) {
+    value = value * (1 + g); rent = rent * (1 + rg);
+    const a = am[y - 1] || { closing: 0, interest: 0, payment: 0 };
+    const opsGrown = num(o.ops) * Math.pow(1.03, y - 1);
+    const pre = rent - opsGrown - a.payment;
+    const taxLoss = rent - opsGrown - a.interest - num(o.depn);
+    const relief = taxLoss < 0 ? (o.quarantined ? 0 : -taxLoss * num(o.mr) / 100) : -(taxLoss * num(o.mr) / 100);
+    const after = pre + relief;
+    cum += after;
+    series.push({ y, value, loan: a.closing, equity: value - a.closing, rent, after, cum, interest: a.interest });
+  }
+  return series;
+}
+function strategyRow(name, blurb, cfg) {
+  const cf = cashflowModel();
+  const cashIn = cfg.cashIn;
+  const s = projection({
+    years: gv("holdYears") || 10, growth: cfg.growth, rentGrowth: gv("rentGrowth"), value: cfg.value,
+    rentAnnual: cfg.rentAnnual, loan: cfg.loan, rate: gv("rate"), term: gv("term"),
+    io: cfg.io != null ? cfg.io : gb("io"), ioYears: cfg.ioYears != null ? cfg.ioYears : (gv("ioYears") || 5),
+    ops: cfg.ops, depn: cfg.depn, mr: cf.mr, quarantined: cfg.quarantined
+  });
+  const last = s[s.length - 1];
+  const sellCost = last.value * gv("sellingCosts") / 100;
+  const gain = Math.max(0, last.value - (cfg.costBase || cfg.value) - sellCost);
+  const taxOnGain = cgt({
+    salePrice: last.value - sellCost, costBase: cfg.costBase || cfg.value, marginalRate: cf.mr, yearsHeld: gv("holdYears") || 10,
+    yearsPostReform: Math.max(0, (gv("holdYears") || 10) - 1), postReformShare: 90, ownedDays: 3650, mainResidenceDays: cfg.ppr ? 3650 : 0,
+    inflation: gv("inflation"), newBuildElection: !!cfg.newBuildElection
+  }).tax;
+  const net = last.equity - sellCost - taxOnGain + last.cum;
+  const yrs = gv("holdYears") || 10;
+  const annual = cashIn > 0 && net > 0 ? (Math.pow((net + cashIn) / cashIn, 1 / yrs) - 1) * 100 : NaN;
+  return { name, blurb, cashIn, series: s, endValue: last.value, equity: last.equity, cum: last.cum, tax: taxOnGain, net, annual, perWeek: s[0].after / 52, quarantined: cfg.quarantined };
+}
+function strategies() {
+  const cf = cashflowModel(), c = cf.c;
+  const base = {
+    value: gv("price"), costBase: c.totalAcq, loan: c.loan, rentAnnual: cf.rentGross, ops: cf.cashOps,
+    depn: cf.depn, growth: gv("growthAssumed"), cashIn: c.deposit + c.d.gross + c.other, quarantined: cf.quarantined
+  };
+  const out = [];
+  out.push(strategyRow("Buy and hold as an investment", "Rent it out from settlement, claim what the new rules still allow.", base));
+  out.push(strategyRow("Live in it (owner-occupier)", "No rent, no deductions, but the gain is CGT-free while it is your main residence.", {
+    ...base, rentAnnual: 0, ops: cf.cashOps - cf.mgmt - gv("lettingFee") - cf.lt.tax, depn: 0, ppr: true, quarantined: true
+  }));
+  out.push(strategyRow("Hold on interest only", "Five years of interest-only repayments: better weekly cashflow, no principal paid down, more interest over the hold.", {
+    ...base, io: true
+  }));
+  out.push(strategyRow("Renovate, then hold", "Spend " + k$(gv("renoCost")) + " to lift value by " + k$(gv("renoUplift")) + " and rent by " + money(gv("renoRentUplift")) + "/week.", {
+    ...base, value: gv("price") + gv("renoUplift"), costBase: c.totalAcq + gv("renoCost"),
+    loan: c.loan + Math.max(0, gv("renoCost")), rentAnnual: cf.rentGross + gv("renoRentUplift") * (52 - gv("vacancyWeeks")),
+    cashIn: base.cashIn
+  }));
+  out.push(strategyRow("Knock down and rebuild", "A new dwelling keeps full negative gearing and lets you elect the 50% CGT discount — the single biggest lever in the 2027 rules.", {
+    ...base, value: gv("price") + (gv("lots") * gv("buildArea") * gv("buildCostM2")) * 0.85,
+    costBase: c.totalAcq + gv("lots") * gv("buildArea") * gv("buildCostM2") + gv("civilCost") + gv("profCost"),
+    loan: c.loan + gv("lots") * gv("buildArea") * gv("buildCostM2") * 0.8,
+    rentAnnual: cf.rentGross * 1.45, depn: (gv("lots") * gv("buildArea") * gv("buildCostM2")) * 0.025,
+    quarantined: false, newBuildElection: true, cashIn: base.cashIn + gv("civilCost") * 0.2
+  }));
+  return out;
+}
+function feasibility() {
+  const c = costsModel();
+  const lots = Math.max(1, gv("lots")), area = gv("buildArea"), rate = gv("buildCostM2");
+  const build = lots * area * rate;
+  const gaicRate = gs("gaicType") === "Type A" ? 122260 : gs("gaicType") === "Type B-1 / B-2 / C" ? 145220 : 0;
+  const gaic = gaicRate * gv("gaicHa");
+  const grv = lots * gv("endValue");
+  const months = Math.max(1, gv("feasMonths"));
+  const landCost = c.price + c.d.gross + c.other;
+  const debt = (landCost + build) * 0.7;
+  const holding = debt * gv("rate") / 100 * (months / 12) * 0.6;
+  const selling = grv * gv("sellingCosts") / 100 + lots * 1500;
+  const gst = gb("marginScheme") ? Math.max(0, (grv - c.price)) / 11 : grv / 11;
+  const totalCost = landCost + build + gv("civilCost") + gv("profCost") + gaic + holding + selling + gst;
+  const profit = grv - totalCost;
+  return { lots, build, gaic, grv, landCost, holding, selling, gst, totalCost, profit, onCost: totalCost > 0 ? profit / totalCost * 100 : 0, onGrv: grv > 0 ? profit / grv * 100 : 0, months, debt };
+}
+
+/* =========================================================================
+   10. RULES REFERENCE (dated, sourced)
+   ========================================================================= */
+const RULES = [
+  { t: "Negative gearing restricted to new builds", d: "Law. Applies 1 Jul 2027", tone: "bad", b: "Losses on established residential property acquired from 7:30pm AEST 12 May 2026 can only be offset against residential rental income or capital gains on residential property — not against salary. Excess losses carry forward. Property you already held at that moment is grandfathered under the current rules indefinitely. New builds are exempt.", s: "ATO — Tax reform: reforming negative gearing and capital gains tax", u: "https://www.ato.gov.au/about-ato/new-legislation/in-detail/individuals/tax-reform-boosting-home-ownership-reforming-negative-gearing-and-capital-gains-tax" },
+  { t: "50% CGT discount replaced by indexation plus a 30% floor", d: "Law. Applies 1 Jul 2027", tone: "bad", b: "For individuals, trusts and partnerships, the 50% discount gives way to cost base indexation and a 30% minimum tax rate on real capital gains. Gains accrued before 1 Jul 2027 keep the 50% discount, so an asset held across that date is split. Income support recipients are exempt from the 30% floor. Buyers of new residential dwellings can elect to keep the 50% discount instead. The main residence exemption is unchanged.", s: "ATO, plus Clayton Utz and Baker McKenzie budget analyses", u: "https://www.ato.gov.au/about-ato/new-legislation/in-detail/individuals/tax-reform-boosting-home-ownership-reforming-negative-gearing-and-capital-gains-tax" },
+  { t: "5% Deposit Scheme — no income caps, no waitlist", d: "Since 1 Oct 2025", tone: "good", b: "Formerly the Home Guarantee Scheme. First home buyers need a 5% deposit (single parents 2%) with no lenders mortgage insurance, no income test and no place limit. Price caps by location: VIC $950,000 in Melbourne and Geelong, $650,000 elsewhere; NSW $1.5m in Sydney and regional centres, $800,000 elsewhere; QLD $1m; WA $850,000; SA $900,000; TAS $700,000; ACT $1m; NT $750,000 in Darwin.", s: "firsthomebuyers.gov.au — property price caps", u: "https://firsthomebuyers.gov.au/australian-government-5-percent-deposit-scheme/property-price-caps" },
+  { t: "Help to Buy shared equity — applications open", d: "Open since 5 Dec 2025", tone: "good", b: "2% deposit; the Commonwealth takes up to 30% of an existing home or 40% of a new one and shares the gain or loss proportionally. Income cap $103,000 single or $165,000 joint and single parents, on last year's notice of assessment. All applicants must be Australian citizens, must live in the home, and must not own property anywhere. 10,000 places a year. Price caps are slightly tighter than the deposit scheme in NSW ($1.3m).", s: "firsthomebuyers.gov.au — Help to Buy", u: "https://firsthomebuyers.gov.au/australian-government-help-buy-scheme" },
+  { t: "First Home Super Saver Scheme", d: "Ongoing", tone: "good", b: "Voluntary super contributions of up to $50,000 plus earnings can be released for a first home, taxed concessionally on the way in and out. Slower than it looks — plan on a release request well before you need the funds.", s: "firsthomebuyers.gov.au", u: "https://firsthomebuyers.gov.au/" },
+  { t: "Foreign buyers banned from established dwellings", d: "1 Apr 2025 to 30 Jun 2029", tone: "bad", b: "Foreign persons, including temporary residents and foreign-owned companies, cannot buy established homes. Permanent residents and New Zealand citizens are exempt. Narrow exceptions exist where the investment genuinely adds housing supply. The 2026–27 Budget extended the ban by two years and three months.", s: "ATO — banning foreign purchases of established dwellings", u: "https://www.ato.gov.au/about-ato/new-legislation/in-detail/international/banning-foreign-purchases-of-established-dwellings" },
+  { t: "VIC: off-the-plan duty concession extended", d: "21 Oct 2024 to 20 Apr 2027", tone: "good", b: "For dwellings in a strata subdivision with common property, construction costs incurred after the contract date come off the dutiable value. No value cap, open to investors, companies and trusts. It does not reduce foreign purchaser additional duty, which is assessed on the full price.", s: "SRO Victoria (updated 18 Jun 2026); extension in the Building Legislation and Treasury Legislation (Tax Relief) Amendment Act 2026", u: "https://www.sro.vic.gov.au/buying-property/land-transfer-stamp-duty/temporary-plan-duty-concession" },
+  { t: "VIC: first home duty exemption and concession", d: "Current", tone: "good", b: "No duty up to $600,000 and a pro-rata concession to $750,000, for a new or established home or vacant land. All purchasers must be individuals, 18 or over, citizens or permanent residents, and at least one must live there for 12 continuous months within 12 months of settlement. A $10,000 First Home Owner Grant applies to new homes up to $750,000.", s: "SRO Victoria (updated 12 Aug 2026)", u: "https://www.sro.vic.gov.au/fhbduty" },
+  { t: "VIC: land tax and the emergency services levy", d: "2026–27", tone: "warn", b: "Land tax starts at $50,000 of site value with fixed charges of $500 (to $100,000) and $975 (to $300,000) before marginal rates begin — the COVID debt levy settings run to the 2033 land tax year. Separately, the emergency services and volunteers fund charges residential land $139 plus 17.3 cents per $1,000 of capital improved value. Absentee owners add 4%.", s: "SRO Victoria current rates (updated 20–21 Jul 2026)", u: "https://www.sro.vic.gov.au/about-us/rates-and-statistics/current-rates/land-tax-current-rates" },
+  { t: "VIC: vacant residential land tax escalates", d: "From 2025", tone: "bad", b: "1% of capital improved value in the first year a property is liable, 2% in the second consecutive year, 3% in the third and beyond. Metropolitan land undeveloped for five years or more, and new residential land unsold for over three years, sit at 1%. No threshold and no COVID levy.", s: "SRO Victoria (updated 16 Feb 2026)", u: "https://www.sro.vic.gov.au/about-us/rates-and-statistics/current-rates/vacant-residential-land-tax-current-rates" },
+  { t: "NSW: duty thresholds indexed for 2026–27", d: "2026–27", tone: "warn", b: "General duty reaches $52,237 plus $5.50 per $100 above $1,290,000. Premium property duty starts at $3,870,000. First home buyers: exempt to $800,000, concession under $1m; vacant land exempt to $350,000, concession under $450,000. Surcharge purchaser duty is 9%. Land tax thresholds are frozen at $1,075,000 and $6,571,000 and assessed on a three-year average land value.", s: "Revenue NSW (updated 19 Aug 2026 and 16 Mar 2026)", u: "https://www.revenue.nsw.gov.au/taxes-duties-levies-royalties/transfer-duty/understanding-transfer-duty/calculate-transfer-duty" },
+  { t: "QLD: first home buyers of new homes pay no duty", d: "Contracts from 1 May 2025", tone: "good", b: "The first home (new home) concession is a full exemption with no value cap for a new or substantially renovated first home. Established homes get nil duty under $700,000, phasing out to $800,000. The home concession charges the first $350,000 at $1 per $100. From 1 Aug 2026 buyers must be citizens, permanent residents or specified foreign retirees. Foreign acquirers add 8%.", s: "Queensland Revenue Office", u: "https://qro.qld.gov.au/duties/transfer-duty/concessions/homes/first-home-new-home/" },
+  { t: "WA: first home thresholds lifted", d: "From 7 May 2026", tone: "good", b: "No duty on a first home up to $600,000 and a concessional rate to $800,000; vacant land nil to $450,000 and concessional to $550,000. The First Home Owner Grant cap rose to $800,000 south of the 26th parallel. The off-the-plan concession runs to 30 Jun 2028 and now covers survey-strata and community title. Foreign buyers duty is 7%.", s: "WA 2026–27 Housing Taxation Package", u: "https://www.wa.gov.au/government/announcements/2026-27-housing-taxation-package" },
+  { t: "SA: first home relief covers new builds only", d: "Current", tone: "warn", b: "No stamp duty, with no value cap, on a new home, an off-the-plan apartment or vacant land to build on. An established home attracts full duty. From 13 Feb 2025 applicants must never have held any residential property interest in Australia. Foreign ownership surcharge 7%.", s: "RevenueSA", u: "https://www.revenuesa.sa.gov.au/stampduty/first-home-buyer-relief" },
+  { t: "TAS: first home exemption needs checking", d: "Legislated to 30 Jun 2026", tone: "bad", b: "The 100% duty exemption for first home buyers of established homes up to $750,000 was legislated for 18 Feb 2024 to 30 Jun 2026. Unless it has been extended, full duty now applies. Confirm with the State Revenue Office before budgeting on it.", s: "SRO Tasmania", u: "https://www.sro.tas.gov.au/property-transfer-duties/concessions-exemptions/first-home-buyers-of-established-homes-duty-relief" },
+  { t: "ACT: concession caps removed", d: "From 1 Jul 2026", tone: "good", b: "The Home Buyer Concession Scheme loses both its property price cap and its income threshold. The Pensioner and Disability concession caps go too, as does the cap on the off-the-plan unit exemption, and a new exemption covers owner-occupiers buying newly unit-titled homes.", s: "ACT Revenue Office — 2026–27 Budget updates", u: "https://www.revenue.act.gov.au/about-the-act-revenue-office/news/act-budget-2026-27-updates" },
+  { t: "NT: no first home duty concession", d: "Current", tone: "warn", b: "Duty follows a formula below $525,000, then 4.95% to $3m, 5.75% to $5m and 5.95% above. There is no first home duty concession, but a House and Land Package exemption runs to 30 Jun 2027 and a first home owner grant applies.", s: "NT Territory Revenue Office", u: "https://nt.gov.au/employ/money-and-taxes/taxes-royalties-and-grants/stamp-duty" },
+  { t: "Depreciation: second-hand plant is dead", d: "Since 9 May 2017", tone: "warn", b: "You cannot claim Division 40 plant and equipment on a second-hand residential property. Division 43 capital works stays available at 2.5% a year for 40 years where construction began after 15 September 1987 — get a quantity surveyor's schedule. New builds keep the full Division 40 claim, which matters more than ever under the 2027 rules.", s: "ATO — residential rental properties", u: "https://www.ato.gov.au/individuals-and-families/investments-and-assets/residential-rental-properties" },
+  { t: "Main residence and the six-year rule", d: "Unchanged", tone: "good", b: "Your home is CGT-free. Move out and rent it and you can still treat it as your main residence for up to six years, with a fresh six-year window after each period of moving back in. Leave it vacant instead and the period is unlimited. You can only have one main residence at a time.", s: "ATO — treating a former home as your main residence", u: "https://www.ato.gov.au/individuals-and-families/investments-and-assets/capital-gains-tax/property-and-capital-gains-tax/your-main-residence-home/treating-former-home-as-main-residence" },
+  { t: "Borrowing: the 3% buffer holds", d: "Current", tone: "warn", b: "APRA has kept the serviceability buffer at 3 percentage points above the offered rate, and the cash rate is 4.35% after three increases in 2026 (February, March and May). Assess yourself at roughly 9.4% and you will not be surprised.", s: "APRA macroprudential settings; RBA cash rate target (12 Aug 2026)", u: "https://www.rba.gov.au/statistics/cash-rate/" },
+  { t: "VIC: growth area infrastructure contribution", d: "2026–27", tone: "warn", b: "If the land is in a declared growth area, GAIC is $122,260 per hectare for type A land and $145,220 per hectare for types B-1, B-2 and C. The excluded-building threshold is $1,528,532. This lands on subdivision or building permits, not on purchase — a trap on greenfield land.", s: "SRO Victoria — changes taking effect 1 Jul 2026", u: "https://www.sro.vic.gov.au/about-us/news-and-events/news/changes-taking-effect-1-july-2026" },
+  { t: "Victorian Homebuyer Fund is closed", d: "Closed to new participants", tone: "warn", b: "The state shared-equity scheme no longer accepts new participants; Help to Buy is the federal replacement. Existing participants have 2026–27 income thresholds of $151,265 single and $242,025 joint.", s: "SRO Victoria", u: "https://www.sro.vic.gov.au/about-us/news-and-events/news/changes-taking-effect-1-july-2026" }
+];
+
+const CHECKS = [
+  ["Contract and title", "Title search obtained, not just the vendor's statement", "Check the registered proprietor, mortgages, caveats, covenants and easements."],
+  ["Contract and title", "Plan of subdivision read against the fence line", "Fences in the wrong place are common in older estates and in new ones where the builder set out wrongly."],
+  ["Contract and title", "Section 32 / contract reviewed by your conveyancer before you bid", "Auction contracts have no cooling-off period."],
+  ["Contract and title", "Owners corporation certificate and minutes read", "Look for special levies, defect litigation and insurance shortfalls."],
+  ["Planning and build", "Zone and every overlay confirmed on the state planning map", "A Development Plan Overlay or a Design and Development Overlay can stop the build you planned."],
+  ["Planning and build", "Flood and drainage advice from the water authority", "A Land Subject to Inundation Overlay changes both insurance and buildability."],
+  ["Planning and build", "Bushfire attack level checked if the land is bushfire prone", "BAL-29 and above adds real money to a build."],
+  ["Planning and build", "Building and pest inspection, plus a survey if boundaries matter", "Cheaper than the first claim you cannot make."],
+  ["Planning and build", "Building permits and certificates for past works sighted", "Unpermitted decks, carports and rooms become your problem at resale."],
+  ["Planning and build", "Minimum lot size, garden area and setback rules checked against your subdivision idea", "Garden area requirements have killed plenty of two-lot plans."],
+  ["Money", "Duty figure reconciled against the state revenue office calculator", "This tool is a model; theirs is the assessment."],
+  ["Money", "Land tax position for the whole portfolio, not just this property", "Land tax aggregates across your holdings — the marginal rate on this purchase may be far higher than it looks alone."],
+  ["Money", "Pre-approval confirms the loan amount at the assessment rate, not the offered rate", "The 3% buffer is what decides your ceiling."],
+  ["Money", "Contract date checked against the 12 May 2026 negative gearing cut-off", "The single most expensive date in Australian property tax right now."],
+  ["Money", "Quantity surveyor's depreciation schedule quoted before settlement", "Only worth it where Division 43 or a new build's Division 40 is in play."],
+  ["Money", "Rates, water and owners corporation adjustments estimated for settlement", "Cash at settlement is always more than the deposit plus duty."],
+  ["Demand", "Sold evidence collected from two portals plus the state sales report", "Each source misses different sales."],
+  ["Demand", "At least three comparables within 12 months, same type, same street or the next one", "Six-month-old comparables in a moving market mislead in both directions."],
+  ["Demand", "Rental appraisal in writing from two local agents", "Agents' buyer-side rent estimates are optimistic."],
+  ["Demand", "Vacancy rate and days-to-lease checked for the postcode", "Your vacancy allowance should come from data, not habit."],
+  ["Schools and amenity", "School zone confirmed by address on the state tool, not the portal", "Portal catchment maps lag boundary changes."],
+  ["Schools and amenity", "Zone change risk considered in a growth area", "New schools redraw boundaries and the premium moves with them."],
+  ["Schools and amenity", "Walk times to transport, shops and the primary school measured, not guessed", "Walkability is what resale buyers actually feel."],
+  ["Schools and amenity", "Planned infrastructure and planned nuisance both checked", "The same road project lifts one street and ruins the next."]
+];
+
+/* =========================================================================
+   11. CHART
+   ========================================================================= */
+function lineChart(series, lines, fmt) {
+  const W = 680, H = 230, pad = { l: 56, r: 14, t: 14, b: 26 };
+  const xs = series.map(d => d.y);
+  const allV = lines.flatMap(L => series.map(L.get));
+  const max = Math.max.apply(null, allV.concat([0])), min = Math.min.apply(null, allV.concat([0]));
+  const span = (max - min) || 1;
+  const X = i => pad.l + (W - pad.l - pad.r) * (series.length < 2 ? 0.5 : i / (series.length - 1));
+  const Y = v => pad.t + (H - pad.t - pad.b) * (1 - (v - min) / span);
+  const ticks = [min, min + span / 2, max];
+  let g = "";
+  ticks.forEach(t => { g += '<line x1="' + pad.l + '" x2="' + (W - pad.r) + '" y1="' + Y(t).toFixed(1) + '" y2="' + Y(t).toFixed(1) + '" stroke="var(--line)" stroke-width="1"/>' +
+    '<text x="' + (pad.l - 8) + '" y="' + (Y(t) + 4).toFixed(1) + '" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">' + fmt(t) + "</text>"; });
+  xs.forEach((x, i) => { if (i % Math.ceil(xs.length / 8) === 0 || i === xs.length - 1) g += '<text x="' + X(i).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">y' + x + "</text>"; });
+  lines.forEach(L => {
+    const pts = series.map((d, i) => X(i).toFixed(1) + "," + Y(L.get(d)).toFixed(1));
+    if (L.fill) g += '<polygon points="' + pad.l + "," + Y(Math.max(min, 0)).toFixed(1) + " " + pts.join(" ") + " " + X(series.length - 1).toFixed(1) + "," + Y(Math.max(min, 0)).toFixed(1) + '" fill="' + L.color + '" fill-opacity="0.10" stroke="none"/>';
+    g += '<polyline points="' + pts.join(" ") + '" fill="none" stroke="' + L.color + '" stroke-width="2" stroke-linejoin="round"/>';
+    const last = series[series.length - 1];
+    g += '<circle cx="' + X(series.length - 1).toFixed(1) + '" cy="' + Y(L.get(last)).toFixed(1) + '" r="3.5" fill="' + L.color + '"/>';
+  });
+  g += '<line x1="' + pad.l + '" x2="' + (W - pad.r) + '" y1="' + Y(0).toFixed(1) + '" y2="' + Y(0).toFixed(1) + '" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 3"/>';
+  return '<div class="chartbox"><svg class="chart" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Projection chart">' + g + "</svg></div>" +
+    '<div class="pill-row" style="margin-top:8px">' + lines.map(L => '<span class="tag"><span class="dot" style="background:' + L.color + '"></span>' + esc(L.name) + "</span>").join("") + "</div>";
+}
+
+/* =========================================================================
+   12. TABS
+   ========================================================================= */
+const TABS = [
+  {
+    id: "property", label: "Property", title: "The property itself",
+    sub: "Everything downstream keys off these facts. The links collect what cannot be calculated — sold prices, catchments, overlays.",
+    render() {
+      let h = panel("Core facts", "", fieldsHTML(["street", "ptype", "land", "floor", "beds", "baths", "cars", "built", "zone", "overlays", "council"]));
+      h += panel("Price and valuation basis", "Capital improved value and site value come off the council rates notice. They are different numbers and they drive different taxes.",
+        fieldsHTML(["price", "civ", "sitevalue", "contractDate"]) + '<div class="divider"></div>' + fieldsHTML(["profile", "otpDeduction"]) + fieldsHTML(["fhb", "ppr", "newBuild", "vacantLand", "foreign", "pensioner"]));
+      const c = costsModel();
+      h += panel("Read at a glance", "", '<div class="cols">' +
+        "<div>" + kv([
+          ["Price per m² of land", gv("land") > 0 ? money(gv("price") / gv("land")) : dash],
+          ["Price per m² of floor area", gv("floor") > 0 ? money(gv("price") / gv("floor")) : dash],
+          ["Building age", gv("built") ? (2026 - gv("built")) + " years" : dash],
+          ["Division 43 eligible", gv("built") ? (gv("built") >= 1988 ? "Yes — construction after Sep 1987" : "No — built before Sep 1987") : dash],
+          ["Land to building ratio", gv("land") && gv("floor") ? (gv("land") / gv("floor")).toFixed(2) + "×" : dash],
+          ["Parcel identifier", gs("parcelSPI") || dash],
+          ["Zone", gs("zone") ? gs("zone") + (gs("zoneDesc") ? " \u2014 " + gs("zoneDesc") : "") : dash],
+          ["Negative gearing status", isPostCutoff() ? (gb("newBuild") ? "New build — exempt from the restriction" : "Acquired after 12 May 2026 — losses quarantined from 1 Jul 2027") : "Grandfathered under current rules"]
+        ]) + "</div><div>" + kv([
+          ["Transfer duty", money(c.d.duty)],
+          ["Foreign surcharge", c.d.surcharge ? money(c.d.surcharge) : "nil"],
+          ["Loan at this deposit", money(c.loan)],
+          ["LVR", pct(c.lvr)],
+          ["Gross yield at current rent", pct(cashflowModel().grossYield)],
+          ["Cash needed to settle", money(c.deposit + c.d.gross + c.other)]
+        ]) + "</div></div>");
+      h += lookupGroups().map(linksHTML).join("");
+      return h;
+    }
+  },
+  {
+    id: "site", label: "Site & surrounds", title: "The parcel, drawn to scale",
+    sub: "Boundary, dimensions and area straight from the Vicmap parcel polygon, with the buildings Vicmap records on and around the site, and everything of interest within 2.5km.",
+    render() {
+      const sp = sitePlanSVG();
+      let h = "";
+      if (!sp) {
+        h += panel("No parcel geometry yet", "", '<div class="callout">Look up a Victorian address in the bar at the top of the page. The parcel boundary, its dimensions, the area and the surrounding amenities all come from that one lookup. Outside Victoria there is no equivalent free parcel service, so land size has to be typed in.</div>');
+        return h;
+      }
+      h += panel("Site plan", "Drawn from the registered parcel boundary in VicGrid94, so the edge lengths and the area are survey figures, not estimates. Buildings are Vicmap footprints and can lag new construction by a year or more.",
+        '<div class="cols"><div class="chartbox">' + sp.svg + "</div><div>" +
+        kv([["Parcel identifier", gs("parcelSPI") || dash],
+        ["Title area", Math.round(sp.area).toLocaleString("en-AU") + " m²"],
+        ["Frontage envelope", sp.wM.toFixed(1) + " m × " + sp.hM.toFixed(1) + " m"],
+        ["Shape efficiency", pct(sp.area / (sp.wM * sp.hM) * 100, 0) + " of its bounding rectangle"],
+        ["Building footprints found", (S._buildings || []).length || "none recorded"],
+        ["Site coverage", (S._buildings || []).length ? pct((S._buildings || []).reduce((a, b) => a + ringArea(b), 0) / sp.area * 100, 0) : dash],
+        ["Planning zone", gs("zone") ? gs("zone") + (gs("zoneDesc") ? " — " + gs("zoneDesc") : "") : dash],
+        ["Overlays", gs("overlays") || dash],
+        ["Council", gs("council") || dash],
+        ["Coordinates", S.lat ? (+S.lat).toFixed(5) + ", " + (+S.lon).toFixed(5) : dash]]) +
+        '<p class="note" style="padding:10px 0 0">Zone and overlay results are point-in-polygon lookups and are indicative only. Confirm against a VicPlan planning property report before you rely on them, and remember an overlay can clip part of a lot without covering the point tested here.</p>' +
+        "</div></div>");
+
+      const am = S._amenities || [];
+      if (am.length) {
+        const groups = {};
+        am.forEach(a => { const k = a.t || "other"; (groups[k] = groups[k] || []).push(a); });
+        const order = Object.keys(groups).sort((a, b) => groups[a][0].d - groups[b][0].d);
+        h += panel("What is around it", am.length + " features within 2.5km, from the nearest outward. Distances are straight-line, so walking distance is longer — in a new estate, considerably longer.",
+          table(["Type", "Nearest", "Distance", "Direction", "Others of this type"],
+            order.map(k => {
+              const g = groups[k], n = g[0];
+              return trow([esc(titleCase(k)), esc(n.n) + (n.s ? ' <span class="src">' + esc(n.s) + "</span>" : ""), (n.d / 1000).toFixed(2) + " km", n.b,
+              g.length > 1 ? g.length - 1 + " more, next at " + (g[1].d / 1000).toFixed(2) + " km" : dash]);
+            }).join("")));
+        const schools = am.filter(a => /school/i.test(a.s + " " + a.t));
+        if (schools.length) h += panel("Schools within range", "These are the schools Vicmap records nearby — <b>not</b> the catchment. Which one you are zoned to is a separate question, answered only by Find my School, and it is the one that sets the price premium.",
+          table(["School", "Type", "Distance", "Direction"], schools.map(s => trow([esc(s.n), esc(titleCase(s.s)), (s.d / 1000).toFixed(2) + " km", s.b])).join("")) +
+          '<div class="row" style="margin-top:10px"><a class="btn ghost sm" style="text-decoration:none" href="https://www.findmyschool.vic.gov.au/" target="_blank" rel="noopener">Open Find my School</a></div>');
+      }
+      return h;
+    }
+  },
+  {
+    id: "value", label: "Value & sales", title: "What it has sold for, and what it is worth now",
+    sub: "Past sale prices for this exact property, plus comparable evidence. Paste rows straight from a portal or a spreadsheet.",
+    render() {
+      let h = panel("Sale history for this property", "", fieldsHTML(["saleHistory"], "wide"));
+      const pc = propertyCAGR(), hist = history().filter(r => r.p > 0);
+      if (hist.length) {
+        let body = "";
+        hist.sort((a, b) => String(a.date).localeCompare(String(b.date))).forEach((r, i, arr) => {
+          const prev = arr[i - 1];
+          const gap = prev && isFinite(r.y) && isFinite(prev.y) ? r.y - prev.y : 0;
+          const growth = prev && gap > 0 ? cagr(prev.p, r.p, gap) : NaN;
+          body += trow([esc(r.date) + (r.note ? ' <span class="src">' + esc(r.note) + "</span>" : ""), money(r.p), prev ? (r.p - prev.p >= 0 ? "+" : "") + money(r.p - prev.p) : dash, isFinite(growth) ? pct(growth) + " p.a." : dash]);
+        });
+        const lastSale = hist[hist.length - 1];
+        if (gv("price") > 0 && lastSale) {
+          const yrs = 2026 - lastSale.y;
+          body += trow(["<b>Your price (2026)</b>", "<b>" + money(gv("price")) + "</b>", (gv("price") - lastSale.p >= 0 ? "+" : "") + money(gv("price") - lastSale.p), yrs > 0 ? pct(cagr(lastSale.p, gv("price"), yrs)) + " p.a." : dash], "tot");
+        }
+        h += panel("Price path", pc ? "From " + money(pc.from.p) + " in " + pc.from.y + " to " + money(pc.to) + " today — <b>" + pct(pc.rate) + " a year</b> compounding over " + pc.years + " years." : "",
+          table(["Sale", "Price", "Change", "Compound"], body));
+      }
+      h += panel("Comparable sales", "Three genuine comparables beat ten loose ones. Same type, same pocket, last six months.", fieldsHTML(["comparables"], "wide"));
+      const cs = compStats();
+      if (cs) {
+        const perM2 = isFinite(cs.perM2) ? cs.perM2 : NaN;
+        const implied = isFinite(perM2) && gv("land") ? perM2 * gv("land") : NaN;
+        h += panel("What the comparables say", "",
+          '<div class="cols"><div><div class="eyebrow">Implied value range</div><div class="big">' + (cs.low === cs.high ? money(cs.median) : k$(cs.low) + " – " + k$(cs.high)) + "</div>" +
+          '<p class="note" style="padding:6px 0 0">Median of ' + cs.n + " comparables: " + money(cs.median) + (gv("price") > 0 ? ". Your price sits " + (gv("price") > cs.median ? pct((gv("price") / cs.median - 1) * 100) + " above" : pct((1 - gv("price") / cs.median) * 100) + " below") + " that median." : "") + "</p></div><div>" +
+          kv([["Average $ per m² of land", isFinite(perM2) ? money(perM2) : dash],
+          ["Implied value on land rate", isFinite(implied) ? money(implied) : dash],
+          ["Lowest comparable", money(cs.low)], ["Highest comparable", money(cs.high)],
+          ["Your price vs median", gv("price") && cs.median ? ((gv("price") / cs.median - 1) * 100 >= 0 ? "+" : "") + pct((gv("price") / cs.median - 1) * 100) : dash]]) + "</div></div>");
+      }
+      h += panel("Sales in this street", "Street-level evidence is the strongest comparable there is, and the thinnest. Count the dwellings so turnover means something.",
+        fieldsHTML(["streetSales", "streetDwellings"], "wide"));
+      return h;
+    }
+  },
+  {
+    id: "demand", label: "Demand", title: "Demand, at suburb and street level",
+    sub: "Twelve suburb measures and four street measures, each scored against a stated threshold rather than a vibe. Fill what you can; the score reports its own coverage.",
+    render() {
+      let h = panel("Suburb measures", "Grab these from the suburb profile pages and SQM — the links are on the Property tab.",
+        fieldsHTML(["medianHouse", "median12", "median10", "dom", "discount", "clearance", "vacancy", "daysToRent", "listings", "soldYear", "dwellings", "renters", "popGrowth", "yieldSuburb", "buyerDemandIndex"]));
+      const d = demandScore();
+      h += scoreBlock(d, "Suburb demand score", "Coverage: " + d.coverage + " measures supplied. Each bar runs from a defined weak anchor to a defined strong one, so a half-full bar means genuinely middling, not unknown.");
+      const extra = [];
+      if (isFinite(d.stockPct)) extra.push(["Stock on market", pct(d.stockPct, 2) + " of all dwellings listed"]);
+      if (isFinite(d.invMonths)) extra.push(["Months of inventory", d.invMonths.toFixed(1) + " months to clear current listings"]);
+      if (isFinite(d.absorb)) extra.push(["Absorption", d.absorb.toFixed(1) + " sales per current listing"]);
+      if (gv("soldYear") && gv("dwellings")) extra.push(["Suburb turnover", pct(gv("soldYear") / gv("dwellings") * 100) + " of dwellings traded in 12 months"]);
+      if (gv("renters")) extra.push(["Renter share", pct(gv("renters"), 0) + (gv("renters") > 40 ? " — investor-heavy, thinner owner-occupier floor" : " — owner-occupier dominated")]);
+      if (extra.length) h += panel("Derived balance measures", "These three are what agents mean by a 'seller's market', made explicit.", kv(extra));
+      const ss = streetScore(), st = streetStats();
+      h += scoreBlock(ss, "Street demand score", st ? st.n + " sales in the street over 12 months, averaging " + money(st.avg) + (isFinite(st.premium) ? ", a " + (st.premium >= 0 ? "premium" : "discount") + " of " + pct(Math.abs(st.premium)) + " to the suburb median" : "") + "." : "Add street sales on the Value tab to score this.");
+      return h;
+    }
+  },
+  {
+    id: "schools", label: "Schools", title: "The zoned schools, and the alternatives",
+    sub: "For family housing the zoned secondary school is often the single largest non-structural driver of resale demand. Confirm the zone by address on the state tool — portal maps lag.",
+    render() {
+      let h = panel("Zoned schools", "ICSEA is an index of the intake's socio-educational advantage, set at 1000 nationally. NAPLAN is only meaningful against statistically similar schools, which is how My School presents it.",
+        fieldsHTML(["schoolPrimary", "schoolPrimaryICSEA", "schoolPrimaryNaplan", "schoolDistance", "schoolSecondary", "schoolSecondaryICSEA", "schoolSecondaryNaplan", "schoolVCE", "zoneRisk"]));
+      h += panel("Other options within reach", "", fieldsHTML(["schoolOthers"], "wide"));
+      const os = otherSchools();
+      if (os.length) h += panel("Alternatives", "", table(["School", "Sector", "Distance", "Fees"], os.map(r => trow([esc(r.name), esc(r.sector), esc(r.dist), esc(r.fees)])).join("")));
+      h += scoreBlock(schoolScore(), "School catchment score", "Weighted toward the secondary school and the results, because that is what buyers pay for.");
+      if (gs("zoneRisk") === "Growth area, likely to change") h += '<div class="panel"><div class="pb"><div class="callout"><strong>Zone risk is live here.</strong> In a growth corridor, new schools open and boundaries are redrawn, often within five years. A premium paid for a zone today can move one street over. Ask the department about planned schools on the precinct structure plan before you pay for the catchment.</div></div></div>';
+      return h;
+    }
+  },
+  {
+    id: "costs", label: "Buy costs", title: "What it costs to get the keys",
+    sub: "Duty is calculated from the legislated rate tables for all eight jurisdictions, with the first home, home, off-the-plan and foreign purchaser settings applied.",
+    render() {
+      const c = costsModel(), d = c.d;
+      let h = panel("Duty settings", "", fieldsHTML(["price", "otpDeduction"]) + fieldsHTML(["fhb", "ppr", "newBuild", "vacantLand", "foreign"]),
+        '<span class="tag acc">' + esc(gs("state")) + "</span>");
+      h += panel("Transfer duty", d.notes.map(n => "<div>" + esc(n) + "</div>").join("") || "",
+        '<div class="cols"><div><div class="eyebrow">Duty payable</div><div class="big">' + money(d.gross) + "</div>" +
+        '<p class="src" style="margin-top:6px">Source: ' + esc(d.source) + ". Rates as at " + RULES_ASOF + "." + (d.estimate ? ' <b class="w">This figure uses a modelled phase-out — verify against the official calculator.</b>' : "") + "</p></div><div>" +
+        kv([["General duty", money(d.duty)], ["Foreign purchaser surcharge", d.surcharge ? money(d.surcharge) : "nil"],
+        ["Effective rate on price", gv("price") ? pct(d.gross / gv("price") * 100, 2) : dash],
+        ["Duty if you were not a first home buyer", money(transferDuty({ state: gs("state"), price: gv("price"), ppr: gb("ppr"), newBuild: gb("newBuild"), vacantLand: gb("vacantLand") }).gross)],
+        ["First home saving", money(Math.max(0, transferDuty({ state: gs("state"), price: gv("price"), ppr: gb("ppr"), newBuild: gb("newBuild"), vacantLand: gb("vacantLand") }).gross - d.duty))]]) + "</div></div>");
+      h += panel("Deposit, loan and mortgage insurance", "", fieldsHTML(["deposit", "rate", "term", "ioYears", "buffer"]) + fieldsHTML(["io"]) + '<div class="divider"></div>' +
+        '<div class="cols"><div>' + kv([["Loan required", money(c.loan)], ["LVR", pct(c.lvr)],
+        ["Indicative LMI rate", c.lvr > 80 ? pct(c.lmiRate, 2) + " of loan" : "not required"],
+        ["Indicative LMI premium", c.lvr > 80 ? money(c.lmi) : "nil"],
+        ["Under the 5% Deposit Scheme", c.fhbGuarantee ? "No LMI payable — saves " + money(c.lmi) : c.lvr <= 80 ? "not needed" : "check eligibility and the price cap"]]) +
+        "</div><div>" + (c.lvr > 95 ? '<div class="callout"><strong>Above 95% LVR.</strong> Outside the guarantee schemes almost no lender will go here, and the premium above assumes they would. Either lift the deposit or check the 5% Deposit Scheme cap for this location.</div>' :
+          c.fhbGuarantee ? '<div class="callout acc"><strong>This is the case for the guarantee.</strong> A 5% deposit with no lenders mortgage insurance saves ' + money(c.lmi) + " up front. There are no income caps and no waitlist since 1 October 2025 — only the location price cap.</div>" :
+            '<div class="callout acc">LMI is a one-off cost, usually capitalised onto the loan, and it buys the lender protection, not you. Crossing 80% is the expensive step; crossing 90% is the very expensive one.</div>') + "</div></div>");
+      h += panel("Everything else at settlement", "", fieldsHTML(["conveyancing", "inspections", "transferFee", "loanFees", "adjustments", "buyersAgent", "movingCosts"]));
+      const rowsHtml = [
+        trow(["Purchase price", money(c.price)]),
+        trow(["Transfer duty" + (d.surcharge ? " and foreign surcharge" : ""), money(d.gross)]),
+        trow(["Conveyancing and legal", money(gv("conveyancing"))]),
+        trow(["Inspections and survey", money(gv("inspections"))]),
+        trow(["Title transfer and registration", money(gv("transferFee"))]),
+        trow(["Loan establishment", money(gv("loanFees"))]),
+        trow(["Settlement adjustments", money(gv("adjustments"))]),
+        trow(["Buyer's agent", money(gv("buyersAgent"))]),
+        trow(["Moving and immediate works", money(gv("movingCosts"))]),
+        trow(["Lenders mortgage insurance", c.fhbGuarantee ? "waived under the guarantee" : money(c.lmiPayable)]),
+        trow(["<b>Total acquisition cost</b>", "<b>" + money(c.totalAcq + c.lmiPayable) + "</b>"], "tot"),
+        trow(["Less loan", "-" + money(c.loan)], "sub"),
+        trow(["<b>Cash you must have</b>", "<b>" + money(c.totalAcq + c.lmiPayable - c.loan) + "</b>"], "tot")
+      ].join("");
+      h += panel("Cash to settle", "", table(["Item", "Amount"], rowsHtml));
+      const bp = borrowingPower({ income1: gv("income1"), income2: gv("income2"), livingCosts: gv("livingCosts"), otherRepayments: gv("otherRepayments"), cardLimits: gv("cardLimits"), rate: gv("rate"), buffer: gv("buffer"), term: gv("term"), rentAssessed: gb("ppr") ? 0 : gv("rentWeek") });
+      h += panel("Can you actually borrow it?", "A rough capitalisation of monthly surplus at the assessment rate, with a 6× debt-to-income ceiling. Your lender's household expenditure benchmark will override your own living-cost figure if it is lower.",
+        fieldsHTML(["income1", "income2", "livingCosts", "otherRepayments", "cardLimits"]) + '<div class="divider"></div>' +
+        kv([["Assessment rate", pct(bp.assessRate) + " (offered " + pct(gv("rate")) + " plus " + pct(gv("buffer"), 0) + " buffer)"],
+        ["Monthly surplus available", money(bp.avail)],
+        ["Indicative borrowing capacity", money(bp.capacity)],
+        ["Debt-to-income ceiling (6×)", money(bp.dtiCap)],
+        ["Binding constraint", bp.binding],
+        ["This purchase needs", money(c.loan) + (c.loan > Math.min(bp.capacity, bp.dtiCap) ? ' <span class="tag bad">short</span>' : ' <span class="tag good">within capacity</span>')]]));
+      return h;
+    }
+  },
+  {
+    id: "cashflow", label: "Cashflow", title: "What it costs to hold, every week",
+    sub: "Rent in, every real outgoing out, including land tax and the Victorian emergency services levy, then the tax effect under the rules that will apply to you.",
+    render() {
+      const m = cashflowModel();
+      let h = panel("Rent and outgoings", "", fieldsHTML(["rentWeek", "vacancyWeeks", "mgmtPct", "lettingFee", "councilRates", "water", "insurance", "strata", "maintPct", "otherCosts"]));
+      h += panel("Depreciation", "Only a quantity surveyor's schedule makes these numbers defensible. Second-hand plant and equipment in a residential rental has not been deductible since 9 May 2017.", fieldsHTML(["depnBuilding", "depnPlant"]));
+      const lt = m.lt, levy = m.levy;
+      const body = [
+        trow(["Gross rent (" + (52 - gv("vacancyWeeks")) + " weeks at " + money(gv("rentWeek")) + ")", money(m.rentGross)]),
+        trow(["Property management (" + pct(gv("mgmtPct")) + ")", "-" + money(m.mgmt)]),
+        trow(["Letting and advertising", "-" + money(gv("lettingFee"))]),
+        trow(["Council rates", "-" + money(gv("councilRates"))]),
+        trow(["Water service charges", "-" + money(gv("water"))]),
+        trow(["Insurance", "-" + money(gv("insurance"))]),
+        trow(["Owners corporation", "-" + money(gv("strata"))]),
+        trow(["Maintenance allowance (" + pct(gv("maintPct")) + " of value)", "-" + money(m.maint)]),
+        trow(["Land tax" + (lt.modelled ? "" : " — not modelled for " + gs("state")), "-" + money(lt.tax)]),
+        levy ? trow([levy.label, "-" + money(levy.total)]) : "",
+        trow(["Other", "-" + money(gv("otherCosts"))]),
+        trow(["<b>Net operating income</b>", "<b>" + money(m.rentGross - m.cashOps) + "</b>"], "tot"),
+        trow(["Loan repayments (" + (gb("io") ? "interest only" : "principal and interest") + " at " + pct(gv("rate")) + ")", "-" + money(m.repay)]),
+        trow(["of which interest", money(m.interest)], "sub"),
+        trow(["of which principal (your equity)", money(m.principal)], "sub"),
+        trow(["<b>Cashflow before tax</b>", "<b>" + money(m.preTax) + "</b>"], "tot"),
+        trow(["Depreciation (non-cash)", "-" + money(m.depn)], "sub"),
+        trow(["Taxable rental result", money(m.taxLoss)]),
+        trow(["Tax effect at " + pct(m.mr, 0) + " marginal rate" + (m.quarantined ? " — quarantined" : ""), (m.taxEffect >= 0 ? "+" : "") + money(m.taxEffect)]),
+        trow(["<b>Cashflow after tax</b>", "<b>" + money(m.afterTax) + "</b>"], "tot")
+      ].join("");
+      h += panel("Annual cashflow", lt.basis ? esc(lt.basis) : "", table(["Line", "Per year"], body));
+      h += panel("The numbers you will quote", "",
+        '<div class="cols"><div>' + kv([
+          ["Gross yield", pct(m.grossYield, 2)], ["Net yield after outgoings", pct(m.netYield, 2)],
+          ["Cashflow after tax, per week", money(m.perWeek, 2)],
+          ["Break-even rent", money(m.breakEvenRent, 0) + " per week"],
+          ["Rent shortfall to break even", m.breakEvenRent > gv("rentWeek") ? money(m.breakEvenRent - gv("rentWeek")) + " per week" : "none — it covers itself"]
+        ]) + "</div><div>" +
+        (m.quarantined
+          ? '<div class="callout"><strong>Your loss is quarantined.</strong> This contract date falls after 7:30pm on 12 May 2026 and the property is not a new build, so from 1 July 2027 the ' + money(Math.abs(Math.min(0, m.taxLoss))) + " annual rental loss cannot reduce your salary income. It can only offset residential rental income or a residential capital gain, and otherwise carries forward. The " + money(Math.abs(Math.min(0, m.taxLoss)) * m.mr / 100) + " a year of tax relief you would have had under the old rules is what changes the case for this purchase.</div>"
+          : gb("newBuild") ? '<div class="callout acc"><strong>New build exemption.</strong> Full negative gearing survives here, and at sale you can elect to keep the 50% CGT discount instead of the indexation and 30% floor. On these numbers the relief is worth ' + money(Math.abs(Math.min(0, m.taxLoss)) * m.mr / 100) + " a year.</div>"
+            : '<div class="callout acc"><strong>Grandfathered.</strong> Held before 7:30pm on 12 May 2026, so the current negative gearing rules keep applying to this property indefinitely.</div>') +
+        "</div></div>");
+      if (gs("state") === "VIC" && !gb("ppr")) {
+        const v = vrlt(gv("civ"), 1);
+        h += panel("If it sits empty", "Victoria's vacant residential land tax escalates: 1% of capital improved value the first year it is liable, 2% the second consecutive year, 3% the third.",
+          kv([["Year one at 1% of CIV", money(v.total)], ["Year two at 2%", money(v.total * 2)], ["Year three onward at 3%", money(v.total * 3)],
+          ["Notification deadline", "15 February each year — the obligation is on you, not the SRO"]]));
+      }
+      return h;
+    }
+  },
+  {
+    id: "tax", label: "Tax & CGT", title: "Tax on the way through, and on the way out",
+    sub: "The 2026 reforms are law and start on 1 July 2027. They change the answer for almost every investor, so both regimes are modelled side by side.",
+    render() {
+      const m = cashflowModel();
+      let h = panel("Negative gearing under the new rules", "", '<div class="cols"><div>' +
+        kv([["Contract date", gs("contractDate") || dash],
+        ["Cut-off", "7:30pm AEST, 12 May 2026"],
+        ["Status", isPostCutoff() ? (gb("newBuild") ? "New build — exempt" : "Restricted from 1 Jul 2027") : "Grandfathered"],
+        ["Annual rental loss", money(Math.min(0, m.taxLoss))],
+        ["Relief under current rules", money(Math.abs(Math.min(0, m.taxLoss)) * m.mr / 100)],
+        ["Relief from 1 Jul 2027", m.quarantined ? money(0) + " — carried forward" : money(Math.abs(Math.min(0, m.taxLoss)) * m.mr / 100)],
+        ["Annual cost of the change", m.quarantined ? money(Math.abs(Math.min(0, m.taxLoss)) * m.mr / 100) : money(0)]]) +
+        '</div><div><div class="callout"><strong>What carrying forward actually means.</strong> The deduction is not lost, it is deferred. Quarantined losses accumulate and can be used against future residential rental income or a residential capital gain. For a single negatively geared property the practical effect is that the relief arrives at sale rather than each year — which is a cashflow problem now and a tax benefit later.</div>' +
+        (gb("newBuild") ? "" : '<p class="note" style="padding:10px 0 0">The cleanest lever available is the new build exemption: a newly constructed dwelling, a knock-down rebuild that adds a dwelling, or building on vacant land all keep full negative gearing <em>and</em> the option of the 50% CGT discount. See the Strategies tab for what that does to the numbers.</p>') + "</div></div>");
+      h += panel("Capital gains tax", "", fieldsHTML(["salePrice", "sellingCosts", "yearsHeld", "yearsPostReform", "postReformShare", "ownedDays", "mainResidenceDays", "inflation"]) + fieldsHTML(["sixYear", "newBuildElection", "incomeSupport"]));
+      const c = costsModel();
+      const g = cgt({ salePrice: gv("salePrice") - gv("salePrice") * gv("sellingCosts") / 100, costBase: c.totalAcq, marginalRate: m.mr, yearsHeld: gv("yearsHeld"), yearsPostReform: gv("yearsPostReform"), postReformShare: gv("postReformShare"), ownedDays: gv("ownedDays"), mainResidenceDays: gv("mainResidenceDays"), sixYear: gb("sixYear"), newBuildElection: gb("newBuildElection"), incomeSupport: gb("incomeSupport"), inflation: gv("inflation") });
+      h += panel("CGT on sale", g.notes.map(n => "<div>" + esc(n) + "</div>").join(""),
+        table(["Slice of the gain", "Gain", "Method", "Taxable", "Tax"],
+          g.rows.map(r => trow([esc(r.label), money(r.gain), '<span class="src">' + esc(r.method) + "</span>", money(r.taxable), money(r.tax)])).join("") +
+          trow(["<b>Total</b>", "<b>" + money(g.gainTotal) + "</b>", g.exempt ? "Main residence exempt: " + money(g.exempt) : "", "", "<b>" + money(g.tax) + "</b>"], "tot")) +
+        '<div class="divider"></div>' + kv([
+          ["Cost base used", money(c.totalAcq) + " (price, duty and acquisition costs)"],
+          ["Net sale proceeds", money(gv("salePrice") - gv("salePrice") * gv("sellingCosts") / 100)],
+          ["Tax under the old 50% discount", money(g.taxOldRules)],
+          ["Tax under the new regime", money(g.tax)],
+          ["Difference", (g.tax - g.taxOldRules >= 0 ? "+" : "") + money(g.tax - g.taxOldRules) + (g.tax > g.taxOldRules ? ' <span class="tag bad">worse</span>' : g.tax < g.taxOldRules ? ' <span class="tag good">better</span>' : "")],
+          ["Effective tax rate on the gain", pct(g.effective)],
+          ["After-tax proceeds", money(gv("salePrice") - gv("salePrice") * gv("sellingCosts") / 100 - g.tax)]
+        ]));
+      h += panel("Holding-cost taxes in " + gs("state"), "", kv((() => {
+        const lt = landTax(gs("state"), gv("sitevalue"), { ppr: false, metro: true });
+        const out = [["Land tax basis", esc(lt.basis)], ["Land tax on this land alone", money(lt.tax)]];
+        const lvFull = landTax(gs("state"), gv("sitevalue") * 2, { metro: true });
+        out.push(["If aggregated with another similar holding", money(lvFull.tax) + " total, so this one adds " + money(lvFull.tax - lt.tax)]);
+        const levy = esvf(gs("state"), gv("civ"), "res");
+        if (levy) out.push([levy.label, money(levy.total) + " (fixed " + money(levy.fixed) + " plus 17.3c per $1,000 of CIV)"]);
+        if (gs("state") === "VIC") out.push(["Absentee owner surcharge if applicable", money(landTax("VIC", gv("sitevalue"), { absentee: true }).tax - lt.tax)]);
+        return out;
+      })()) + '<p class="note" style="padding:10px 0 0">Land tax aggregates across everything you own in the state. The second property is always dearer than the first — the row above shows by how much.</p>');
+      return h;
+    }
+  },
+  {
+    id: "strategy", label: "Strategies", title: "Five ways to play the same address",
+    sub: "Same property, same growth and rent assumptions, different structures. Every line is after selling costs and after CGT under the regime that will apply.",
+    render() {
+      let h = panel("Projection assumptions", "", fieldsHTML(["growthAssumed", "rentGrowth", "holdYears", "renoCost", "renoUplift", "renoRentUplift"]));
+      const list = strategies();
+      const best = list.reduce((a, b) => (b.net > a.net ? b : a), list[0]);
+      h += panel("Comparison over " + (gv("holdYears") || 10) + " years",
+        "One caveat to read the owner-occupier row with: it receives no rent, and it also does not credit the roughly " + money(cashflowModel().rentGross) + " a year you stop paying a landlord. Add that back and its net position rises by around " + money(cashflowModel().rentGross * (gv("holdYears") || 10)) + " — which is usually what decides between living in it and renting it out.",
+        table(["Strategy", "Cash in", "Week one cashflow", "End value", "Equity", "Cumulative cashflow", "CGT", "Net position", "Annualised"],
+          list.map(s => trow([
+            "<b>" + esc(s.name) + "</b><br><span class=\"src\">" + esc(s.blurb) + "</span>",
+            money(s.cashIn), money(s.perWeek, 0), money(s.endValue), money(s.equity), money(s.cum), money(s.tax),
+            "<b>" + money(s.net) + "</b>" + (s === best ? ' <span class="tag good">best here</span>' : ""),
+            isFinite(s.annual) ? pct(s.annual) : dash
+          ])).join("")));
+      const hold = list[0];
+      h += panel("Buy and hold, year by year", "Equity is value less loan balance. Cumulative cashflow is after tax, with outgoings growing at 3% and rent at " + pct(gv("rentGrowth")) + ".",
+        lineChart(hold.series, [
+          { name: "Property value", get: d => d.value, color: "var(--accent)" },
+          { name: "Equity", get: d => d.equity, color: "var(--good)", fill: true },
+          { name: "Cumulative after-tax cashflow", get: d => d.cum, color: "var(--ochre)" }
+        ], k$) + '<div class="divider"></div>' +
+        table(["Year", "Value", "Loan", "Equity", "Rent", "After-tax cashflow", "Cumulative"],
+          hold.series.map(d => trow([d.y, money(d.value), money(d.loan), money(d.equity), money(d.rent), money(d.after), money(d.cum)])).join("")));
+      h += panel("Other angles worth testing", "", '<div class="stack">' +
+        '<div class="callout acc"><strong>Rentvesting.</strong> Buying where the numbers work and renting where you want to live keeps the main residence exemption available for a later purchase, but you lose it on this one. Run the Live-in-it row against Buy-and-hold: the gap is the value of the CGT exemption, and it is usually larger than the rent you save.</div>' +
+        '<div class="callout acc"><strong>Debt recycling.</strong> Paying down a home loan and redrawing for investment converts non-deductible interest into deductible interest. From 1 July 2027 that deduction may be quarantined on established property, which weakens the strategy for new purchases and strengthens it for grandfathered ones.</div>' +
+        '<div class="callout acc"><strong>SMSF purchase.</strong> A fund pays 15% on rental income and an effective 10% on gains after the discount, cannot negatively gear against your salary, and needs a limited recourse borrowing arrangement. It suits positively geared property and is poorly suited to this one unless the yield rises materially.</div>' +
+        '<div class="callout acc"><strong>Build to add a dwelling.</strong> The new build carve-out is the only mainstream way to keep both full negative gearing and the 50% discount after July 2027. The Feasibility tab costs it properly, including GAIC and GST.</div>' +
+        "</div>");
+      return h;
+    }
+  },
+  {
+    id: "feasibility", label: "Feasibility", title: "Subdivide, or build",
+    sub: "A residual feasibility on the land you are buying: gross realisation less every cost, including the growth areas contribution and GST.",
+    render() {
+      let h = panel("Development inputs", "Check the minimum lot size, garden area and setback rules for the zone before you trust the lot count.",
+        fieldsHTML(["lots", "buildArea", "buildCostM2", "civilCost", "profCost", "endValue", "feasMonths", "gaicType", "gaicHa"]) + fieldsHTML(["marginScheme"]));
+      const f = feasibility();
+      h += panel("Residual feasibility", "",
+        table(["Line", "Amount"],
+          [trow(["Gross realisation — " + f.lots + " × " + money(gv("endValue")), money(f.grv)]),
+          trow(["Land, duty and acquisition costs", "-" + money(f.landCost)]),
+          trow(["Construction — " + f.lots + " × " + gv("buildArea") + "m² at " + money(gv("buildCostM2")) + "/m²", "-" + money(f.build)]),
+          trow(["Civil works, services, demolition", "-" + money(gv("civilCost"))]),
+          trow(["Consultants, permits, contributions", "-" + money(gv("profCost"))]),
+          trow(["Growth areas infrastructure contribution", "-" + money(f.gaic)]),
+          trow(["Holding costs over " + f.months + " months", "-" + money(f.holding)]),
+          trow(["Selling and marketing", "-" + money(f.selling)]),
+          trow(["GST" + (gb("marginScheme") ? " (margin scheme)" : " (1/11th of realisation)"), "-" + money(f.gst)]),
+          trow(["<b>Profit</b>", "<b>" + money(f.profit) + "</b>"], "tot")].join("")) +
+        '<div class="divider"></div>' +
+        kv([["Margin on cost", pct(f.onCost) + (f.onCost < 18 ? ' <span class="tag bad">below the 20% a lender wants</span>' : f.onCost < 25 ? ' <span class="tag warn">thin</span>' : ' <span class="tag good">workable</span>')],
+        ["Margin on realisation", pct(f.onGrv)],
+        ["Break-even end value per dwelling", money((f.totalCost) / f.lots)],
+        ["Profit per dwelling", money(f.profit / f.lots)],
+        ["Peak debt assumed", money(f.debt)],
+        ["Cost per dwelling, all in", money(f.totalCost / f.lots)]]));
+      h += panel("What this model does not know", "", '<div class="stack">' +
+        '<div class="callout">Planning risk is the whole game. A permit refusal, a neighbour objection to VCAT, or a garden-area rule you missed turns this page into fiction. Get a town planner to confirm the yield before you exchange.</div>' +
+        '<div class="callout">GST treatment depends on whether you are carrying on an enterprise and whether the margin scheme is available — it usually is not if the vendor was not registered. Get advice; the difference here is ' + money(Math.abs(f.grv / 11 - Math.max(0, f.grv - gv("price")) / 11)) + '.</div>' +
+        '<div class="callout">Build costs in 2026 move faster than feasibilities. Fixed-price contracts with a 12-month validity and a named escalation clause are the only ones worth modelling.</div>' +
+        "</div>");
+      return h;
+    }
+  },
+  {
+    id: "rules", label: "Rules", title: "The rules as they stand",
+    sub: "Every card below was read from the primary source in September 2026 and carries its date. Property tax rules move: treat anything older than a budget cycle as suspect.",
+    render() {
+      let h = '<div class="panel"><div class="pb"><div class="callout"><strong>The two dates that matter most right now.</strong> 7:30pm AEST 12 May 2026 decides whether your negative gearing is grandfathered. 1 July 2027 is when the restriction and the new CGT regime start. Both are law, not proposals.</div></div></div>';
+      h += RULES.map(r => '<div class="panel"><div class="ph"><h3>' + esc(r.t) + '</h3><span class="tag ' + (r.tone === "good" ? "good" : r.tone === "bad" ? "bad" : "warn") + '">' + esc(r.d) + '</span></div><div class="pb"><p style="margin:0 0 8px">' + esc(r.b) + '</p><p class="src" style="margin:0">' + esc(r.s) + ' · <a href="' + esc(r.u) + '" target="_blank" rel="noopener">source</a></p></div></div>').join("");
+      return h;
+    }
+  },
+  {
+    id: "checklist", label: "Checklist", title: "Due diligence, in order",
+    sub: "Tick these off before you sign anything. Each one exists because skipping it costs more than doing it.",
+    render() {
+      const groups = [...new Set(CHECKS.map(c => c[0]))];
+      return groups.map(g => panel(g, "", '<ul class="ck">' + CHECKS.filter(c => c[0] === g).map((c, i) => {
+        const id = "ck_" + slug(g) + "_" + i;
+        return '<li><input type="checkbox" id="' + id + '" data-ck="' + id + '"' + (S["_ck_" + id] ? " checked" : "") + '><span><span>' + esc(c[1]) + '</span><span class="why">' + esc(c[2]) + "</span></span></li>";
+      }).join("") + "</ul>")).join("");
+    }
+  },
+  {
+    id: "saved", label: "Saved", title: "Saved analyses",
+    sub: "Each save is a full snapshot of every field, held in this browser\u2019s local storage. It survives reloads and site updates, but it does not follow you to another device \u2014 export the JSON if you need it elsewhere.",
+    render() {
+      let h = '<div class="panel"><div class="ph"><h3>Export</h3></div><div class="pb"><div class="row">' +
+        '<button class="btn ghost sm" id="btn-json" type="button">Download JSON snapshot</button>' +
+        '<button class="btn ghost sm" id="btn-csv" type="button">Download summary CSV</button>' +
+        '<button class="btn ghost sm" id="btn-copy" type="button">Copy summary to clipboard</button>' +
+        '</div><p class="note" style="padding:10px 0 0">The JSON round-trips back into this page. The CSV is the headline indicators, for a spreadsheet of candidate properties.</p></div></div>';
+      h += '<div class="panel"><div class="ph"><h3>Analyses</h3><span class="tag" id="savedcount">—</span></div><div class="pb" id="savedlist"><p class="note" style="padding:0">Loading…</p></div></div>';
+      h += panel("Paste a listing and let Claude fill the fields", "Copy the whole listing or suburb profile — price, beds, land size, rent, median, days on market — and this reads what it can into the inputs. It runs entirely in your browser, so nothing leaves the page, and it is only as good as the listing\u2019s wording. Check every field it fills.",
+        '<div class="f"><label class="lab" for="f_paste">Pasted text</label><textarea id="f_paste" rows="5" placeholder="4 bed 2 bath 2 car · 448m² · $670,000 - $700,000 · Rental estimate $550-$580 per week · Median house price $672,000 · Median days on market 38"></textarea></div>' +
+        '<div class="row" style="margin-top:10px"><button class="btn sm" id="btn-parse" type="button">Read into fields</button><span class="src" id="parsestatus"></span></div>');
+      return h;
+    }
+  }
+];
+
+/* =========================================================================
+   13. BOARD + SHELL
+   ========================================================================= */
+let activeTab = "property";
+
+function renderBoard() {
+  const m = cashflowModel(), c = m.c, d = demandScore(), sc = schoolScore(), ss = streetScore();
+  const pc = propertyCAGR();
+  const items = [
+    { k: "Price", v: gv("price") ? k$(gv("price")) : dash, s: gv("land") ? money(gv("price") / gv("land")) + " / m² land" : (gs("suburb") || "enter an address"), lead: true },
+    { k: "Suburb demand", v: d.total == null ? dash : d.total, s: scoreWord(d.total) + " · " + d.coverage, tone: scoreTone(d.total) },
+    { k: "Street demand", v: ss.total == null ? dash : ss.total, s: scoreWord(ss.total), tone: scoreTone(ss.total) },
+    { k: "Schools", v: sc.total == null ? dash : sc.total, s: scoreWord(sc.total), tone: scoreTone(sc.total) },
+    { k: "Duty + costs", v: k$(c.d.gross + c.other), s: "duty " + k$(c.d.gross), tone: "m" },
+    { k: "Cash to settle", v: k$(c.totalAcq + c.lmiPayable - c.loan), s: "LVR " + pct(c.lvr, 0), tone: c.lvr > 90 ? "b" : c.lvr > 80 ? "w" : "g" },
+    { k: "Gross yield", v: pct(m.grossYield, 2), s: "net " + pct(m.netYield, 2), tone: m.grossYield >= 5 ? "g" : m.grossYield >= 3.8 ? "w" : "b" },
+    { k: "After tax / week", v: money(m.perWeek, 0), s: m.quarantined ? "loss quarantined" : gb("newBuild") ? "new build, geared" : "currently deductible", tone: m.perWeek >= 0 ? "g" : m.perWeek > -150 ? "w" : "b" },
+    { k: "History", v: pc ? pct(pc.rate) : dash, s: pc ? "p.a. since " + pc.from.y : "add past sales", tone: pc ? (pc.rate >= 5 ? "g" : pc.rate >= 2.5 ? "w" : "b") : "m" }
+  ];
+  $("#board").innerHTML = items.map(i =>
+    '<div class="sc' + (i.lead ? " lead" : "") + '"><div class="k">' + esc(i.k) + '</div><div class="v' + (i.tone && i.tone !== "m" ? " " + i.tone : "") + '">' + i.v + '</div><div class="s">' + (i.tone && i.tone !== "m" ? '<span class="dot bg-' + i.tone + '"></span>' : "") + esc(i.s) + "</div></div>"
+  ).join("");
+}
+function renderTabs() {
+  $("#tabstrip").innerHTML = TABS.map(t => '<button role="tab" type="button" data-tab="' + t.id + '" aria-selected="' + (t.id === activeTab) + '">' + esc(t.label) + "</button>").join("");
+}
+function renderMain() {
+  const t = TABS.find(x => x.id === activeTab) || TABS[0];
+  let body = "";
+  try { body = t.render(); } catch (e) { body = '<div class="panel"><div class="pb"><div class="callout">Something in this panel could not be calculated from the values entered. Check the number fields on this tab.</div></div></div>'; console.error(e); }
+  $("#main").innerHTML = '<div class="sechead"><h2>' + esc(t.title) + '</h2><p>' + t.sub + "</p></div>" + body;
+  if (activeTab === "saved") { renderSaved(); wireSaved(); }
+}
+function renderAll() { renderBoard(); renderTabs(); renderMain(); renderFoot(); saveLocal(); }
+function renderFoot() {
+  $("#foot").innerHTML = "Address, parcel, planning and amenity data from Vicmap (Department of Transport and Planning), CC BY 4.0. Rules and rate tables read from primary sources on " + RULES_ASOF +
+    ". This is a modelling tool, not advice: duty, land tax and CGT figures are estimates to be reconciled against the relevant state revenue office calculator and the ATO, and nothing here is financial, tax or legal advice. " +
+    (gs("state") ? "Currently configured for " + esc(gs("state")) + "." : "");
+}
+
+/* ---------- input binding ---------- */
+const HEADER_KEYS = ["address", "suburb", "state", "postcode"];
+function readControl(n) {
+  if (n.type === "checkbox") return n.checked;
+  return n.value;
+}
+document.addEventListener("input", e => {
+  const n = e.target;
+  if (n.id === "f_paste") return;
+  if (n.dataset && n.dataset.k) { S[n.dataset.k] = readControl(n); renderBoard(); saveLocal(); return; }
+  if (n.id && n.id.indexOf("f_") === 0 && HEADER_KEYS.includes(n.id.slice(2))) { S[n.id.slice(2)] = n.value; renderBoard(); saveLocal(); }
+});
+document.addEventListener("change", e => {
+  const n = e.target;
+  if (n.dataset && n.dataset.ck) { S["_ck_" + n.dataset.ck] = n.checked; saveLocal(); return; }
+  if (n.id === "f_paste") return;
+  if ((n.dataset && n.dataset.k) || (n.id && HEADER_KEYS.includes(n.id.slice(2)))) {
+    if (n.dataset && n.dataset.k) S[n.dataset.k] = readControl(n); else S[n.id.slice(2)] = n.value;
+    const keep = document.activeElement && document.activeElement.id;
+    renderBoard(); renderMain(); saveLocal();
+    if (keep) { const again = document.getElementById(keep); if (again && again.focus) { try { again.focus(); } catch (_) { } } }
+  }
+});
+document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.tagName === "INPUT") { e.target.blur(); e.target.focus(); } });
+document.addEventListener("click", e => {
+  const b = e.target.closest("button[data-tab]");
+  if (b) { activeTab = b.dataset.tab; renderTabs(); renderMain(); window.scrollTo({ top: 0, behavior: "instant" }); }
+});
+
+/* ---------- header + buttons ---------- */
+function paintHeaderFields() { HEADER_KEYS.forEach(k => { const n = document.getElementById("f_" + k); if (n) n.value = S[k] == null ? "" : S[k]; }); }
+$("#btn-theme").addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  const next = cur === "dark" ? "light" : cur === "light" ? "" : "dark";
+  if (next) document.documentElement.setAttribute("data-theme", next); else document.documentElement.removeAttribute("data-theme");
+  try { localStorage.setItem("pts-theme", next); } catch (_) { }
+});
+$("#btn-example").addEventListener("click", () => { Object.assign(S, EXAMPLE); paintHeaderFields(); renderAll(); });
+$("#btn-reset").addEventListener("click", () => {
+  Object.keys(S).forEach(k => { if (!BLANK_KEEP.includes(k)) delete S[k]; });
+  S.state = S.state || "VIC"; paintHeaderFields(); renderAll();
+});
+
+/* =========================================================================
+   14. PERSISTENCE
+   ========================================================================= */
+function saveLocal() { try { localStorage.setItem("pts-state", JSON.stringify(S)); } catch (_) { } }
+function loadLocal() { try { const r = localStorage.getItem("pts-state"); if (r) { Object.assign(S, JSON.parse(r)); return true; } } catch (_) { } return false; }
+
+let DB = null, SAVED = [];
+/* Saved analyses live in this browser's local storage. They survive reloads and
+   redeploys of the site, but they do not follow you to another device. */
+const LS_SAVED = "pts-saved";
+const lsAll = () => { try { return JSON.parse(localStorage.getItem(LS_SAVED) || "[]"); } catch (_) { return []; } };
+const lsWrite = a => { try { localStorage.setItem(LS_SAVED, JSON.stringify(a)); } catch (_) { } };
+const LOCAL_DB = {
+  doc(path) {
+    const id = path.split("/").slice(1).join("/");
+    return {
+      async set(rec) { const a = lsAll().filter(r => r.id !== id); a.unshift(Object.assign({ id }, rec)); lsWrite(a); },
+      async delete() { lsWrite(lsAll().filter(r => r.id !== id)); }
+    };
+  },
+  collection() {
+    const q = { orderBy: () => q, limit: () => q, async get() { return { docs: lsAll().map(r => ({ id: r.id, data: () => r })) }; } };
+    return q;
+  }
+};
+(function () { DB = LOCAL_DB; loadSaved(); if (activeTab === "saved") renderMain(); })();
+async function loadSaved() {
+  if (!DB) return;
+  try {
+    const snap = await DB.collection("analyses").orderBy("savedAt", "desc").limit(60).get();
+    SAVED = (snap && snap.docs ? snap.docs : snap || []).map(d => ({ id: d.id, ...(d.data ? d.data() : d) }));
+  } catch (e) { SAVED = []; }
+  if (activeTab === "saved") renderSaved();
+}
+function analysisLabel() {
+  return [gs("address"), gs("suburb"), gs("state")].filter(Boolean).join(", ") || "Untitled analysis";
+}
+$("#btn-save").addEventListener("click", async () => {
+  const btn = $("#btn-save");
+  const label = analysisLabel();
+  const m = cashflowModel(), d = demandScore();
+  const rec = {
+    label, state: gs("state"), suburb: gs("suburb"), price: gv("price"),
+    demand: d.total, grossYield: Math.round(m.grossYield * 100) / 100, weekly: Math.round(m.perWeek),
+    duty: m.c.d.gross, savedAt: new Date().toISOString(), fields: JSON.stringify(S)
+  };
+  if (!DB) { btn.textContent = "Saving unavailable"; setTimeout(() => btn.textContent = "Save analysis", 2200); return; }
+  btn.textContent = "Saving…";
+  try {
+    await DB.doc("analyses/" + slug(label) + "-" + Date.now().toString(36)).set(rec);
+    btn.textContent = "Saved";
+    await loadSaved();
+  } catch (e) { btn.textContent = "Save failed"; }
+  setTimeout(() => btn.textContent = "Save analysis", 2200);
+});
+function renderSaved() {
+  const list = $("#savedlist"), cnt = $("#savedcount");
+  if (!list) return;
+  if (!DB) { list.innerHTML = '<p class="note" style="padding:0">Saving is unavailable in this browser. Use the JSON export above to keep a copy.</p>'; if (cnt) cnt.textContent = "unavailable"; return; }
+  if (cnt) cnt.textContent = SAVED.length + " saved";
+  if (!SAVED.length) { list.innerHTML = '<p class="note" style="padding:0">Nothing saved yet. Fill in a property and press <b>Save analysis</b> — each save keeps every field, so you can line candidates up against each other.</p>'; return; }
+  list.innerHTML = '<div class="tscroll"><table><thead><tr><th>Property</th><th class="n">Price</th><th class="n">Demand</th><th class="n">Yield</th><th class="n">Per week</th><th class="n">Saved</th><th class="n"></th></tr></thead><tbody>' +
+    SAVED.map(r => '<tr><td><b>' + esc(r.label) + "</b></td><td class=\"n\">" + (r.price ? k$(r.price) : dash) + '</td><td class="n">' + (r.demand == null ? dash : r.demand) + '</td><td class="n">' + (r.grossYield ? pct(r.grossYield, 2) : dash) + '</td><td class="n">' + (r.weekly == null ? dash : money(r.weekly)) + '</td><td class="n"><span class="src">' + esc(String(r.savedAt || "").slice(0, 10)) + '</span></td><td class="n"><button class="btn ghost sm" data-open="' + esc(r.id) + '" type="button">Open</button> <button class="btn ghost sm" data-del="' + esc(r.id) + '" type="button">Delete</button></td></tr>').join("") + "</tbody></table></div>";
+}
+function wireSaved() {
+  const list = $("#savedlist");
+  if (list) list.addEventListener("click", async e => {
+    const o = e.target.closest("button[data-open]"), x = e.target.closest("button[data-del]");
+    if (o) {
+      const rec = SAVED.find(r => r.id === o.dataset.open);
+      if (rec && rec.fields) { try { Object.keys(S).forEach(k => delete S[k]); Object.assign(S, JSON.parse(rec.fields)); paintHeaderFields(); activeTab = "property"; renderAll(); } catch (_) { } }
+    }
+    if (x && DB) { try { await DB.doc("analyses/" + x.dataset.del).delete(); await loadSaved(); } catch (_) { } }
+  });
+  const pj = $("#btn-json"), pc = $("#btn-csv"), cp = $("#btn-copy"), pa = $("#btn-parse");
+  if (pj) pj.addEventListener("click", () => offerFile(slug(analysisLabel() || "analysis") + ".json", JSON.stringify({ meta: { tool: "Paddock to Settlement", rulesAsOf: RULES_ASOF, exported: new Date().toISOString() }, fields: S }, null, 2), "application/json"));
+  if (pc) pc.addEventListener("click", () => offerFile(slug(analysisLabel() || "analysis") + ".csv", summaryCSV(), "text/csv"));
+  if (cp) cp.addEventListener("click", async () => { try { await navigator.clipboard.writeText(summaryText()); cp.textContent = "Copied"; setTimeout(() => cp.textContent = "Copy summary to clipboard", 1800); } catch (_) { cp.textContent = "Copy blocked"; } });
+  if (pa) pa.addEventListener("click", parsePasted);
+}
+function summaryRows() {
+  const m = cashflowModel(), c = m.c, d = demandScore(), sc = schoolScore(), ss = streetScore(), pc = propertyCAGR();
+  return [
+    ["Address", analysisLabel()], ["Type", gs("ptype")], ["Land m2", gv("land")], ["Floor m2", gv("floor")],
+    ["Price", gv("price")], ["Price per m2 land", gv("land") ? Math.round(gv("price") / gv("land")) : ""],
+    ["Transfer duty", c.d.gross], ["Acquisition costs", c.other], ["Cash to settle", Math.round(c.totalAcq + c.lmiPayable - c.loan)],
+    ["Loan", c.loan], ["LVR %", Math.round(c.lvr * 10) / 10],
+    ["Rent per week", gv("rentWeek")], ["Gross yield %", Math.round(m.grossYield * 100) / 100], ["Net yield %", Math.round(m.netYield * 100) / 100],
+    ["After-tax cashflow per week", Math.round(m.perWeek)], ["Break-even rent per week", Math.round(m.breakEvenRent)],
+    ["Land tax", m.lt.tax], ["Suburb demand score", d.total == null ? "" : d.total], ["Street demand score", ss.total == null ? "" : ss.total],
+    ["School score", sc.total == null ? "" : sc.total], ["Zoned primary", gs("schoolPrimary")], ["Zoned secondary", gs("schoolSecondary")],
+    ["Suburb median", gv("medianHouse")], ["Days on market", gv("dom")], ["Vacancy %", gv("vacancy")],
+    ["Historic growth % pa", pc ? Math.round(pc.rate * 10) / 10 : ""],
+    ["Negative gearing status", isPostCutoff() ? (gb("newBuild") ? "New build exempt" : "Quarantined from 1 Jul 2027") : "Grandfathered"]
+  ];
+}
+const summaryCSV = () => "Indicator,Value\n" + summaryRows().map(r => '"' + String(r[0]).replace(/"/g, '""') + '","' + String(r[1] == null ? "" : r[1]).replace(/"/g, '""') + '"').join("\n");
+const summaryText = () => summaryRows().map(r => r[0] + ": " + (r[1] === "" || r[1] == null ? "—" : r[1])).join("\n");
+function offerFile(filename, data, type) {
+  const say = t => { const n = $("#parsestatus"); if (n) n.textContent = t; };
+  try {
+    const blob = new Blob([data], { type: type + ";charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename; a.style.display = "none";
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+    say("Downloaded " + filename + ".");
+  } catch (e) { say("Could not start the download — try the copy button instead."); }
+}
+
+/* ---------- parsing pasted listing text, locally ---------- */
+function parsePasted() {
+  const ta = $("#f_paste"), st = $("#parsestatus");
+  if (!ta || !ta.value.trim()) { if (st) st.textContent = "Paste something first."; return; }
+  const t = ta.value.replace(/\u00a0/g, " ");
+  const n = s => num(s);
+  const grab = (re, fn) => { const m = t.match(re); return m ? (fn ? fn(m) : n(m[1])) : null; };
+  const found = {};
+  const put = (k, v) => { if (v != null && isFinite(v) ? v !== 0 : v) found[k] = v; };
+
+  // price: take the largest six-figure-plus dollar amounts and use the midpoint of a range
+  const dollars = (t.match(/\$\s?[\d,]{6,}/g) || []).map(n).filter(v => v >= 80000 && v <= 20000000);
+  if (dollars.length) {
+    const sorted = dollars.slice().sort((a, b) => a - b);
+    const lo = sorted[0], hi = sorted[sorted.length - 1];
+    put("price", hi > lo * 1.5 ? hi : Math.round((lo + hi) / 2 / 1000) * 1000);
+  }
+  put("beds", grab(/(\d+)\s*(?:bed|bedroom|br\b)/i));
+  put("baths", grab(/(\d+)\s*(?:bath|bathroom)/i));
+  put("cars", grab(/(\d+)\s*(?:car|garage|carport)/i));
+  put("land", grab(/([\d,]+)\s*(?:m²|m2|sqm|square met)/i));
+  put("floor", grab(/(?:internal|floor|living|house size)[^\d]{0,20}([\d,]+)\s*(?:m²|m2|sqm)/i));
+  put("built", grab(/(?:built|constructed|circa|c\.)\s*(?:in\s*)?((?:19|20)\d{2})/i));
+  const rent = t.match(/\$\s?(\d{3,4})(?:\s*(?:-|–|to)\s*\$?(\d{3,4}))?\s*(?:per week|pw\b|p\/w|\/week|weekly)/i);
+  if (rent) put("rentWeek", rent[2] ? Math.round((n(rent[1]) + n(rent[2])) / 2) : n(rent[1]));
+  put("medianHouse", grab(/median[^$\n]{0,40}\$\s?([\d,]{6,})/i));
+  put("dom", grab(/(?:median\s+)?days?\s+on\s+market[^\d]{0,12}(\d+)/i) || grab(/(\d+)\s*days?\s+on\s+market/i));
+  put("vacancy", grab(/vacanc[^\d]{0,20}([\d.]+)\s*%/i));
+  put("yieldSuburb", grab(/(?:rental\s+)?yield[^\d]{0,20}([\d.]+)\s*%/i));
+  put("clearance", grab(/clearance[^\d]{0,20}([\d.]+)\s*%/i));
+  put("median12", grab(/(?:12\s*month|annual|yearly)[^\d%\n]{0,30}([-\d.]+)\s*%/i));
+  put("popGrowth", grab(/population[^\d]{0,25}([\d.]+)\s*%/i));
+  put("renters", grab(/rent(?:ed|ers|ing)[^\d]{0,25}([\d.]+)\s*%/i));
+  put("listings", grab(/([\d,]+)\s*(?:properties|homes|listings)\s+for\s+sale/i));
+  put("soldYear", grab(/([\d,]+)\s*(?:properties|homes|sales)\s+sold/i));
+  put("daysToRent", grab(/days?\s+(?:to|on\s+market\s+to)\s+(?:lease|rent)[^\d]{0,12}(\d+)/i));
+  const zone = t.match(/\b((?:GRZ|NRZ|RGZ|LDRZ|UGZ|MUZ|C1Z|R1|R2|R3|R4|LDRZ)\d?\w{0,3})\b/);
+  if (zone) found.zone = zone[1];
+  const pcode = t.match(/\b(VIC|NSW|QLD|SA|WA|TAS|ACT|NT)\s+(\d{4})\b/i);
+  if (pcode) { found.state = pcode[1].toUpperCase(); found.postcode = pcode[2]; }
+
+  const keys = Object.keys(found);
+  keys.forEach(k => S[k] = found[k]);
+  paintHeaderFields(); renderAll();
+  const st2 = $("#parsestatus");
+  if (st2) st2.textContent = keys.length
+    ? "Filled " + keys.length + " fields (" + keys.join(", ") + ") — check every one before relying on it."
+    : "Nothing recognisable found. Listings vary wildly in wording; enter the fields by hand.";
+}
+
+/* =========================================================================
+   14b. VICMAP ADDRESS LOOKUP (Victoria only, no API key, client-side)
+   Layers and field names observed against the live services, September 2026.
+   Data: Vicmap, Department of Transport and Planning, CC BY 4.0.
+   ========================================================================= */
+const VM = "https://services-ap1.arcgis.com/P744lA0wf4LlBZ84/ArcGIS/rest/services";
+const LAYER = {
+  address: VM + "/Vicmap_Address/FeatureServer/0",
+  parcel: VM + "/Vicmap_Parcel/FeatureServer/0",
+  zone: VM + "/Vicmap_Planning/FeatureServer/3",
+  overlay: VM + "/Vicmap_Planning/FeatureServer/2",
+  bushfire: VM + "/Vicmap_Planning/FeatureServer/9",
+  lga: VM + "/Vicmap_Admin/FeatureServer/9",
+  poi: VM + "/Vicmap_Features_of_Interest/FeatureServer/1",
+  building: VM + "/Vicmap_Features_of_Interest/FeatureServer/7"
+};
+const STOP = new Set(["the","of","and","st","rd","ave","dr","ct","pl","cres","pde","tce","street","road","avenue","drive","court","place","crescent","parade","terrace","way","close","grove","boulevard","circuit","rise","walk","lane"]);
+
+async function vmQuery(url, params) {
+  const body = new URLSearchParams(Object.assign({ f: "json" }, params));
+  const r = await fetch(url + "/query", { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" } });
+  if (!r.ok) throw new Error("Vicmap returned " + r.status);
+  const j = await r.json();
+  if (j.error) throw new Error(j.error.message || "Vicmap error");
+  return j.features || [];
+}
+const sqlq = s => String(s).replace(/'/g, "''").toUpperCase();
+
+async function vmSearch(text) {
+  const t = String(text).trim();
+  if (t.length < 4) return [];
+  const numMatch = t.match(/^(\d+)/);
+  const words = t.replace(/^\d+\s*/, "").split(/[^A-Za-z0-9]+/).filter(w => w.length >= 3 && !STOP.has(w.toLowerCase()));
+  if (!words.length) return [];
+  const likes = words.map(w => "ezi_address LIKE '%" + sqlq(w) + "%'");
+  const fields = "pfi,property_pfi,ezi_address,postcode,locality_name";
+  const where = (numMatch ? "house_number_1=" + numMatch[1] + " AND " : "") + likes.join(" AND ");
+  let f = await vmQuery(LAYER.address, { where: where, outFields: fields, returnGeometry: "true", outSR: "4326", resultRecordCount: "12" });
+  if (!f.length && words.length > 1) {
+    const relaxed = (numMatch ? "house_number_1=" + numMatch[1] + " AND " : "") + likes[0];
+    f = await vmQuery(LAYER.address, { where: relaxed, outFields: fields, returnGeometry: "true", outSR: "4326", resultRecordCount: "12" });
+  }
+  return f.filter(x => x.geometry).sort((a, b) => String(a.attributes.ezi_address).localeCompare(String(b.attributes.ezi_address))).slice(0, 8);
+}
+
+/* polygon area in square metres from EPSG:3111 rings (VicGrid94, projected metres) */
+function ringArea(rings) {
+  let total = 0;
+  (rings || []).forEach(ring => {
+    let s = 0;
+    for (let i = 0, n = ring.length; i < n; i++) {
+      const a = ring[i], b = ring[(i + 1) % n];
+      s += a[0] * b[1] - b[0] * a[1];
+    }
+    total += s / 2;
+  });
+  return Math.abs(total);
+}
+const haversine = (lat1, lon1, lat2, lon2) => {
+  const R = 6371000, dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.pow(Math.sin(dLon / 2), 2);
+  return 2 * R * Math.asin(Math.sqrt(a));
+};
+const bearing = (lat1, lon1, lat2, lon2) => {
+  const y = Math.sin((lon2 - lon1) * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180);
+  const x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) -
+    Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos((lon2 - lon1) * Math.PI / 180);
+  const deg = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+  return ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Math.round(deg / 45) % 8];
+};
+
+/* ---------- SITE PLAN: parcel polygon drawn to scale from EPSG:3111 rings ---------- */
+function sitePlanSVG() {
+  const rings = S._rings;
+  if (!rings || !rings.length) return null;
+  const all = rings.flat();
+  const xs = all.map(p => p[0]), ys = all.map(p => p[1]);
+  const minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
+  const minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
+  const wM = maxX - minX, hM = maxY - minY;
+  const pad = 34, inner = 300;
+  const scale = inner / Math.max(wM, hM, 1);
+  const W = wM * scale + pad * 2, H = hM * scale + pad * 2;
+  const px = p => [(p[0] - minX) * scale + pad, (maxY - p[1]) * scale + pad];
+  const path = rs => rs.map(r => "M" + r.map(p => px(p).map(v => v.toFixed(1)).join(",")).join("L") + "Z").join(" ");
+
+  let g = '<rect x="0" y="0" width="' + W.toFixed(0) + '" height="' + H.toFixed(0) + '" fill="var(--surface-2)"/>';
+  (S._buildings || []).forEach(b => {
+    g += '<path d="' + path(b) + '" fill="var(--muted)" fill-opacity="0.28" stroke="var(--muted)" stroke-width="1"/>';
+  });
+  g += '<path d="' + path(rings) + '" fill="var(--accent)" fill-opacity="0.10" stroke="var(--accent)" stroke-width="2"/>';
+  // edge lengths on each boundary segment of the outer ring
+  const outer = rings[0];
+  for (let i = 0; i < outer.length - (outer[0][0] === outer[outer.length - 1][0] ? 1 : 0); i++) {
+    const a = outer[i], b = outer[(i + 1) % outer.length];
+    const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (len < 2) continue;
+    const A = px(a), B = px(b);
+    const mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2;
+    g += '<text x="' + mx.toFixed(1) + '" y="' + my.toFixed(1) + '" font-size="9.5" font-family="IBM Plex Mono, monospace" fill="var(--ink-2)" text-anchor="middle" dominant-baseline="middle" paint-order="stroke" stroke="var(--surface-2)" stroke-width="3">' + len.toFixed(1) + 'm</text>';
+  }
+  // north arrow + scale bar
+  const barM = wM > 60 ? 20 : 10, barPx = barM * scale;
+  g += '<g transform="translate(' + (W - pad + 6).toFixed(0) + ',' + (pad - 6).toFixed(0) + ')">' +
+    '<line x1="0" y1="16" x2="0" y2="0" stroke="var(--ink-2)" stroke-width="1.4"/>' +
+    '<path d="M-3.5,4 L0,-3 L3.5,4 Z" fill="var(--ink-2)"/>' +
+    '<text x="0" y="26" font-size="8.5" font-family="IBM Plex Mono, monospace" fill="var(--muted)" text-anchor="middle">N</text></g>';
+  g += '<g transform="translate(' + pad.toFixed(0) + ',' + (H - 12).toFixed(0) + ')">' +
+    '<line x1="0" y1="0" x2="' + barPx.toFixed(1) + '" y2="0" stroke="var(--ink-2)" stroke-width="1.5"/>' +
+    '<line x1="0" y1="-3" x2="0" y2="3" stroke="var(--ink-2)" stroke-width="1.5"/>' +
+    '<line x1="' + barPx.toFixed(1) + '" y1="-3" x2="' + barPx.toFixed(1) + '" y2="3" stroke="var(--ink-2)" stroke-width="1.5"/>' +
+    '<text x="' + (barPx / 2).toFixed(1) + '" y="-6" font-size="8.5" font-family="IBM Plex Mono, monospace" fill="var(--muted)" text-anchor="middle">' + barM + 'm</text></g>';
+  return { svg: '<svg class="chart" viewBox="0 0 ' + W.toFixed(0) + ' ' + H.toFixed(0) + '" role="img" aria-label="Site plan drawn to scale from the Vicmap parcel boundary">' + g + "</svg>", wM, hM, area: ringArea(rings) };
+}
+
+function titleCase(s) {
+  return String(s || "").toLowerCase().replace(/\b([a-z])/g, m => m.toUpperCase()).replace(/\b(Of|And|The)\b/g, m => m.toLowerCase());
+}
+
+async function vmDossier(feat) {
+  const a = feat.attributes, g = feat.geometry;
+  const pt = { geometry: g.x + "," + g.y, geometryType: "esriGeometryPoint", inSR: "4326", spatialRel: "esriSpatialRelIntersects", outFields: "*" };
+  const res = await Promise.all([
+    vmQuery(LAYER.parcel, Object.assign({}, pt, { returnGeometry: "true", outSR: "3111" })).catch(() => []),
+    vmQuery(LAYER.zone, Object.assign({}, pt, { returnGeometry: "false" })).catch(() => []),
+    vmQuery(LAYER.overlay, Object.assign({}, pt, { returnGeometry: "false" })).catch(() => []),
+    vmQuery(LAYER.bushfire, Object.assign({}, pt, { returnGeometry: "false" })).catch(() => []),
+    vmQuery(LAYER.lga, Object.assign({}, pt, { returnGeometry: "false" })).catch(() => []),
+    vmQuery(LAYER.poi, Object.assign({}, pt, { returnGeometry: "true", outSR: "4326", distance: "2500", units: "esriSRUnit_Meter", resultRecordCount: "300" })).catch(() => [])
+  ]);
+  const parcel = res[0], zone = res[1], overlay = res[2], bushfire = res[3], lga = res[4], poi = res[5];
+
+  const ezi = String(a.ezi_address || ""), loc = String(a.locality_name || ""), pcode = String(a.postcode || "");
+  const filled = [];
+  let addr = ezi;
+  if (pcode) addr = addr.replace(new RegExp("\\s+" + pcode + "$"), "");
+  if (loc) addr = addr.replace(new RegExp("\\s+" + loc + "$", "i"), "");
+  S.address = titleCase(addr.trim());
+  S.street = titleCase(addr.replace(/^\d+[A-Za-z]?\s*/, "").trim());
+  S.suburb = titleCase(loc); S.postcode = pcode; S.state = "VIC";
+  filled.push("address", "suburb", "postcode");
+
+  if (parcel.length && parcel[0].geometry) {
+    const area = Math.round(ringArea(parcel[0].geometry.rings));
+    if (area > 0 && area < 2000000) { S.land = area; filled.push("land " + area + "m²"); }
+    if (parcel[0].attributes.parcel_spi) { S.parcelSPI = parcel[0].attributes.parcel_spi; filled.push("parcel " + parcel[0].attributes.parcel_spi); }
+  }
+  if (zone.length) {
+    S.zone = zone[0].attributes.zone_code || "";
+    S.zoneDesc = titleCase(zone[0].attributes.zone_description || "");
+    filled.push("zone " + S.zone);
+  }
+  let ovl = overlay.map(o => o.attributes.zone_code).filter(Boolean);
+  if (bushfire.length) ovl.push("BPA");
+  ovl = ovl.filter((v, i, arr) => arr.indexOf(v) === i);
+  if (ovl.length) { S.overlays = ovl.join(", "); filled.push(ovl.length + " overlay" + (ovl.length > 1 ? "s" : "")); }
+  else S.overlays = "none recorded at this point";
+  if (lga.length) { S.council = titleCase(lga[0].attributes.lga_official_name || lga[0].attributes.lga_name || ""); filled.push("council"); }
+
+  const schools = poi.map(p => (p.attributes && p.geometry) ? { a: p.attributes, d: haversine(g.y, g.x, p.geometry.y, p.geometry.x) } : null)
+    .filter(x => x && /school/i.test(String(x.a.feature_subtype || x.a.feature_type || "")))
+    .sort((x, y) => x.d - y.d).slice(0, 6);
+  if (schools.length) {
+    S.schoolOthers = schools.map(s => {
+      const nm = s.a.name_label || titleCase(s.a.name || "");
+      const sector = /catholic|christian|grammar|\bst\b|college of/i.test(nm) ? "Non-government" : "Government";
+      return nm + " | " + sector + " | " + (s.d / 1000).toFixed(1) + "km | fees unknown";
+    }).join("\n");
+    filled.push(schools.length + " nearby schools");
+    const near = schools.filter(s => /primary/i.test(String(s.a.feature_subtype || "")))[0];
+    if (near) S.schoolDistance = Math.round(near.d / 100) / 10;
+  }
+  S._rings = (parcel.length && parcel[0].geometry) ? parcel[0].geometry.rings : null;
+  S._amenities = poi.filter(x => x.attributes && x.geometry).map(x => ({
+    n: x.attributes.name_label || titleCase(x.attributes.name || ""),
+    t: String(x.attributes.feature_type || "other"),
+    s: String(x.attributes.feature_subtype || ""),
+    d: Math.round(haversine(g.y, g.x, x.geometry.y, x.geometry.x)),
+    b: bearing(g.y, g.x, x.geometry.y, x.geometry.x)
+  })).sort((a, b) => a.d - b.d);
+  S.lat = g.y; S.lon = g.x;
+  try {
+    const bl = await vmQuery(LAYER.building, Object.assign({}, pt, { returnGeometry: "true", outSR: "3111", distance: "60", units: "esriSRUnit_Meter", resultRecordCount: "40" }));
+    S._buildings = bl.filter(x => x.geometry && x.geometry.rings).map(x => x.geometry.rings);
+  } catch (_) { S._buildings = null; }
+  return { filled: filled, zoneDesc: S.zoneDesc, ugz: /^UGZ/.test(S.zone || "") };
+}
+
+let vmTimer = null, vmBusy = false;
+function lstatus(html) { const n = $("#lookupstatus"); if (n) n.innerHTML = html; }
+function renderSugg(list) {
+  const box = $("#sugg");
+  if (!box) return;
+  if (!list || !list.length) { box.innerHTML = ""; box._list = null; return; }
+  box.innerHTML = '<div class="sugg">' + list.map((f, i) => '<button type="button" data-sugg="' + i + '">' + esc(f.attributes.ezi_address) + "</button>").join("") + "</div>";
+  box._list = list;
+}
+async function doLookup(text) {
+  if (vmBusy) return;
+  vmBusy = true;
+  lstatus("Searching Vicmap…");
+  try {
+    const list = await vmSearch(text);
+    renderSugg(list);
+    lstatus(list.length
+      ? "<b>" + list.length + "</b> match" + (list.length > 1 ? "es" : "") + " — pick one."
+      : "No match. Try the number and street name only, for example <b>12 Tottori Road</b>, then add the suburb.");
+  } catch (e) {
+    renderSugg([]);
+    lstatus("Vicmap did not answer (" + esc(e.message) + "). You can still type everything by hand.");
+  }
+  vmBusy = false;
+}
+document.addEventListener("input", e => {
+  if (e.target.id !== "f_lookup") return;
+  const v = e.target.value;
+  clearTimeout(vmTimer);
+  if (v.trim().length < 4) { renderSugg([]); return; }
+  vmTimer = setTimeout(() => doLookup(v), 400);
+});
+document.addEventListener("keydown", e => {
+  if (e.target.id === "f_lookup" && e.key === "Enter") { e.preventDefault(); clearTimeout(vmTimer); doLookup(e.target.value); }
+});
+document.addEventListener("click", async e => {
+  if (e.target.id === "btn-lookup") { const n = $("#f_lookup"); if (n && n.value.trim()) doLookup(n.value); return; }
+  const b = e.target.closest("button[data-sugg]");
+  if (!b) { const box = $("#sugg"); if (box && !e.target.closest(".lookup")) { box.innerHTML = ""; box._list = null; } return; }
+  const box = $("#sugg"), list = box && box._list;
+  if (!list) return;
+  const feat = list[+b.dataset.sugg];
+  box.innerHTML = ""; box._list = null;
+  lstatus("Reading parcel, planning and amenity layers…");
+  try {
+    const r = await vmDossier(feat);
+    paintHeaderFields(); renderAll();
+    lstatus("Filled from Vicmap: <b>" + esc(r.filled.join(", ")) + "</b>."
+      + (r.zoneDesc ? " Zone is " + esc(r.zoneDesc) + "." : "")
+      + (r.ugz ? " Urban Growth Zone — check whether the growth areas infrastructure contribution applies before subdividing." : "")
+      + " Zone and overlay results are indicative; confirm against a VicPlan planning property report.");
+  } catch (err) {
+    lstatus("Could not read the property layers (" + esc(err.message) + "). Enter the fields by hand.");
+  }
+});
+
+/* =========================================================================
+   15. BOOT
+   ========================================================================= */
+(function boot() {
+  try { const t = localStorage.getItem("pts-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (_) { }
+  const had = loadLocal();
+  if (!had) Object.assign(S, EXAMPLE);
+  if (!S.state) S.state = "VIC";
+  paintHeaderFields();
+  renderAll();
+  if (!had) {
+    const note = el("div", "panel", '<div class="pb"><div class="callout"><strong>These are example figures, not a real property.</strong> They show what a filled-in analysis looks like for a growth-corridor house in Melbourne\'s west. Press <b>Clear</b> and put your own address in, or overwrite as you go.</div></div>');
+    $("#main").insertBefore(note, $("#main").children[1]);
+  }
+})();
+</script>
+</body>
+</html>
