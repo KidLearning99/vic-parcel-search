@@ -2106,10 +2106,10 @@ async function vmSearch(text) {
   const likes = words.map(w => "ezi_address LIKE '%" + sqlq(w) + "%'");
   const fields = "pfi,property_pfi,ezi_address,postcode,locality_name";
   const where = (numMatch ? "house_number_1=" + numMatch[1] + " AND " : "") + likes.join(" AND ");
-  let f = await vmQuery(LAYER.address, { where: where, outFields: fields, returnGeometry: "true", outSR: "4326", resultRecordCount: "12" });
+  let f = await vmQuery(LAYER.address, { where: where, outFields: fields, returnGeometry: "true", outSR: "4326", resultRecordCount: "12" }, 32000);
   if (!f.length && words.length > 1) {
     const relaxed = (numMatch ? "house_number_1=" + numMatch[1] + " AND " : "") + likes[0];
-    f = await vmQuery(LAYER.address, { where: relaxed, outFields: fields, returnGeometry: "true", outSR: "4326", resultRecordCount: "12" });
+    f = await vmQuery(LAYER.address, { where: relaxed, outFields: fields, returnGeometry: "true", outSR: "4326", resultRecordCount: "12" }, 32000);
   }
   return f.filter(x => x.geometry).sort((a, b) => String(a.attributes.ezi_address).localeCompare(String(b.attributes.ezi_address))).slice(0, 8);
 }
@@ -2290,7 +2290,14 @@ function renderSugg(list) {
 async function doLookup(text) {
   if (vmBusy) return;
   vmBusy = true;
+  /* The state address service is often slow to first byte. Count up so a long wait
+     reads as a slow service rather than a dead page. */
+  const t0 = Date.now();
   lstatus("Searching Vicmap…");
+  const tick = setInterval(() => {
+    const s = Math.round((Date.now() - t0) / 1000);
+    lstatus("Searching Vicmap… <b>" + s + "s</b>" + (s > 5 ? " — the state address service is slow right now, still waiting." : ""));
+  }, 1000);
   try {
     const list = await vmSearch(text);
     renderSugg(list);
@@ -2299,8 +2306,8 @@ async function doLookup(text) {
       : "No match. Try the number and street name only, for example <b>12 Tottori Road</b>, then add the suburb.");
   } catch (e) {
     renderSugg([]);
-    lstatus("Vicmap did not answer (" + esc(e.message) + "). Try again, or type the fields by hand.");
-  } finally { vmBusy = false; }
+    lstatus("Vicmap did not answer (" + esc(e.message) + "). Press Search again — the state service is intermittently slow — or type the fields by hand.");
+  } finally { clearInterval(tick); vmBusy = false; }
 }
 document.addEventListener("input", e => {
   if (e.target.id !== "f_lookup") return;
@@ -2321,6 +2328,10 @@ document.addEventListener("click", async e => {
   const feat = list[+b.dataset.sugg];
   box.innerHTML = ""; box._list = null;
   lstatus("Reading parcel, planning and amenity layers…");
+  const d0 = Date.now();
+  const dtick = setInterval(() => {
+    lstatus("Reading parcel, planning and amenity layers… <b>" + Math.round((Date.now() - d0) / 1000) + "s</b>");
+  }, 1000);
   try {
     const r = await vmDossier(feat);
     paintHeaderFields(); renderAll();
@@ -2329,8 +2340,8 @@ document.addEventListener("click", async e => {
       + (r.ugz ? " Urban Growth Zone — check whether the growth areas infrastructure contribution applies before subdividing." : "")
       + " Zone and overlay results are indicative; confirm against a VicPlan planning property report.");
   } catch (err) {
-    lstatus("Could not read the property layers (" + esc(err.message) + "). Enter the fields by hand.");
-  }
+    lstatus("Could not read the property layers (" + esc(err.message) + "). Pick the address again to retry, or enter the fields by hand.");
+  } finally { clearInterval(dtick); }
 });
 
 
