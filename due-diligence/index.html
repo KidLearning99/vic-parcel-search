@@ -626,7 +626,77 @@ function provOf(k) {
   return ASSUMPTIONS.has(k) ? "a" : "n";
 }
 function setProv(k, tag) { if (!S._prov) S._prov = {}; S._prov[k] = tag; }
-const PROV_LABEL = { v: "Vicmap", u: "you", a: "assumed", n: "not set", x: "example" };
+const PROV_LABEL = { v: "Vicmap", u: "you", a: "assumed", n: "not set", x: "example", g: "VIC gov data" };
+
+/* =========================================================================
+   VICTORIAN MARKET DATA — suburb medians and rents from the published
+   government series, shipped beside this page as data/vic-market.json.
+   Sales: Victorian Property Sales Report (DTP), quarterly by locality.
+   Rents: Homes Victoria Rental Report Table 12, moving annual by suburb group.
+   Neither is derivable from Vicmap, and neither has a public CORS API, so the
+   tables are baked in with their as-at date and cited rather than guessed.
+   ========================================================================= */
+let MARKET = null, marketTried = false;
+async function loadMarket() {
+  if (MARKET || marketTried) return MARKET;
+  marketTried = true;
+  try {
+    const r = await fetch("data/vic-market.json", { cache: "force-cache" });
+    if (r.ok) MARKET = await r.json();
+  } catch (_) { }
+  return MARKET;
+}
+/* The rental report groups suburbs ("Vermont-Forest Hill-Burwood East"), so a
+   locality matches either the whole group name or one hyphen-separated part. */
+function rentGroupFor(loc) {
+  if (!MARKET || !MARKET.rg) return null;
+  const L = String(loc || "").toUpperCase().trim();
+  if (!L) return null;
+  if (MARKET.rg[L]) return [L, MARKET.rg[L]];
+  for (const k in MARKET.rg) {
+    if (k.split("-").some(p => p.trim() === L)) return [k, MARKET.rg[k]];
+  }
+  return null;
+}
+/* Fill only what is empty or was filled from this same source last time. Anything
+   you typed wins, and nothing here overwrites a Vicmap fact. */
+function setFromData(k, v) {
+  if (v == null || v === "") return false;
+  const p = provOf(k);
+  if (p === "u" || p === "v") return false;
+  const cur = S[k];
+  if (cur !== "" && cur != null && p !== "g" && p !== "x") return false;
+  S[k] = v; setProv(k, "g"); return true;
+}
+async function applyMarket() {
+  const m = await loadMarket();
+  if (!m) return [];
+  const L = String(S.suburb || "").toUpperCase().trim();
+  if (!L) return [];
+  const unitish = /unit|apartment|flat|townhouse|villa/i.test(String(S.ptype || ""));
+  const rec = (unitish ? m.u[L] : m.h[L]) || m.h[L] || m.u[L] || null;
+  const out = [];
+  S._market = { suburb: L, sales: rec || null, salesType: rec ? ((unitish && m.u[L]) ? "unit" : (m.h[L] ? "house" : "unit")) : null, rentGroup: null, rentRow: null };
+  if (rec) {
+    if (setFromData("medianHouse", rec[0])) out.push("suburb median");
+    if (rec[3] != null) setFromData("median12", rec[3]);
+    if (rec[2] != null) setFromData("soldYear", rec[2]);
+  }
+  const rg = rentGroupFor(L);
+  if (rg) {
+    const beds = num(S.beds) || 3;
+    const key = unitish ? (beds <= 1 ? "f1" : beds === 2 ? "f2" : "f3")
+                        : (beds <= 2 ? "h2" : beds === 3 ? "h3" : "h4");
+    const row = rg[1][key] || rg[1].h3 || rg[1].f2 || rg[1].h4;
+    if (row && row[1]) {
+      S._market.rentGroup = rg[0]; S._market.rentRow = row; S._market.rentKey = rg[1][key] ? key : "fallback";
+      if (setFromData("rentWeek", row[1])) out.push("market rent");
+    }
+  }
+  const med = num(S.medianHouse), rw = num(S.rentWeek);
+  if (med > 0 && rw > 0) setFromData("yieldSuburb", Math.round(rw * 52 / med * 1000) / 10);
+  return out;
+}
 function provBadge(k) {
   const t = provOf(k);
   if (t === "n") return "";
@@ -1450,6 +1520,33 @@ const TABS = [
     sub: "Twelve suburb measures and four street measures, each scored against a stated threshold rather than a vibe. Fill what you can; the score reports its own coverage.",
     render() {
       let h = "";
+      const mk = S._market, M = MARKET;
+      if (mk && M && (mk.sales || mk.rentRow)) {
+        const rows = [];
+        if (mk.sales) {
+          const s = mk.sales;
+          rows.push(["Median " + (mk.salesType === "unit" ? "unit" : "house") + " price", money(s[0], 0) + (s[5] ? " (few sales — treat with care)" : "")]);
+          if (s[1] != null) rows.push(["Sales in the quarter", s[1]]);
+          if (s[2] != null) rows.push(["Sales in the year", s[2]]);
+          if (s[3] != null) rows.push(["Change on a year earlier", pct(s[3], 1)]);
+          if (s[4] != null) rows.push(["Change on the quarter", pct(s[4], 1)]);
+        }
+        if (mk.rentRow) {
+          const LBL = { f1: "1 bed flat", f2: "2 bed flat", f3: "3 bed flat", h2: "2 bed house", h3: "3 bed house", h4: "4 bed house" };
+          rows.push(["Median weekly rent, " + (LBL[mk.rentKey] || "3 bed house"), money(mk.rentRow[1], 0)]);
+          if (mk.rentRow[0] != null) rows.push(["Bonds in that group", mk.rentRow[0]]);
+          if (mk.rentRow[2] != null) rows.push(["Rent change on a year earlier", pct(mk.rentRow[2], 1)]);
+          rows.push(["Rent reported for", titleCase(mk.rentGroup)]);
+        }
+        if (gnum("medianHouse") && gnum("rentWeek")) rows.push(["Implied gross yield on the median", pct(gv("rentWeek") * 52 / gv("medianHouse") * 100, 2)]);
+        h += panel("What the state actually publishes for " + esc(titleCase(mk.suburb)),
+          "Not a portal estimate and not a guess — these are the government series, quoted with the quarter they describe. They set the suburb median, the sales count and the market rent above; overwrite any of them if you have something better.",
+          table(["Measure", "Value"], rows.map(r => trow([esc(String(r[0])), esc(String(r[1]))])).join("")) +
+          '<p class="src">Sales: ' + esc(M.sales.src) + ", " + esc(M.sales.asOf) + '. <a href="' + M.sales.url + '" target="_blank" rel="noopener">Source</a>. ' +
+          "Rents: " + esc(M.rent.src) + ", " + esc(M.rent.asOf) + '. <a href="' + M.rent.url + '" target="_blank" rel="noopener">Source</a>. ' +
+          "The rental report groups neighbouring suburbs, so the rent is for the group named above, not this locality alone.</p>");
+      }
+
       const sb = S._suburb;
       if (sb && sb.pending) h += panel("What this suburb is actually made of", "", '<div class="callout">Measuring the locality boundary and its zone mix from Vicmap. It takes a few seconds and appears here on its own.</div>');
       else if (sb && sb.error) h += panel("What this suburb is actually made of", "", '<div class="callout">Could not measure the suburb: ' + esc(sb.error) + ". Run the address lookup again to retry.</div>");
@@ -2194,7 +2291,7 @@ async function vmDossier(feat) {
      leave it looking authoritative. Assumptions and your own finances survive. */
   PROPERTY_SCOPED.forEach(k => { delete S[k]; if (S._prov) delete S._prov[k]; });
   purgeExample(false);
-  ["_street", "_suburb", "_rings", "_buildings", "_amenities", "zoneDesc", "parcelSPI"].forEach(k => delete S[k]);
+  ["_street", "_suburb", "_market", "_rings", "_buildings", "_amenities", "zoneDesc", "parcelSPI"].forEach(k => delete S[k]);
   const pt = { geometry: g.x + "," + g.y, geometryType: "esriGeometryPoint", inSR: "4326", spatialRel: "esriSpatialRelIntersects", outFields: "*" };
   const res = await Promise.all([
     vmQuery(LAYER.parcel, Object.assign({}, pt, { returnGeometry: "true", outSR: "3111" })).catch(() => []),
@@ -2268,6 +2365,10 @@ async function vmDossier(feat) {
     S._buildings = bl.filter(x => x.geometry && x.geometry.rings).map(x => x.geometry.rings);
   } catch (_) { S._buildings = null; }
   if (S._prov) Object.keys(S._prov).forEach(k => { if (S._prov[k] === "x") S._prov[k] = "a"; });
+  /* Suburb medians and rents from the published state series. Local file, so this is
+     quick and worth doing before the lookup reports what it filled. */
+  try { (await applyMarket()).forEach(x => filled.push(x)); } catch (_) { }
+
   /* The street and suburb passes pull a lot of polygon geometry and can take 10-30s.
      Nothing above depends on them, so let the facts paint immediately and fill these in
      when they land instead of making the whole lookup wait behind them. */
