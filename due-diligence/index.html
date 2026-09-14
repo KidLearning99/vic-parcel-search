@@ -10,30 +10,33 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
 :root{
-  --paper:#EDF0F1; --surface:#FDFDFC; --surface-2:#F4F7F7; --ink:#121A1D; --ink-2:#2C3A3F;
-  --muted:#5C6B70; --muted-2:#7A8A90; --line:#D3DAD9; --line-2:#E3E9E8;
-  --accent:#12566E; --accent-soft:#E2EDF1; --accent-ink:#0C3A4B; --btn-ink:#FFFFFF;
-  --ochre:#A8661F; --ochre-soft:#F6EADB;
-  --good:#2F7A4F; --good-soft:#E3F0E8; --warn:#9A6E10; --warn-soft:#F8EFD9; --bad:#A33329; --bad-soft:#F7E4E1;
+  --paper:#ECEAE4; --surface:#FFFFFF; --surface-2:#F6F4EF; --ink:#14171A; --ink-2:#333A40;
+  --muted:#5E656B; --muted-2:#858C92; --line:#D6D2C8; --line-2:#E7E3DA;
+  --accent:#23486F; --accent-soft:#E4EAF2; --accent-ink:#152F4C; --btn-ink:#FFFFFF;
+  --ochre:#8F6212; --ochre-soft:#F5EDDC;
+  --good:#2C7350; --good-soft:#E2EFE7; --warn:#96690C; --warn-soft:#F7EEDA; --bad:#A02F26; --bad-soft:#F7E3E0;
+  --verified:#23486F; --verified-soft:#E4EAF2;
   --shadow:0 1px 2px rgba(18,26,29,.06), 0 8px 24px -16px rgba(18,26,29,.22);
   --r:6px;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#0E1518; --surface:#172024; --surface-2:#1D272B; --ink:#E7EDEB; --ink-2:#CCD8D6;
-    --muted:#93A4A6; --muted-2:#7E9092; --line:#27343A; --line-2:#202C31;
-    --accent:#5FB3CD; --accent-soft:#17333D; --accent-ink:#A8D7E6; --btn-ink:#08171D;
-    --ochre:#D79B4A; --ochre-soft:#32261A;
-    --good:#5FB483; --good-soft:#17291F; --warn:#D9AE4E; --warn-soft:#2B2414; --bad:#DD8478; --bad-soft:#2E1A18;
+    --paper:#111316; --surface:#1B1F24; --surface-2:#232830; --ink:#E9E7E1; --ink-2:#CFCDC6;
+    --muted:#969CA3; --muted-2:#7C838A; --line:#2E343C; --line-2:#252A31;
+    --accent:#89AEDC; --accent-soft:#1C2A3C; --accent-ink:#BCD2EC; --btn-ink:#0D1620;
+    --ochre:#D2A 654; --ochre-soft:#2E2617;
+    --good:#68B98C; --good-soft:#18291F; --warn:#D6AC53; --warn-soft:#2B2415; --bad:#DE8378; --bad-soft:#2F1A18;
+    --verified:#89AEDC; --verified-soft:#1C2A3C;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.7);
   }
 }
 :root[data-theme="dark"]{
-  --paper:#0E1518; --surface:#172024; --surface-2:#1D272B; --ink:#E7EDEB; --ink-2:#CCD8D6;
-  --muted:#93A4A6; --muted-2:#7E9092; --line:#27343A; --line-2:#202C31;
-  --accent:#5FB3CD; --accent-soft:#17333D; --accent-ink:#A8D7E6; --btn-ink:#08171D;
-  --ochre:#D79B4A; --ochre-soft:#32261A;
-  --good:#5FB483; --good-soft:#17291F; --warn:#D9AE4E; --warn-soft:#2B2414; --bad:#DD8478; --bad-soft:#2E1A18;
+  --paper:#111316; --surface:#1B1F24; --surface-2:#232830; --ink:#E9E7E1; --ink-2:#CFCDC6;
+  --muted:#969CA3; --muted-2:#7C838A; --line:#2E343C; --line-2:#252A31;
+  --accent:#89AEDC; --accent-soft:#1C2A3C; --accent-ink:#BCD2EC; --btn-ink:#0D1620;
+  --ochre:#D2A654; --ochre-soft:#2E2617;
+  --good:#68B98C; --good-soft:#18291F; --warn:#D6AC53; --warn-soft:#2B2415; --bad:#DE8378; --bad-soft:#2F1A18;
+  --verified:#89AEDC; --verified-soft:#1C2A3C;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.7);
 }
 *{box-sizing:border-box}
@@ -73,6 +76,30 @@ input,select,textarea{
 }
 input:hover,select:hover{border-color:var(--muted-2)}
 textarea{font-family:"Public Sans",sans-serif; line-height:1.5; resize:vertical}
+
+
+/* provenance + data quality */
+.prov{display:inline-block; font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  padding:1px 5px; border-radius:3px; vertical-align:1px; margin-left:6px}
+.prov.v{color:#fff; background:var(--verified)}
+:root[data-theme="dark"] .prov.v{color:#0D1620}
+.prov.u{color:var(--ink-2); background:var(--line-2); border:1px solid var(--line)}
+.prov.a{color:var(--ochre); background:var(--ochre-soft)}
+.prov.n{color:var(--bad); background:var(--bad-soft)}
+.quality{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:1px; background:var(--line); border-radius:var(--r); overflow:hidden; margin-bottom:12px}
+.quality > div{background:var(--surface-2); padding:9px 11px}
+.quality .qn{font-family:"IBM Plex Mono",monospace; font-size:19px; font-weight:500}
+.quality .ql{font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.missing{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px}
+.missing span{font-size:11.5px; padding:2px 8px; border-radius:99px; background:var(--bad-soft); color:var(--bad)}
+.bars{display:grid; gap:5px}
+.barrow{display:grid; grid-template-columns:78px 1fr 62px; gap:9px; align-items:center; font-size:12.5px}
+.barrow .bt{height:16px; background:var(--line-2); border-radius:2px; overflow:hidden}
+.barrow .bt > i{display:block; height:100%; background:var(--accent)}
+.barrow .bv{font-family:"IBM Plex Mono",monospace; text-align:right; font-variant-numeric:tabular-nums; color:var(--muted)}
+h2, h3{letter-spacing:-.01em}
+.sechead h2{font-size:22px}
+.panel > .ph{padding-top:13px}
 
 /* address lookup */
 .lookup{position:relative; padding-bottom:12px}
@@ -572,6 +599,64 @@ function cgt(o) {
   return out;
 }
 
+
+/* =========================================================================
+   4b. PROVENANCE — every figure knows where it came from
+   ========================================================================= */
+/* v = read from Vicmap (authoritative)  u = you typed it  a = planning assumption  n = missing */
+const ASSUMPTIONS = new Set(["rate","term","buffer","mgmtPct","maintPct","vacancyWeeks","inflation",
+  "sellingCosts","growthAssumed","rentGrowth","holdYears","buildCostM2","feasMonths","ioYears"]);
+/* cleared whenever a new address is looked up — they belong to the OLD property */
+const PROPERTY_SCOPED = ["price","civ","sitevalue","floor","beds","baths","cars","built","ptype",
+  "saleHistory","comparables","streetSales","streetDwellings","medianHouse","median12","median10","dom",
+  "discount","clearance","vacancy","listings","soldYear","dwellings","renters","popGrowth","yieldSuburb",
+  "buyerDemandIndex","daysToRent","schoolPrimary","schoolPrimaryICSEA","schoolPrimaryNaplan","schoolSecondary",
+  "schoolSecondaryICSEA","schoolSecondaryNaplan","schoolVCE","zoneRisk","rentWeek","councilRates","water",
+  "insurance","strata","depnBuilding","depnPlant","salePrice","renoCost","renoUplift","renoRentUplift",
+  "lots","buildArea","civilCost","profCost","endValue","gaicHa","otpDeduction","deposit"];
+function provOf(k) {
+  const p = S._prov || {};
+  if (p[k]) return p[k];
+  const v = S[k];
+  if (v === "" || v == null || (typeof v === "number" && !isFinite(v))) return "n";
+  return ASSUMPTIONS.has(k) ? "a" : "n";
+}
+function setProv(k, tag) { if (!S._prov) S._prov = {}; S._prov[k] = tag; }
+const PROV_LABEL = { v: "Vicmap", u: "you", a: "assumed", n: "not set", x: "example" };
+function provBadge(k) {
+  const t = provOf(k);
+  if (t === "n") return "";
+  return '<span class="prov ' + t + '">' + PROV_LABEL[t] + "</span>";
+}
+function markAssumptions() { ASSUMPTIONS.forEach(k => { if (S[k] !== "" && S[k] != null && !(S._prov || {})[k]) setProv(k, "a"); }); }
+/* fields whose absence actually changes a headline number */
+const MATERIAL = [
+  ["price", "purchase price"], ["rentWeek", "market rent"], ["sitevalue", "site value (land tax)"],
+  ["civ", "capital improved value"], ["medianHouse", "suburb median"], ["dom", "days on market"],
+  ["vacancy", "vacancy rate"], ["schoolSecondary", "zoned secondary school"], ["councilRates", "council rates"],
+  ["comparables", "comparable sales"], ["saleHistory", "sale history"]
+];
+function qualityReport() {
+  const counts = { v: 0, u: 0, a: 0, n: 0, x: 0 };
+  const tracked = Object.keys(F).concat(["address", "suburb", "postcode", "zoneDesc", "parcelSPI"]);
+  tracked.forEach(k => { counts[provOf(k)] = (counts[provOf(k)] || 0) + 1; });
+  const missing = MATERIAL.filter(m => { const t = provOf(m[0]); return t === "n" || t === "x"; }).map(m => m[1]);
+  return { counts, missing, tracked: tracked.length };
+}
+function qualityHTML() {
+  const q = qualityReport();
+  let h = '<div class="quality">' +
+    '<div><div class="ql">From Vicmap</div><div class="qn g">' + q.counts.v + "</div></div>" +
+    '<div><div class="ql">You entered</div><div class="qn">' + q.counts.u + "</div></div>" +
+    '<div><div class="ql">Assumptions</div><div class="qn w">' + q.counts.a + "</div></div>" +
+    '<div><div class="ql">Not set</div><div class="qn ' + (q.counts.n > 0 ? "b" : "") + '">' + q.counts.n + "</div></div>";
+  if (q.counts.x) h += '<div><div class="ql">Example data</div><div class="qn b">' + q.counts.x + "</div></div>";
+  h += "</div>";
+  if (q.missing.length) h += '<p class="note" style="padding:0">These are missing and they change the headline numbers: </p><div class="missing">' +
+    q.missing.map(m => "<span>" + esc(m) + "</span>").join("") + "</div>";
+  else h += '<p class="note" style="padding:0">Every figure that moves a headline number has a value. Check the <b>assumed</b> ones still suit you.</p>';
+  return h;
+}
 /* =========================================================================
    5. FIELD PLUMBING
    ========================================================================= */
@@ -584,7 +669,7 @@ function fieldHTML(d) {
   else if (d.t === "check") return '<label class="chk"><input type="checkbox" id="' + id + '" data-k="' + d.k + '"' + (v ? " checked" : "") + '><span>' + esc(d.l) + "</span></label>";
   else if (d.t === "area") ctl = '<textarea id="' + id + '" data-k="' + d.k + '" rows="' + (d.rows || 4) + '" placeholder="' + esc(d.ph || "") + '">' + esc(v == null ? "" : v) + "</textarea>";
   else ctl = '<input id="' + id + '" data-k="' + d.k + '" inputmode="' + (d.t === "text" ? "text" : "decimal") + '" value="' + esc(v == null ? "" : v) + '" placeholder="' + esc(d.ph || "") + '">';
-  return '<div class="f"><label class="lab" for="' + id + '">' + esc(d.l) + (d.u ? ' <span style="text-transform:none;letter-spacing:0">(' + esc(d.u) + ")</span>" : "") + "</label>" + ctl + (d.hint ? '<span class="hint">' + d.hint + "</span>" : "") + "</div>";
+  return '<div class="f"><label class="lab" for="' + id + '">' + esc(d.l) + (d.u ? ' <span style="text-transform:none;letter-spacing:0">(' + esc(d.u) + ")</span>" : "") + provBadge(d.k) + "</label>" + ctl + (d.hint ? '<span class="hint">' + d.hint + "</span>" : "") + "</div>";
 }
 function fieldsHTML(keys, cls) {
   const checks = keys.filter(k => F[k] && F[k].t === "check"), rest = keys.filter(k => !F[k] || F[k].t !== "check");
@@ -593,6 +678,13 @@ function fieldsHTML(keys, cls) {
   return h;
 }
 const gv = k => num(S[k]);
+/* a field that was never filled in is unknown, not zero — scoring must never treat it as a value */
+function gnum(k) {
+  const v = S[k];
+  if (v === "" || v == null) return null;
+  const n = num(v);
+  return isFinite(n) ? n : null;
+}
 const gs = k => S[k] == null ? "" : String(S[k]);
 const gb = k => !!S[k];
 
@@ -800,27 +892,29 @@ function streetStats() {
 
 /* ---- suburb demand score ---- */
 function demandScore() {
-  const listings = gv("listings"), sold = gv("soldYear"), dw = gv("dwellings");
-  const stockPct = dw > 0 ? listings / dw * 100 : NaN;
-  const invMonths = sold > 0 ? listings / (sold / 12) : NaN;
-  const absorb = listings > 0 ? sold / listings : NaN;
+  const listings = gnum("listings"), sold = gnum("soldYear"), dw = gnum("dwellings");
+  const stockPct = (listings != null && dw) ? listings / dw * 100 : NaN;
+  const invMonths = (listings != null && sold) ? listings / (sold / 12) : NaN;
+  const absorb = (listings && sold != null) ? sold / listings : NaN;
   const parts = [
-    { k: "Days on market", s: scoreBand(gv("dom"), 75, 18), v: gv("dom") ? gv("dom") + " days" : dash, w: 1.4, why: "How long buyers take to commit." },
-    { k: "Vendor discount", s: scoreBand(gv("discount"), 9, 0), v: gs("discount") ? pct(gv("discount")) : dash, w: 1.1, why: "How far sellers move off asking." },
-    { k: "Auction clearance", s: scoreBand(gv("clearance"), 45, 80), v: gs("clearance") ? pct(gv("clearance"), 0) : dash, w: 1.1, why: "Live competition in the room." },
-    { k: "Rental vacancy", s: scoreBand(gv("vacancy"), 4, 0.8), v: gs("vacancy") ? pct(gv("vacancy")) : dash, w: 1.3, why: "Tenant scarcity. Under 2% means rents push up." },
+    { k: "Days on market", s: scoreBand(gnum("dom"), 75, 18), v: gv("dom") ? gv("dom") + " days" : dash, w: 1.4, why: "How long buyers take to commit." },
+    { k: "Vendor discount", s: scoreBand(gnum("discount"), 9, 0), v: gnum("discount") != null ? pct(gv("discount")) : dash, w: 1.1, why: "How far sellers move off asking." },
+    { k: "Auction clearance", s: scoreBand(gnum("clearance"), 45, 80), v: gnum("clearance") != null ? pct(gv("clearance"), 0) : dash, w: 1.1, why: "Live competition in the room." },
+    { k: "Rental vacancy", s: scoreBand(gnum("vacancy"), 4, 0.8), v: gnum("vacancy") != null ? pct(gv("vacancy")) : dash, w: 1.3, why: "Tenant scarcity. Under 2% means rents push up." },
     { k: "Stock on market", s: scoreBand(stockPct, 2.6, 0.7), v: isFinite(stockPct) ? pct(stockPct, 2) : dash, w: 1.2, why: "Listings as a share of all dwellings." },
     { k: "Months of inventory", s: scoreBand(invMonths, 8, 1.5), v: isFinite(invMonths) ? invMonths.toFixed(1) + " mths" : dash, w: 1.2, why: "How long current stock takes to clear." },
-    { k: "Growth, 12 months", s: scoreBand(gv("median12"), -4, 12), v: gs("median12") ? pct(gv("median12")) : dash, w: 1.0, why: "Recent direction of the median." },
-    { k: "Growth, 10 years p.a.", s: scoreBand(gv("median10"), 1, 9), v: gs("median10") ? pct(gv("median10")) : dash, w: 1.0, why: "Whether the suburb compounds over a cycle." },
-    { k: "Buyer interest index", s: scoreBand(gv("buyerDemandIndex"), 0.5, 2.2), v: gs("buyerDemandIndex") ? gv("buyerDemandIndex").toFixed(2) + "×" : dash, w: 0.9, why: "Views per listing against the state." },
-    { k: "Population growth", s: scoreBand(gv("popGrowth"), 0, 4), v: gs("popGrowth") ? pct(gv("popGrowth")) : dash, w: 0.8, why: "Underlying demand for dwellings." },
-    { k: "Days to lease", s: scoreBand(gv("daysToRent"), 45, 8), v: gs("daysToRent") ? gv("daysToRent") + " days" : dash, w: 0.8, why: "Rental depth — your vacancy risk." },
-    { k: "Gross yield", s: scoreBand(gv("yieldSuburb"), 2.5, 6), v: gs("yieldSuburb") ? pct(gv("yieldSuburb")) : dash, w: 0.7, why: "Income support for the price." }
+    { k: "Growth, 12 months", s: scoreBand(gnum("median12"), -4, 12), v: gnum("median12") != null ? pct(gv("median12")) : dash, w: 1.0, why: "Recent direction of the median." },
+    { k: "Growth, 10 years p.a.", s: scoreBand(gnum("median10"), 1, 9), v: gnum("median10") != null ? pct(gv("median10")) : dash, w: 1.0, why: "Whether the suburb compounds over a cycle." },
+    { k: "Buyer interest index", s: scoreBand(gnum("buyerDemandIndex"), 0.5, 2.2), v: gnum("buyerDemandIndex") != null ? gv("buyerDemandIndex").toFixed(2) + "×" : dash, w: 0.9, why: "Views per listing against the state." },
+    { k: "Population growth", s: scoreBand(gnum("popGrowth"), 0, 4), v: gnum("popGrowth") != null ? pct(gv("popGrowth")) : dash, w: 0.8, why: "Underlying demand for dwellings." },
+    { k: "Days to lease", s: scoreBand(gnum("daysToRent"), 45, 8), v: gnum("daysToRent") != null ? gv("daysToRent") + " days" : dash, w: 0.8, why: "Rental depth — your vacancy risk." },
+    { k: "Gross yield", s: scoreBand(gnum("yieldSuburb"), 2.5, 6), v: gnum("yieldSuburb") != null ? pct(gv("yieldSuburb")) : dash, w: 0.7, why: "Income support for the price." }
   ];
   const live = parts.filter(p => p.s != null);
-  const total = live.length ? Math.round(live.reduce((a, p) => a + p.s * p.w, 0) / live.reduce((a, p) => a + p.w, 0)) : null;
-  return { parts, total, coverage: live.length + "/" + parts.length, stockPct, invMonths, absorb };
+  const enough = live.length >= 4;
+  const total = enough ? Math.round(live.reduce((a, p) => a + p.s * p.w, 0) / live.reduce((a, p) => a + p.w, 0)) : null;
+  return { parts, total, blocked: !enough, why: "needs at least four measures — it has " + live.length,
+    coverage: live.length + "/" + parts.length, stockPct, invMonths, absorb };
 }
 function streetScore() {
   const st = streetStats();
@@ -837,17 +931,21 @@ function schoolScore() {
   const nap = v => ({ "Well above": 95, "Above": 78, "Close to": 55, "Below": 30, "Well below": 12 })[v] || null;
   const zr = { "Stable": 85, "Under review": 50, "Recently changed": 45, "Growth area, likely to change": 30 }[gs("zoneRisk")] || null;
   const parts = [
-    { k: "Primary ICSEA", s: scoreBand(gv("schoolPrimaryICSEA"), 900, 1120), v: gs("schoolPrimaryICSEA") || dash, w: 1, why: "Socio-educational advantage of the zoned intake." },
+    { k: "Primary ICSEA", s: scoreBand(gnum("schoolPrimaryICSEA"), 900, 1120), v: gs("schoolPrimaryICSEA") || dash, w: 1, why: "Socio-educational advantage of the zoned intake." },
     { k: "Primary results", s: nap(gs("schoolPrimaryNaplan")), v: gs("schoolPrimaryNaplan") || dash, w: 1.1, why: "NAPLAN against statistically similar schools." },
-    { k: "Secondary ICSEA", s: scoreBand(gv("schoolSecondaryICSEA"), 900, 1120), v: gs("schoolSecondaryICSEA") || dash, w: 1, why: "" },
+    { k: "Secondary ICSEA", s: scoreBand(gnum("schoolSecondaryICSEA"), 900, 1120), v: gs("schoolSecondaryICSEA") || dash, w: 1, why: "" },
     { k: "Secondary results", s: nap(gs("schoolSecondaryNaplan")), v: gs("schoolSecondaryNaplan") || dash, w: 1.3, why: "The zoned secondary school drives family resale demand." },
-    { k: "Median study score", s: scoreBand(gv("schoolVCE"), 24, 36), v: gs("schoolVCE") || dash, w: 1, why: "30 is the state median." },
-    { k: "Walk to primary", s: scoreBand(gv("schoolDistance"), 3.5, 0.4), v: gs("schoolDistance") ? gv("schoolDistance") + " km" : dash, w: 0.7, why: "Walkability is priced into family homes." },
+    { k: "Median study score", s: scoreBand(gnum("schoolVCE"), 24, 36), v: gs("schoolVCE") || dash, w: 1, why: "30 is the state median." },
+    { k: "Walk to primary", s: scoreBand(gnum("schoolDistance"), 3.5, 0.4), v: gnum("schoolDistance") != null ? gv("schoolDistance") + " km" : dash, w: 0.7, why: "Walkability is priced into family homes." },
     { k: "Alternatives nearby", s: scoreBand(otherSchools().length, 0, 4), v: otherSchools().length + " listed", w: 0.6, why: "Private and Catholic options widen the buyer pool." },
     { k: "Zone stability", s: zr, v: gs("zoneRisk") || dash, w: 0.9, why: "A zone you can lose is a premium you can lose." }
   ];
   const live = parts.filter(p => p.s != null);
-  return { parts, total: live.length ? Math.round(live.reduce((a, p) => a + p.s * p.w, 0) / live.reduce((a, p) => a + p.w, 0)) : null };
+  /* the schools score means nothing without the schools themselves — proximity alone is not a score */
+  const haveZoned = !!(gs("schoolSecondary") || gs("schoolPrimary"));
+  const enough = live.length >= 3 && haveZoned;
+  return { parts, total: enough ? Math.round(live.reduce((a, p) => a + p.s * p.w, 0) / live.reduce((a, p) => a + p.w, 0)) : null,
+    blocked: !enough, why: haveZoned ? "needs at least three of the measures below" : "confirm the zoned schools first — proximity alone is not a catchment" };
 }
 
 /* ---- money models ---- */
@@ -1000,7 +1098,7 @@ function linksHTML(g) {
    ========================================================================= */
 function scoreBlock(res, title, sub) {
   const t = res.total;
-  return '<div class="panel"><div class="ph"><h3>' + esc(title) + '</h3><span class="tag ' + (t == null ? "" : t >= 67 ? "good" : t >= 40 ? "warn" : "bad") + '">' + (t == null ? "no data yet" : t + " / 100 · " + scoreWord(t)) + '</span></div>' +
+  return '<div class="panel"><div class="ph"><h3>' + esc(title) + '</h3><span class="tag ' + (t == null ? "" : t >= 67 ? "good" : t >= 40 ? "warn" : "bad") + '">' + (t == null ? (res.blocked ? "withheld — " + esc(res.why) : "no data yet") : t + " / 100 · " + scoreWord(t)) + '</span></div>' +
     (sub ? '<p class="note">' + sub + "</p>" : "") + '<div class="pb">' +
     res.parts.map(p => '<div class="scorerow"><div><div>' + esc(p.k) + '</div>' + (p.why ? '<span class="hint">' + esc(p.why) + "</span>" : "") + '</div><div class="sv">' + esc(p.v) + '</div><div>' +
       (p.s == null ? '<span class="src">no data</span>' : '<div class="meter"><i style="width:' + p.s + '%;background:var(--' + (p.s >= 67 ? "good" : p.s >= 40 ? "warn" : "bad") + ')"></i></div>') + "</div></div>").join("") +
@@ -1200,7 +1298,10 @@ const TABS = [
     id: "property", label: "Property", title: "The property itself",
     sub: "Everything downstream keys off these facts. The links collect what cannot be calculated — sold prices, catchments, overlays.",
     render() {
-      let h = panel("Core facts", "", fieldsHTML(["street", "ptype", "land", "floor", "beds", "baths", "cars", "built", "zone", "overlays", "council"]));
+      let h = panel("Where these figures came from",
+        "Nothing here is guessed. A field is either read from Vicmap, typed by you, or a planning assumption you can change — and the badge on every input says which. Looking up a new address clears everything that belonged to the previous property.",
+        qualityHTML());
+      h += panel("Core facts", "", fieldsHTML(["street", "ptype", "land", "floor", "beds", "baths", "cars", "built", "zone", "overlays", "council"]));
       h += panel("Price and valuation basis", "Capital improved value and site value come off the council rates notice. They are different numbers and they drive different taxes.",
         fieldsHTML(["price", "civ", "sitevalue", "contractDate"]) + '<div class="divider"></div>' + fieldsHTML(["profile", "otpDeduction"]) + fieldsHTML(["fhb", "ppr", "newBuild", "vacantLand", "foreign", "pensioner"]));
       const c = costsModel();
@@ -1251,6 +1352,33 @@ const TABS = [
         '<p class="note" style="padding:10px 0 0">Zone and overlay results are point-in-polygon lookups and are indicative only. Confirm against a VicPlan planning property report before you rely on them, and remember an overlay can clip part of a lot without covering the point tested here.</p>' +
         "</div></div>");
 
+      const stq = S._street;
+      if (stq && stq.st) {
+        const s = stq.st;
+        const pctl = stq.myPercentile;
+        h += panel("How this lot compares to its street",
+          "Every parcel boundary within " + esc(stq.road || "the street") + " measured from Vicmap — " + stq.parcels + " parcels behind " + stq.addresses + " addresses. This is survey data, not a portal estimate.",
+          histogram(s.sorted, stq.myArea, "m²") + '<div class="divider"></div><div class="cols"><div>' +
+          kv([["Street median lot", Math.round(s.median).toLocaleString("en-AU") + " m²"],
+          ["Quartiles", Math.round(s.q1).toLocaleString("en-AU") + " – " + Math.round(s.q3).toLocaleString("en-AU") + " m²"],
+          ["Smallest / largest", Math.round(s.min) + " – " + Math.round(s.max).toLocaleString("en-AU") + " m²"],
+          ["This lot", stq.myArea ? stq.myArea.toLocaleString("en-AU") + " m²" : dash],
+          ["Its percentile on the street", pctl == null ? dash : pctl + "th" + (pctl >= 75 ? " — larger than most" : pctl <= 25 ? " — smaller than most" : " — mid-street")]]) +
+          "</div><div>" +
+          kv([["Addresses with a letter suffix", stq.suffixed + " (12A, 12B — the signature of a past subdivision)"],
+          ["Street numbers with more than one address", stq.multi],
+          ["Lots under 62% of the street median", stq.small],
+          ["Subdivision precedent", pct(stq.subdivided, 0) + " of parcels"]]) +
+          '<div class="callout" style="margin-top:10px">' + (
+            stq.subdivided >= 25
+              ? "<strong>This street has already been carved up.</strong> Roughly " + pct(stq.subdivided, 0) + " of its parcels look subdivided, which means council has approved it here before and neighbours are used to it — but also that the easy sites are going or gone, and your resale competes with townhouses."
+              : stq.subdivided >= 8
+                ? "<strong>Some subdivision, not a wave.</strong> About " + pct(stq.subdivided, 0) + " of parcels show it. Precedent exists without the street having lost its character — usually the sweet spot if you want the option yourself."
+                : "<strong>Essentially intact.</strong> Under " + pct(stq.subdivided, 0) + " of parcels show subdivision. Either the zone or the lot sizes prevent it, or nobody has tried. Check the zone's minimum lot size before assuming you could be first."
+          ) + "</div></div></div>");
+      } else if (S.lat) {
+        h += panel("Street comparison", "", '<div class="callout">Vicmap returned no parcel set for this street, which usually means the street name did not match its Vicmap spelling. The site plan above is unaffected.</div>');
+      }
       const am = S._amenities || [];
       if (am.length) {
         const groups = {};
@@ -1315,7 +1443,34 @@ const TABS = [
     id: "demand", label: "Demand", title: "Demand, at suburb and street level",
     sub: "Twelve suburb measures and four street measures, each scored against a stated threshold rather than a vibe. Fill what you can; the score reports its own coverage.",
     render() {
-      let h = panel("Suburb measures", "Grab these from the suburb profile pages and SQM — the links are on the Property tab.",
+      let h = "";
+      const sb = S._suburb;
+      if (sb && sb.mix && sb.mix.length) {
+        const bar = (label, pctv, note) => '<div class="barrow"><div>' + esc(label) + '</div><div class="bt"><i style="width:' + clamp(pctv, 0, 100).toFixed(1) + '%"></i></div><div class="bv">' + pct(pctv, 1) + "</div></div>" + (note ? '<div class="hint" style="grid-column:1/-1;margin:-2px 0 4px">' + note + "</div>" : "");
+        h += panel("What " + esc(sb.name) + " is actually made of",
+          "Measured from the Vicmap planning scheme across the whole locality — the zone mix is the supply side of the suburb, and it is the part nobody publishes on a portal.",
+          '<div class="cols"><div>' +
+          kv([["Locality area", sb.areaKm2.toFixed(2) + " km²"],
+          ["Addresses", sb.addresses.toLocaleString("en-AU")],
+          ["Address density", sb.density ? Math.round(sb.density).toLocaleString("en-AU") + " per km²" : dash],
+          ["Residential zoned", pct(sb.residentialShare, 1)],
+          ["Public open space", pct(sb.openSpace, 1)],
+          ["Commercial", pct(sb.commercial, 1)]]) +
+          '</div><div><div class="eyebrow" style="margin-bottom:6px">Zone mix by area</div><div class="bars">' +
+          sb.mix.map(m => bar(m.code, m.pct)).join("") + "</div></div></div>" +
+          '<div class="divider"></div>' +
+          '<div class="callout">' + (
+            sb.nrz >= 25
+              ? "<strong>Supply here is locked down.</strong> " + pct(sb.nrz, 0) + " of the suburb sits in Neighbourhood Residential Zone, which caps height and dwelling yield. That restricts new stock — supportive of existing house values, and hostile to your own redevelopment plans."
+              : sb.rgz + sb.ugz >= 10
+                ? "<strong>This suburb is being redeveloped.</strong> " + pct(sb.rgz + sb.ugz, 0) + " sits in Residential Growth or Urban Growth zoning, so expect townhouses and apartments to keep arriving. Good for land value, harder for resale of a standard dwelling competing against new product."
+                : "<strong>Conventional general residential.</strong> " + pct(sb.grz, 0) + " is General Residential Zone — modest redevelopment allowed, typically two or three dwellings on a suitable lot, no apartment towers."
+          ) + "</div>" +
+          (sb.overlays.length ? '<div class="divider"></div><div class="eyebrow" style="margin-bottom:6px">Overlays recorded across the suburb</div><div class="pill-row">' +
+            sb.overlays.map(o => '<span class="tag">' + esc(o.code) + " · " + o.n + "</span>").join("") +
+            '</div><p class="note" style="padding:8px 0 0">Overlay codes beginning HO are heritage, LSIO and SBO are flood, BMO is bushfire, DDO is design and development. A high count is not automatically bad — it tells you what the council cares about and what a permit will hinge on.</p>' : ""));
+      }
+      h += panel("Suburb measures", "These four sources are what the portals actually publish — the links are on the Property tab. Everything you type here is badged <b>you</b> so you can tell it apart from the measured data above.",
         fieldsHTML(["medianHouse", "median12", "median10", "dom", "discount", "clearance", "vacancy", "daysToRent", "listings", "soldYear", "dwellings", "renters", "popGrowth", "yieldSuburb", "buyerDemandIndex"]));
       const d = demandScore();
       h += scoreBlock(d, "Suburb demand score", "Coverage: " + d.coverage + " measures supplied. Each bar runs from a defined weak anchor to a defined strong one, so a half-full bar means genuinely middling, not unknown.");
@@ -1335,9 +1490,16 @@ const TABS = [
     id: "schools", label: "Schools", title: "The zoned schools, and the alternatives",
     sub: "For family housing the zoned secondary school is often the single largest non-structural driver of resale demand. Confirm the zone by address on the state tool — portal maps lag.",
     render() {
-      let h = panel("Zoned schools", "ICSEA is an index of the intake's socio-educational advantage, set at 1000 nationally. NAPLAN is only meaningful against statistically similar schools, which is how My School presents it.",
+      const addrQ = encodeURIComponent([gs("address"), gs("suburb"), gs("state"), gs("postcode")].filter(Boolean).join(" "));
+      let h = panel("The zone is not something this tool can read",
+        "",
+        '<div class="callout"><strong>Victoria does not publish school zones in a queryable form.</strong> Find My School is the only authoritative answer and it works by address. Nothing on this tab is pre-filled from anywhere — if a field is blank it is because it has not been confirmed, and the badge will say so. Portal catchment maps lag boundary changes and are not a substitute.</div>' +
+        '<div class="row" style="margin-top:10px"><a class="btn sm" style="text-decoration:none" href="https://www.findmyschool.vic.gov.au/" target="_blank" rel="noopener">Open Find My School</a>' +
+        '<a class="btn ghost sm" style="text-decoration:none" href="https://www.myschool.edu.au/" target="_blank" rel="noopener">Open My School for results</a>' +
+        (addrQ ? '<span class="src">Search: ' + esc(decodeURIComponent(addrQ)) + "</span>" : "") + "</div>");
+      h += panel("Zoned schools — confirm each one", "ICSEA is an index of the intake's socio-educational advantage, set at 1000 nationally. NAPLAN is only meaningful against statistically similar schools, which is how My School presents it.",
         fieldsHTML(["schoolPrimary", "schoolPrimaryICSEA", "schoolPrimaryNaplan", "schoolDistance", "schoolSecondary", "schoolSecondaryICSEA", "schoolSecondaryNaplan", "schoolVCE", "zoneRisk"]));
-      h += panel("Other options within reach", "", fieldsHTML(["schoolOthers"], "wide"));
+      h += panel("Schools near the address", "Read from Vicmap's features of interest, so the names and distances are authoritative — but proximity is not catchment. The nearest school is frequently not the zoned one.", fieldsHTML(["schoolOthers"], "wide"));
       const os = otherSchools();
       if (os.length) h += panel("Alternatives", "", table(["School", "Sector", "Distance", "Fees"], os.map(r => trow([esc(r.name), esc(r.sector), esc(r.dist), esc(r.fees)])).join("")));
       h += scoreBlock(schoolScore(), "School catchment score", "Weighted toward the secondary school and the results, because that is what buyers pay for.");
@@ -1607,14 +1769,14 @@ function renderBoard() {
   const m = cashflowModel(), c = m.c, d = demandScore(), sc = schoolScore(), ss = streetScore();
   const pc = propertyCAGR();
   const items = [
-    { k: "Price", v: gv("price") ? k$(gv("price")) : dash, s: gv("land") ? money(gv("price") / gv("land")) + " / m² land" : (gs("suburb") || "enter an address"), lead: true },
+    { k: "Price", v: gnum("price") ? k$(gv("price")) : dash, s: (gnum("price") && gnum("land")) ? money(gv("price") / gv("land")) + " / m² land" : (gs("suburb") || "enter an address"), lead: true },
     { k: "Suburb demand", v: d.total == null ? dash : d.total, s: scoreWord(d.total) + " · " + d.coverage, tone: scoreTone(d.total) },
     { k: "Street demand", v: ss.total == null ? dash : ss.total, s: scoreWord(ss.total), tone: scoreTone(ss.total) },
     { k: "Schools", v: sc.total == null ? dash : sc.total, s: scoreWord(sc.total), tone: scoreTone(sc.total) },
-    { k: "Duty + costs", v: k$(c.d.gross + c.other), s: "duty " + k$(c.d.gross), tone: "m" },
-    { k: "Cash to settle", v: k$(c.totalAcq + c.lmiPayable - c.loan), s: "LVR " + pct(c.lvr, 0), tone: c.lvr > 90 ? "b" : c.lvr > 80 ? "w" : "g" },
-    { k: "Gross yield", v: pct(m.grossYield, 2), s: "net " + pct(m.netYield, 2), tone: m.grossYield >= 5 ? "g" : m.grossYield >= 3.8 ? "w" : "b" },
-    { k: "After tax / week", v: money(m.perWeek, 0), s: m.quarantined ? "loss quarantined" : gb("newBuild") ? "new build, geared" : "currently deductible", tone: m.perWeek >= 0 ? "g" : m.perWeek > -150 ? "w" : "b" },
+    { k: "Duty + costs", v: gnum("price") ? k$(c.d.gross + c.other) : dash, s: gnum("price") ? "duty " + k$(c.d.gross) : "needs a price", tone: "m" },
+    { k: "Cash to settle", v: gnum("price") ? k$(c.totalAcq + c.lmiPayable - c.loan) : dash, s: gnum("price") ? "LVR " + pct(c.lvr, 0) : "needs a price", tone: !gnum("price") ? "m" : c.lvr > 90 ? "b" : c.lvr > 80 ? "w" : "g" },
+    { k: "Gross yield", v: (gnum("price") && gnum("rentWeek")) ? pct(m.grossYield, 2) : dash, s: (gnum("price") && gnum("rentWeek")) ? "net " + pct(m.netYield, 2) : "needs price and rent", tone: !(gnum("price") && gnum("rentWeek")) ? "m" : m.grossYield >= 5 ? "g" : m.grossYield >= 3.8 ? "w" : "b" },
+    { k: "After tax / week", v: (gnum("price") && gnum("rentWeek")) ? money(m.perWeek, 0) : dash, s: !(gnum("price") && gnum("rentWeek")) ? "needs price and rent" : m.quarantined ? "loss quarantined" : gb("newBuild") ? "new build, geared" : "currently deductible", tone: !(gnum("price") && gnum("rentWeek")) ? "m" : m.perWeek >= 0 ? "g" : m.perWeek > -150 ? "w" : "b" },
     { k: "History", v: pc ? pct(pc.rate) : dash, s: pc ? "p.a. since " + pc.from.y : "add past sales", tone: pc ? (pc.rate >= 5 ? "g" : pc.rate >= 2.5 ? "w" : "b") : "m" }
   ];
   $("#board").innerHTML = items.map(i =>
@@ -1647,7 +1809,7 @@ function readControl(n) {
 document.addEventListener("input", e => {
   const n = e.target;
   if (n.id === "f_paste") return;
-  if (n.dataset && n.dataset.k) { S[n.dataset.k] = readControl(n); renderBoard(); saveLocal(); return; }
+  if (n.dataset && n.dataset.k) { S[n.dataset.k] = readControl(n); setProv(n.dataset.k, "u"); renderBoard(); saveLocal(); return; }
   if (n.id && n.id.indexOf("f_") === 0 && HEADER_KEYS.includes(n.id.slice(2))) { S[n.id.slice(2)] = n.value; renderBoard(); saveLocal(); }
 });
 document.addEventListener("change", e => {
@@ -1655,7 +1817,7 @@ document.addEventListener("change", e => {
   if (n.dataset && n.dataset.ck) { S["_ck_" + n.dataset.ck] = n.checked; saveLocal(); return; }
   if (n.id === "f_paste") return;
   if ((n.dataset && n.dataset.k) || (n.id && HEADER_KEYS.includes(n.id.slice(2)))) {
-    if (n.dataset && n.dataset.k) S[n.dataset.k] = readControl(n); else S[n.id.slice(2)] = n.value;
+    if (n.dataset && n.dataset.k) { S[n.dataset.k] = readControl(n); setProv(n.dataset.k, "u"); } else { S[n.id.slice(2)] = n.value; setProv(n.id.slice(2), "u"); }
     const keep = document.activeElement && document.activeElement.id;
     renderBoard(); renderMain(); saveLocal();
     if (keep) { const again = document.getElementById(keep); if (again && again.focus) { try { again.focus(); } catch (_) { } } }
@@ -1675,7 +1837,12 @@ $("#btn-theme").addEventListener("click", () => {
   if (next) document.documentElement.setAttribute("data-theme", next); else document.documentElement.removeAttribute("data-theme");
   try { localStorage.setItem("pts-theme", next); } catch (_) { }
 });
-$("#btn-example").addEventListener("click", () => { Object.assign(S, EXAMPLE); paintHeaderFields(); renderAll(); });
+$("#btn-example").addEventListener("click", () => {
+  Object.assign(S, EXAMPLE);
+  S._prov = {};
+  Object.keys(EXAMPLE).forEach(k => setProv(k, ASSUMPTIONS.has(k) ? "a" : "x"));
+  paintHeaderFields(); renderAll();
+});
 $("#btn-reset").addEventListener("click", () => {
   Object.keys(S).forEach(k => { if (!BLANK_KEEP.includes(k)) delete S[k]; });
   S.state = S.state || "VIC"; paintHeaderFields(); renderAll();
@@ -1856,7 +2023,8 @@ const LAYER = {
   bushfire: VM + "/Vicmap_Planning/FeatureServer/9",
   lga: VM + "/Vicmap_Admin/FeatureServer/9",
   poi: VM + "/Vicmap_Features_of_Interest/FeatureServer/1",
-  building: VM + "/Vicmap_Features_of_Interest/FeatureServer/7"
+  building: VM + "/Vicmap_Features_of_Interest/FeatureServer/7",
+  locality: VM + "/Vicmap_Admin/FeatureServer/11"
 };
 const STOP = new Set(["the","of","and","st","rd","ave","dr","ct","pl","cres","pde","tce","street","road","avenue","drive","court","place","crescent","parade","terrace","way","close","grove","boulevard","circuit","rise","walk","lane"]);
 
@@ -1963,6 +2131,10 @@ function titleCase(s) {
 
 async function vmDossier(feat) {
   const a = feat.attributes, g = feat.geometry;
+  /* A new address means every figure about the OLD property is wrong. Clear it rather than
+     leave it looking authoritative. Assumptions and your own finances survive. */
+  PROPERTY_SCOPED.forEach(k => { delete S[k]; if (S._prov) delete S._prov[k]; });
+  ["_street", "_suburb", "_rings", "_buildings", "_amenities", "zoneDesc", "parcelSPI"].forEach(k => delete S[k]);
   const pt = { geometry: g.x + "," + g.y, geometryType: "esriGeometryPoint", inSR: "4326", spatialRel: "esriSpatialRelIntersects", outFields: "*" };
   const res = await Promise.all([
     vmQuery(LAYER.parcel, Object.assign({}, pt, { returnGeometry: "true", outSR: "3111" })).catch(() => []),
@@ -2014,6 +2186,14 @@ async function vmDossier(feat) {
     const near = schools.filter(s => /primary/i.test(String(s.a.feature_subtype || "")))[0];
     if (near) S.schoolDistance = Math.round(near.d / 100) / 10;
   }
+  ["address", "suburb", "postcode", "street", "state"].forEach(k => setProv(k, "v"));
+  if (S.land) setProv("land", "v");
+  if (S.zone) setProv("zone", "v");
+  if (S.overlays) setProv("overlays", "v");
+  if (S.council) setProv("council", "v");
+  if (S.parcelSPI) setProv("parcelSPI", "v");
+  if (S.schoolOthers) setProv("schoolOthers", "v");
+  if (S.schoolDistance) setProv("schoolDistance", "v");
   S._rings = (parcel.length && parcel[0].geometry) ? parcel[0].geometry.rings : null;
   S._amenities = poi.filter(x => x.attributes && x.geometry).map(x => ({
     n: x.attributes.name_label || titleCase(x.attributes.name || ""),
@@ -2027,6 +2207,9 @@ async function vmDossier(feat) {
     const bl = await vmQuery(LAYER.building, Object.assign({}, pt, { returnGeometry: "true", outSR: "3111", distance: "60", units: "esriSRUnit_Meter", resultRecordCount: "40" }));
     S._buildings = bl.filter(x => x.geometry && x.geometry.rings).map(x => x.geometry.rings);
   } catch (_) { S._buildings = null; }
+  if (S._prov) Object.keys(S._prov).forEach(k => { if (S._prov[k] === "x") S._prov[k] = "a"; });
+  try { await streetAnalysis(); } catch (e) { S._street = { error: e.message }; }
+  try { await suburbAnalysis(g); } catch (e) { S._suburb = { error: e.message }; }
   return { filled: filled, zoneDesc: S.zoneDesc, ugz: /^UGZ/.test(S.zone || "") };
 }
 
@@ -2086,13 +2269,153 @@ document.addEventListener("click", async e => {
   }
 });
 
+
+/* =========================================================================
+   14c. STREET + SUBURB ANALYSIS — measured from Vicmap, not typed in
+   ========================================================================= */
+const stats = arr => {
+  const a = arr.slice().sort((x, y) => x - y);
+  const q = f => a[Math.min(a.length - 1, Math.max(0, Math.round((a.length - 1) * f)))];
+  return { n: a.length, min: a[0], max: a[a.length - 1], median: q(0.5), q1: q(0.25), q3: q(0.75),
+    mean: a.reduce((s, v) => s + v, 0) / a.length, deciles: [1,2,3,4,5,6,7,8,9].map(i => q(i / 10)), sorted: a };
+};
+const percentileOf = (v, sorted) => {
+  let below = 0;
+  for (const x of sorted) { if (x < v) below++; else break; }
+  return Math.round(below / sorted.length * 100);
+};
+
+async function streetAnalysis() {
+  const road = String(S.street || "").replace(/\s+(road|street|avenue|drive|court|place|crescent|parade|terrace|way|close|grove|boulevard|circuit|rise|walk|lane)$/i, "").trim();
+  const loc = String(S.suburb || "").toUpperCase();
+  if (!road || !loc) { S._street = null; return; }
+  const addrs = await vmQuery(LAYER.address, {
+    where: "road_name='" + sqlq(road) + "' AND locality_name='" + sqlq(loc) + "'",
+    outFields: "ezi_address,house_number_1,property_pfi", returnGeometry: "true", outSR: "4326", resultRecordCount: "600"
+  });
+  if (!addrs.length) { S._street = null; return; }
+  const xs = addrs.map(f => f.geometry.x), ys = addrs.map(f => f.geometry.y);
+  const pad = 0.0004;
+  const env = [Math.min.apply(null, xs) - pad, Math.min.apply(null, ys) - pad,
+               Math.max.apply(null, xs) + pad, Math.max.apply(null, ys) + pad].join(",");
+  const parcels = await vmQuery(LAYER.parcel, {
+    geometry: env, geometryType: "esriGeometryEnvelope", inSR: "4326", spatialRel: "esriSpatialRelIntersects",
+    outFields: "parcel_spi", returnGeometry: "true", outSR: "3111", resultRecordCount: "900"
+  });
+  const areas = parcels.filter(f => f.geometry && f.geometry.rings)
+    .map(f => Math.round(ringArea(f.geometry.rings))).filter(a => a > 50 && a < 8000);
+  if (!areas.length) { S._street = null; return; }
+  const st = stats(areas);
+  /* subdivision precedent: alpha-suffixed street numbers (12A) and repeated numbers (units) */
+  const nums = addrs.map(f => String(f.attributes.ezi_address || "").match(/^(\d+[A-Za-z]?)/));
+  const suffixed = nums.filter(m => m && /[A-Za-z]$/.test(m[1])).length;
+  const counts = {};
+  nums.forEach(m => { if (m) { const base = m[1].replace(/[A-Za-z]$/, ""); counts[base] = (counts[base] || 0) + 1; } });
+  const multi = Object.keys(counts).filter(k => counts[k] > 1).length;
+  const small = areas.filter(a => a < st.median * 0.62).length;
+  S._street = {
+    road: S.street, addresses: addrs.length, parcels: st.n, st,
+    suffixed, multi, small,
+    subdivided: Math.round(Math.max(suffixed, small) / st.n * 100),
+    myArea: gv("land") || null,
+    myPercentile: gv("land") ? percentileOf(gv("land"), st.sorted) : null
+  };
+}
+
+async function suburbAnalysis(g) {
+  const loc = String(S.suburb || "").toUpperCase();
+  if (!loc) { S._suburb = null; return; }
+  const where = "UPPER(locality_name)='" + sqlq(loc) + "'";
+  const [polyM, poly4326, count] = await Promise.all([
+    vmQuery(LAYER.locality, { where: where, outFields: "locality_name", returnGeometry: "true", outSR: "3111" }).catch(() => []),
+    vmQuery(LAYER.locality, { where: where, outFields: "locality_name", returnGeometry: "true", outSR: "4326" }).catch(() => []),
+    (async () => {
+      const body = new URLSearchParams({ f: "json", where: "locality_name='" + sqlq(loc) + "'", returnCountOnly: "true" });
+      const r = await fetch(LAYER.address + "/query", { method: "POST", body, headers: { "Content-Type": "application/x-www-form-urlencoded" } });
+      const j = await r.json(); return j.count || 0;
+    })().catch(() => 0)
+  ]);
+  const areaM2 = polyM.length && polyM[0].geometry ? ringArea(polyM[0].geometry.rings) : 0;
+  let env = null;
+  if (poly4326.length && poly4326[0].geometry) {
+    const pts = poly4326[0].geometry.rings.flat();
+    const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+    env = [Math.min.apply(null, xs), Math.min.apply(null, ys), Math.max.apply(null, xs), Math.max.apply(null, ys)].join(",");
+  } else if (g) { env = [g.x - 0.02, g.y - 0.02, g.x + 0.02, g.y + 0.02].join(","); }
+
+  const grp = async (url) => {
+    const body = new URLSearchParams({
+      f: "json", geometry: env, geometryType: "esriGeometryEnvelope", inSR: "4326",
+      spatialRel: "esriSpatialRelIntersects", outFields: "zone_code", returnGeometry: "false",
+      outStatistics: JSON.stringify([
+        { statisticType: "sum", onStatisticField: "Shape__Area", outStatisticFieldName: "a" },
+        { statisticType: "count", onStatisticField: "zone_code", outStatisticFieldName: "n" }]),
+      groupByFieldsForStatistics: "zone_code"
+    });
+    const r = await fetch(url + "/query", { method: "POST", body, headers: { "Content-Type": "application/x-www-form-urlencoded" } });
+    const j = await r.json();
+    return (j.features || []).map(f => f.attributes);
+  };
+  const [zones, overlays] = await Promise.all([grp(LAYER.zone).catch(() => []), grp(LAYER.overlay).catch(() => [])]);
+  const totalA = zones.reduce((s, z) => s + (z.a || 0), 0) || 1;
+  const mix = zones.map(z => ({ code: z.zone_code, pct: z.a / totalA * 100, n: z.n })).sort((x, y) => y.pct - x.pct);
+  const share = re => mix.filter(m => re.test(m.code)).reduce((s, m) => s + m.pct, 0);
+  S._suburb = {
+    name: titleCase(loc), areaKm2: areaM2 / 1e6, addresses: count,
+    density: areaM2 > 0 ? count / (areaM2 / 1e6) : null,
+    mix: mix.slice(0, 10),
+    residentialShare: share(/^(NRZ|GRZ|RGZ|LDRZ|MUZ|TZ|UGZ)/),
+    nrz: share(/^NRZ/), grz: share(/^GRZ/), rgz: share(/^RGZ/), ugz: share(/^UGZ/),
+    openSpace: share(/^(PPRZ|PCRZ)/), commercial: share(/^(C1Z|C2Z)/),
+    overlays: overlays.map(o => ({ code: o.zone_code, n: o.n })).sort((x, y) => y.n - x.n).slice(0, 10),
+    constrained: overlays.filter(o => /^(LSIO|SBO|FO|BMO|HO|ESO)/.test(o.zone_code)).reduce((s, o) => s + o.n, 0)
+  };
+}
+
+/* simple distribution chart: lot sizes on the street, with your lot marked */
+function histogram(all, mark, unit) {
+  if (!all || all.length < 4) return "";
+  /* a school reserve or a battleaxe strip at either end squashes every ordinary lot into one bar,
+     so chart the 3rd-97th percentile and say so */
+  const cut = f => all[Math.min(all.length - 1, Math.max(0, Math.round((all.length - 1) * f)))];
+  const lo0 = cut(0.03), hi0 = cut(0.97);
+  const sorted = all.filter(v => v >= lo0 && v <= hi0);
+  if (sorted.length < 4) return "";
+  const clipped = all.length - sorted.length;
+  const W = 660, H = 150, pad = { l: 34, r: 12, t: 10, b: 26 };
+  const lo = sorted[0], hi = sorted[sorted.length - 1], span = (hi - lo) || 1;
+  const bins = 18, counts = new Array(bins).fill(0);
+  sorted.forEach(v => { counts[Math.min(bins - 1, Math.floor((v - lo) / span * bins))]++; });
+  const maxC = Math.max.apply(null, counts) || 1;
+  const bw = (W - pad.l - pad.r) / bins;
+  let g = "";
+  counts.forEach((c, i) => {
+    const h = (H - pad.t - pad.b) * (c / maxC);
+    g += '<rect x="' + (pad.l + i * bw + 1).toFixed(1) + '" y="' + (H - pad.b - h).toFixed(1) +
+      '" width="' + (bw - 2).toFixed(1) + '" height="' + h.toFixed(1) + '" fill="var(--accent)" fill-opacity="0.55"/>';
+  });
+  g += '<line x1="' + pad.l + '" x2="' + (W - pad.r) + '" y1="' + (H - pad.b) + '" y2="' + (H - pad.b) + '" stroke="var(--line)"/>';
+  [lo, lo + span / 2, hi].forEach((v, i) => {
+    const x = pad.l + (W - pad.l - pad.r) * (i / 2);
+    g += '<text x="' + x.toFixed(1) + '" y="' + (H - 8) + '" text-anchor="' + (i === 0 ? "start" : i === 2 ? "end" : "middle") +
+      '" font-size="10" font-family="IBM Plex Mono, monospace" fill="var(--muted)">' + Math.round(v) + (unit || "") + "</text>";
+  });
+  if (mark != null && mark >= lo && mark <= hi) {
+    const x = pad.l + (W - pad.l - pad.r) * ((mark - lo) / span);
+    g += '<line x1="' + x.toFixed(1) + '" x2="' + x.toFixed(1) + '" y1="' + pad.t + '" y2="' + (H - pad.b) + '" stroke="var(--ochre)" stroke-width="2"/>' +
+      '<text x="' + x.toFixed(1) + '" y="' + (pad.t - 1) + '" text-anchor="middle" font-size="10" font-weight="600" font-family="IBM Plex Mono, monospace" fill="var(--ochre)">this lot</text>';
+  }
+  return '<div class="chartbox"><svg class="chart" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Distribution of lot sizes in this street">' + g + "</svg></div>" +
+    (clipped ? '<p class="src" style="margin:4px 0 0">' + clipped + " parcel" + (clipped > 1 ? "s" : "") + " outside this range (reserves, road strips or very large holdings) are excluded from the chart but counted in the figures below.</p>" : "");
+}
 /* =========================================================================
    15. BOOT
    ========================================================================= */
 (function boot() {
   try { const t = localStorage.getItem("pts-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (_) { }
   const had = loadLocal();
-  if (!had) Object.assign(S, EXAMPLE);
+  if (!had) { Object.assign(S, EXAMPLE); S._prov = {}; Object.keys(EXAMPLE).forEach(k => setProv(k, ASSUMPTIONS.has(k) ? "a" : "x")); }
+  markAssumptions();
   if (!S.state) S.state = "VIC";
   paintHeaderFields();
   renderAll();
