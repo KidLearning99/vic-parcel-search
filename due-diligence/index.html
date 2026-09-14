@@ -2360,6 +2360,9 @@ const percentileOf = (v, sorted) => {
   return Math.round(below / sorted.length * 100);
 };
 
+/* These two run in the background after the facts have painted, so they can afford to
+   wait out a slow Vicmap rather than give up at the interactive timeout. */
+const SLOW_MS = 45000;
 async function streetAnalysis() {
   const road = String(S.street || "").replace(/\s+(road|street|avenue|drive|court|place|crescent|parade|terrace|way|close|grove|boulevard|circuit|rise|walk|lane)$/i, "").trim();
   const loc = String(S.suburb || "").toUpperCase();
@@ -2367,7 +2370,7 @@ async function streetAnalysis() {
   const addrs = await vmQuery(LAYER.address, {
     where: "road_name='" + sqlq(road) + "' AND locality_name='" + sqlq(loc) + "'",
     outFields: "ezi_address,house_number_1,property_pfi", returnGeometry: "true", outSR: "4326", resultRecordCount: "600"
-  });
+  }, SLOW_MS);
   if (!addrs.length) { S._street = null; return; }
   const xs = addrs.map(f => f.geometry.x), ys = addrs.map(f => f.geometry.y);
   const pad = 0.0004;
@@ -2376,7 +2379,7 @@ async function streetAnalysis() {
   const parcels = await vmQuery(LAYER.parcel, {
     geometry: env, geometryType: "esriGeometryEnvelope", inSR: "4326", spatialRel: "esriSpatialRelIntersects",
     outFields: "parcel_spi", returnGeometry: "true", outSR: "3111", resultRecordCount: "900"
-  });
+  }, SLOW_MS);
   const areas = parcels.filter(f => f.geometry && f.geometry.rings)
     .map(f => Math.round(ringArea(f.geometry.rings))).filter(a => a > 50 && a < 8000);
   if (!areas.length) { S._street = null; return; }
@@ -2402,8 +2405,8 @@ async function suburbAnalysis(g) {
   if (!loc) { S._suburb = null; return; }
   const where = "UPPER(locality_name)='" + sqlq(loc) + "'";
   const [polyM, poly4326, count] = await Promise.all([
-    vmQuery(LAYER.locality, { where: where, outFields: "locality_name", returnGeometry: "true", outSR: "3111" }).catch(() => []),
-    vmQuery(LAYER.locality, { where: where, outFields: "locality_name", returnGeometry: "true", outSR: "4326" }).catch(() => []),
+    vmQuery(LAYER.locality, { where: where, outFields: "locality_name", returnGeometry: "true", outSR: "3111" }, SLOW_MS).catch(() => []),
+    vmQuery(LAYER.locality, { where: where, outFields: "locality_name", returnGeometry: "true", outSR: "4326" }, SLOW_MS).catch(() => []),
     (async () => {
       const body = new URLSearchParams({ f: "json", where: "locality_name='" + sqlq(loc) + "'", returnCountOnly: "true" });
       const r = await fetch(LAYER.address + "/query", { method: "POST", body, headers: { "Content-Type": "application/x-www-form-urlencoded" } });
