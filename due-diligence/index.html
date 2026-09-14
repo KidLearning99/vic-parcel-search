@@ -1357,6 +1357,8 @@ const TABS = [
         "</div></div>");
 
       const stq = S._street;
+      if (stq && stq.pending) h += panel("How this lot compares to its street", "", '<div class="callout">Measuring every parcel boundary in this street from Vicmap. It takes a few seconds and appears here on its own.</div>');
+      else if (stq && stq.error) h += panel("How this lot compares to its street", "", '<div class="callout">Could not measure the street: ' + esc(stq.error) + ". Run the address lookup again to retry.</div>");
       if (stq && stq.st) {
         const s = stq.st;
         const pctl = stq.myPercentile;
@@ -1449,6 +1451,8 @@ const TABS = [
     render() {
       let h = "";
       const sb = S._suburb;
+      if (sb && sb.pending) h += panel("What this suburb is actually made of", "", '<div class="callout">Measuring the locality boundary and its zone mix from Vicmap. It takes a few seconds and appears here on its own.</div>');
+      else if (sb && sb.error) h += panel("What this suburb is actually made of", "", '<div class="callout">Could not measure the suburb: ' + esc(sb.error) + ". Run the address lookup again to retry.</div>");
       if (sb && sb.mix && sb.mix.length) {
         const bar = (label, pctv, note) => '<div class="barrow"><div>' + esc(label) + '</div><div class="bt"><i style="width:' + clamp(pctv, 0, 100).toFixed(1) + '%"></i></div><div class="bv">' + pct(pctv, 1) + "</div></div>" + (note ? '<div class="hint" style="grid-column:1/-1;margin:-2px 0 4px">' + note + "</div>" : "");
         h += panel("What " + esc(sb.name) + " is actually made of",
@@ -2073,13 +2077,23 @@ const LAYER = {
 };
 const STOP = new Set(["the","of","and","st","rd","ave","dr","ct","pl","cres","pde","tce","street","road","avenue","drive","court","place","crescent","parade","terrace","way","close","grove","boulevard","circuit","rise","walk","lane"]);
 
-async function vmQuery(url, params) {
+/* Every Vicmap call is bounded. fetch() has no default timeout, so one slow layer used to
+   leave the lookup sitting on "Reading parcel…" forever with nothing to click. */
+async function vmQuery(url, params, ms) {
+  const limit = ms || 15000;
   const body = new URLSearchParams(Object.assign({ f: "json" }, params));
-  const r = await fetch(url + "/query", { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" } });
-  if (!r.ok) throw new Error("Vicmap returned " + r.status);
-  const j = await r.json();
-  if (j.error) throw new Error(j.error.message || "Vicmap error");
-  return j.features || [];
+  const ctl = new AbortController();
+  const to = setTimeout(() => ctl.abort(), limit);
+  try {
+    const r = await fetch(url + "/query", { method: "POST", body: body, headers: { "Content-Type": "application/x-www-form-urlencoded" }, signal: ctl.signal });
+    if (!r.ok) throw new Error("Vicmap returned " + r.status);
+    const j = await r.json();
+    if (j.error) throw new Error(j.error.message || "Vicmap error");
+    return j.features || [];
+  } catch (e) {
+    if (e.name === "AbortError") throw new Error("no answer within " + Math.round(limit / 1000) + "s");
+    throw e;
+  } finally { clearTimeout(to); }
 }
 const sqlq = s => String(s).replace(/'/g, "''").toUpperCase();
 
@@ -2254,8 +2268,13 @@ async function vmDossier(feat) {
     S._buildings = bl.filter(x => x.geometry && x.geometry.rings).map(x => x.geometry.rings);
   } catch (_) { S._buildings = null; }
   if (S._prov) Object.keys(S._prov).forEach(k => { if (S._prov[k] === "x") S._prov[k] = "a"; });
-  try { await streetAnalysis(); } catch (e) { S._street = { error: e.message }; }
-  try { await suburbAnalysis(g); } catch (e) { S._suburb = { error: e.message }; }
+  /* The street and suburb passes pull a lot of polygon geometry and can take 10-30s.
+     Nothing above depends on them, so let the facts paint immediately and fill these in
+     when they land instead of making the whole lookup wait behind them. */
+  S._street = { pending: true }; S._suburb = { pending: true };
+  const repaint = () => { try { renderAll(); } catch (_) { } };
+  streetAnalysis().catch(e => { S._street = { error: e.message }; }).then(repaint);
+  suburbAnalysis(g).catch(e => { S._suburb = { error: e.message }; }).then(repaint);
   return { filled: filled, zoneDesc: S.zoneDesc, ugz: /^UGZ/.test(S.zone || "") };
 }
 
@@ -2280,9 +2299,8 @@ async function doLookup(text) {
       : "No match. Try the number and street name only, for example <b>12 Tottori Road</b>, then add the suburb.");
   } catch (e) {
     renderSugg([]);
-    lstatus("Vicmap did not answer (" + esc(e.message) + "). You can still type everything by hand.");
-  }
-  vmBusy = false;
+    lstatus("Vicmap did not answer (" + esc(e.message) + "). Try again, or type the fields by hand.");
+  } finally { vmBusy = false; }
 }
 document.addEventListener("input", e => {
   if (e.target.id !== "f_lookup") return;
