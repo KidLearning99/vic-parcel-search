@@ -123,6 +123,10 @@ h2, h3{letter-spacing:-.01em}
 .sc .v{font-family:"IBM Plex Mono",monospace; font-size:20px; font-weight:500; letter-spacing:-.01em; font-variant-numeric:tabular-nums}
 .sc .s{font-size:11.5px; color:var(--muted)}
 .sc.lead{box-shadow:inset 3px 0 0 var(--accent)}
+.sc .k .ptag{margin-left:6px; font-size:9px; letter-spacing:.06em; padding:1px 4px; border-radius:3px; font-weight:600; vertical-align:1px}
+.sc .k .ptag.example{background:var(--bad,#b3261e); color:#fff}
+.sc .k .ptag.assumed{background:transparent; color:var(--muted); border:1px solid currentColor; opacity:.8}
+.sc.ex .v{opacity:.55}
 .dot{display:inline-block; width:7px; height:7px; border-radius:50%; vertical-align:1px; margin-right:5px}
 .g{color:var(--good)} .w{color:var(--warn)} .b{color:var(--bad)}
 .bg-g{background:var(--good)} .bg-w{background:var(--warn)} .bg-b{background:var(--bad)} .bg-m{background:var(--muted)}
@@ -611,7 +615,7 @@ const PROPERTY_SCOPED = ["price","civ","sitevalue","floor","beds","baths","cars"
   "saleHistory","comparables","streetSales","streetDwellings","medianHouse","median12","median10","dom",
   "discount","clearance","vacancy","listings","soldYear","dwellings","renters","popGrowth","yieldSuburb",
   "buyerDemandIndex","daysToRent","schoolPrimary","schoolPrimaryICSEA","schoolPrimaryNaplan","schoolSecondary",
-  "schoolSecondaryICSEA","schoolSecondaryNaplan","schoolVCE","zoneRisk","rentWeek","councilRates","water",
+  "schoolSecondaryICSEA","schoolSecondaryNaplan","schoolVCE","schoolDistance","schoolOthers","zoneRisk","rentWeek","councilRates","water",
   "insurance","strata","depnBuilding","depnPlant","salePrice","renoCost","renoUplift","renoRentUplift",
   "lots","buildArea","civilCost","profCost","endValue","gaicHa","otpDeduction","deposit"];
 function provOf(k) {
@@ -1765,22 +1769,37 @@ const TABS = [
    ========================================================================= */
 let activeTab = "property";
 
+/* A headline number is only as good as its weakest input. These say so on the tile
+   itself, so nothing on the board can be read as measured when it is not. */
+const BOARD_KEYS = {
+  suburb: ["medianHouse", "median12", "median10", "dom", "discount", "clearance", "vacancy", "listings", "soldYear", "dwellings", "renters", "popGrowth", "yieldSuburb", "buyerDemandIndex", "daysToRent"],
+  street: ["streetSales", "streetDwellings"],
+  schools: ["schoolPrimaryICSEA", "schoolPrimaryNaplan", "schoolSecondaryICSEA", "schoolSecondaryNaplan", "schoolVCE", "schoolDistance"]
+};
+function boardSrc(keys) {
+  let ex = false, as = false;
+  keys.forEach(k => { if (S[k] === undefined || S[k] === "" || S[k] === null) return; const p = provOf(k); if (p === "x") ex = true; else if (p === "a") as = true; });
+  return ex ? "example" : as ? "assumed" : "";
+}
+
 function renderBoard() {
   const m = cashflowModel(), c = m.c, d = demandScore(), sc = schoolScore(), ss = streetScore();
   const pc = propertyCAGR();
   const items = [
-    { k: "Price", v: gnum("price") ? k$(gv("price")) : dash, s: (gnum("price") && gnum("land")) ? money(gv("price") / gv("land")) + " / m² land" : (gs("suburb") || "enter an address"), lead: true },
-    { k: "Suburb demand", v: d.total == null ? dash : d.total, s: scoreWord(d.total) + " · " + d.coverage, tone: scoreTone(d.total) },
-    { k: "Street demand", v: ss.total == null ? dash : ss.total, s: scoreWord(ss.total), tone: scoreTone(ss.total) },
-    { k: "Schools", v: sc.total == null ? dash : sc.total, s: scoreWord(sc.total), tone: scoreTone(sc.total) },
-    { k: "Duty + costs", v: gnum("price") ? k$(c.d.gross + c.other) : dash, s: gnum("price") ? "duty " + k$(c.d.gross) : "needs a price", tone: "m" },
-    { k: "Cash to settle", v: gnum("price") ? k$(c.totalAcq + c.lmiPayable - c.loan) : dash, s: gnum("price") ? "LVR " + pct(c.lvr, 0) : "needs a price", tone: !gnum("price") ? "m" : c.lvr > 90 ? "b" : c.lvr > 80 ? "w" : "g" },
-    { k: "Gross yield", v: (gnum("price") && gnum("rentWeek")) ? pct(m.grossYield, 2) : dash, s: (gnum("price") && gnum("rentWeek")) ? "net " + pct(m.netYield, 2) : "needs price and rent", tone: !(gnum("price") && gnum("rentWeek")) ? "m" : m.grossYield >= 5 ? "g" : m.grossYield >= 3.8 ? "w" : "b" },
-    { k: "After tax / week", v: (gnum("price") && gnum("rentWeek")) ? money(m.perWeek, 0) : dash, s: !(gnum("price") && gnum("rentWeek")) ? "needs price and rent" : m.quarantined ? "loss quarantined" : gb("newBuild") ? "new build, geared" : "currently deductible", tone: !(gnum("price") && gnum("rentWeek")) ? "m" : m.perWeek >= 0 ? "g" : m.perWeek > -150 ? "w" : "b" },
-    { k: "History", v: pc ? pct(pc.rate) : dash, s: pc ? "p.a. since " + pc.from.y : "add past sales", tone: pc ? (pc.rate >= 5 ? "g" : pc.rate >= 2.5 ? "w" : "b") : "m" }
+    { k: "Price", v: gnum("price") ? k$(gv("price")) : dash, s: (gnum("price") && gnum("land")) ? money(gv("price") / gv("land")) + " / m² land" : (gs("suburb") || "enter an address"), lead: true, src: boardSrc(["price"]) },
+    { k: "Suburb demand", v: d.total == null ? dash : d.total, s: scoreWord(d.total) + " · " + d.coverage, tone: scoreTone(d.total), src: boardSrc(BOARD_KEYS.suburb) },
+    { k: "Street demand", v: ss.total == null ? dash : ss.total, s: scoreWord(ss.total), tone: scoreTone(ss.total), src: boardSrc(BOARD_KEYS.street) },
+    { k: "Schools", v: sc.total == null ? dash : sc.total, s: scoreWord(sc.total), tone: scoreTone(sc.total), src: boardSrc(BOARD_KEYS.schools) },
+    { k: "Duty + costs", v: gnum("price") ? k$(c.d.gross + c.other) : dash, s: gnum("price") ? "duty " + k$(c.d.gross) : "needs a price", tone: "m", src: boardSrc(["price"]) },
+    { k: "Cash to settle", v: (gnum("price") && gnum("deposit")) ? k$(c.totalAcq + c.lmiPayable - c.loan) : dash, s: !gnum("price") ? "needs a price" : !gnum("deposit") ? "needs a deposit" : "LVR " + pct(c.lvr, 0), tone: !(gnum("price") && gnum("deposit")) ? "m" : c.lvr > 90 ? "b" : c.lvr > 80 ? "w" : "g", src: boardSrc(["price", "deposit"]) },
+    { k: "Gross yield", v: (gnum("price") && gnum("rentWeek")) ? pct(m.grossYield, 2) : dash, s: (gnum("price") && gnum("rentWeek")) ? "net " + pct(m.netYield, 2) : "needs price and rent", tone: !(gnum("price") && gnum("rentWeek")) ? "m" : m.grossYield >= 5 ? "g" : m.grossYield >= 3.8 ? "w" : "b", src: boardSrc(["price", "rentWeek"]) },
+    { k: "After tax / week", v: (gnum("price") && gnum("rentWeek")) ? money(m.perWeek, 0) : dash, s: !(gnum("price") && gnum("rentWeek")) ? "needs price and rent" : m.quarantined ? "loss quarantined" : gb("newBuild") ? "new build, geared" : "currently deductible", tone: !(gnum("price") && gnum("rentWeek")) ? "m" : m.perWeek >= 0 ? "g" : m.perWeek > -150 ? "w" : "b", src: boardSrc(["price", "rentWeek"]) },
+    { k: "History", v: pc ? pct(pc.rate) : dash, s: pc ? "p.a. since " + pc.from.y : "add past sales", tone: pc ? (pc.rate >= 5 ? "g" : pc.rate >= 2.5 ? "w" : "b") : "m", src: boardSrc(["saleHistory"]) }
   ];
   $("#board").innerHTML = items.map(i =>
-    '<div class="sc' + (i.lead ? " lead" : "") + '"><div class="k">' + esc(i.k) + '</div><div class="v' + (i.tone && i.tone !== "m" ? " " + i.tone : "") + '">' + i.v + '</div><div class="s">' + (i.tone && i.tone !== "m" ? '<span class="dot bg-' + i.tone + '"></span>' : "") + esc(i.s) + "</div></div>"
+    '<div class="sc' + (i.lead ? " lead" : "") + (i.src === "example" ? " ex" : "") + '"><div class="k">' + esc(i.k) +
+    (i.src ? '<span class="ptag ' + i.src + '">' + i.src + "</span>" : "") +
+    '</div><div class="v' + (i.tone && i.tone !== "m" ? " " + i.tone : "") + '">' + i.v + '</div><div class="s">' + (i.tone && i.tone !== "m" ? '<span class="dot bg-' + i.tone + '"></span>' : "") + esc(i.s) + "</div></div>"
   ).join("");
 }
 function renderTabs() {
@@ -1851,8 +1870,34 @@ $("#btn-reset").addEventListener("click", () => {
 /* =========================================================================
    14. PERSISTENCE
    ========================================================================= */
-function saveLocal() { try { localStorage.setItem("pts-state", JSON.stringify(S)); } catch (_) { } }
-function loadLocal() { try { const r = localStorage.getItem("pts-state"); if (r) { Object.assign(S, JSON.parse(r)); return true; } } catch (_) { } return false; }
+/* Bump when a change makes older saved state untrustworthy. v2 is the release that
+   started clearing the example figures on lookup; anything saved before it can hold
+   example numbers sitting next to a real address, which is exactly what must not happen. */
+const STATE_SCHEMA = 2;
+function saveLocal() { try { localStorage.setItem("pts-state", JSON.stringify(Object.assign({ _schema: STATE_SCHEMA }, S))); } catch (_) { } }
+function loadLocal() {
+  try {
+    const r = localStorage.getItem("pts-state");
+    if (!r) return false;
+    const o = JSON.parse(r);
+    const stale = (o._schema || 0) < STATE_SCHEMA;
+    delete o._schema;
+    Object.assign(S, o);
+    if (stale) purgeExample(true);
+    return true;
+  } catch (_) { }
+  return false;
+}
+/* Remove every figure that came from the worked example. `hard` also drops anything
+   property-scoped that carries no provenance at all, which is how pre-v2 state looks. */
+function purgeExample(hard) {
+  const p = S._prov || (S._prov = {});
+  Object.keys(S).forEach(k => {
+    if (k[0] === "_") return;
+    if (p[k] === "x") { delete S[k]; delete p[k]; return; }
+    if (hard && !p[k] && PROPERTY_SCOPED.includes(k)) { delete S[k]; delete p[k]; }
+  });
+}
 
 let DB = null, SAVED = [];
 /* Saved analyses live in this browser's local storage. They survive reloads and
@@ -2134,6 +2179,7 @@ async function vmDossier(feat) {
   /* A new address means every figure about the OLD property is wrong. Clear it rather than
      leave it looking authoritative. Assumptions and your own finances survive. */
   PROPERTY_SCOPED.forEach(k => { delete S[k]; if (S._prov) delete S._prov[k]; });
+  purgeExample(false);
   ["_street", "_suburb", "_rings", "_buildings", "_amenities", "zoneDesc", "parcelSPI"].forEach(k => delete S[k]);
   const pt = { geometry: g.x + "," + g.y, geometryType: "esriGeometryPoint", inSR: "4326", spatialRel: "esriSpatialRelIntersects", outFields: "*" };
   const res = await Promise.all([
