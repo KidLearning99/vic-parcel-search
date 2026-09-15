@@ -242,7 +242,7 @@ img{max-width:100%}
           <input id="f_lookup" autocomplete="off" placeholder="12 Tottori Road Truganina">
         </div>
         <button class="btn ghost sm" id="btn-lookup" type="button" style="margin-bottom:1px">Search</button>
-        <div class="lstatus" id="lookupstatus">Type a street number and name. Picking an address fills the land size, planning zone, overlays, council and nearby schools straight from Vicmap &mdash; everything else you still gather from the links on the Property tab.</div>
+        <div class="lstatus" id="lookupstatus">Type the number, street <b>and suburb</b> &mdash; with the suburb the search answers in about a tenth of a second, without it Vicmap has to scan the whole state and can take half a minute. Picking an address fills the land size, planning zone, overlays, council and nearby schools straight from Vicmap &mdash; everything else you still gather from the links on the Property tab.</div>
       </div>
       <div id="sugg"></div>
     </div>
@@ -644,6 +644,14 @@ async function loadMarket() {
     const r = await fetch("data/vic-market.json", { cache: "force-cache" });
     if (r.ok) MARKET = await r.json();
   } catch (_) { }
+  /* The eight-quarter sales series lives in its own file so the smaller one can be
+     refreshed on its own. Missing it costs the volume chart, nothing else. */
+  if (MARKET) {
+    try {
+      const s = await fetch("data/vic-series.json", { cache: "force-cache" });
+      if (s.ok) { const j = await s.json(); MARKET.qs = j.qs; MARKET.ts = j.ts; MARKET.series = j.series; }
+    } catch (_) { }
+  }
   return MARKET;
 }
 /* The rental report groups suburbs ("Vermont-Forest Hill-Burwood East"), so a
@@ -695,7 +703,64 @@ async function applyMarket() {
   }
   const med = num(S.medianHouse), rw = num(S.rentWeek);
   if (med > 0 && rw > 0) setFromData("yieldSuburb", Math.round(rw * 52 / med * 1000) / 10);
+
+  /* Sales volume over eight quarters. Turnover — how many sales a market is producing —
+     moves before price does, so a suburb where volumes are climbing is worth a second
+     look even when the median has not moved yet. Counts are what the Valuer-General
+     recorded, and later editions revise them up as late settlements land. */
+  const ts = m.ts && m.ts[unitish && m.ts.u && m.ts.u[L] ? "u" : "h"];
+  const row = ts && ts[L];
+  if (row && row.c) {
+    const c = row.c, rec = c.slice(4).filter(x => x != null), pri = c.slice(0, 4).filter(x => x != null);
+    let v = null;
+    if (rec.length >= 3 && pri.length >= 3) {
+      const r4 = rec.reduce((a, b) => a + b, 0) / rec.length * 4, p4 = pri.reduce((a, b) => a + b, 0) / pri.length * 4;
+      if (p4 > 0) v = { recent: Math.round(r4), prior: Math.round(p4), pct: Math.round((r4 - p4) / p4 * 1000) / 10, nRecent: rec.length, nPrior: pri.length };
+    }
+    S._market.vol = { qs: m.qs, counts: c, meds: row.m || null, trend: v, type: (unitish && m.ts.u && m.ts.u[L]) ? "unit" : "house" };
+    if (v) setFromData("soldYear", v.recent);
+  }
   return out;
+}
+
+/* Eight quarterly sales counts as bars, with the median drawn over them on its own scale. */
+function volumeChart(qs, counts, meds) {
+  const W = 620, H = 180, pad = { l: 38, r: 46, t: 14, b: 26 };
+  const n = counts.length, iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
+  const maxC = Math.max.apply(null, counts.filter(x => x != null).concat([1]));
+  const bw = iw / n * 0.62, step = iw / n;
+  let g = "";
+  for (let i = 0; i < n; i++) {
+    const x = pad.l + step * i + (step - bw) / 2;
+    if (counts[i] == null) {
+      g += '<rect x="' + x.toFixed(1) + '" y="' + (pad.t + ih - 6) + '" width="' + bw.toFixed(1) + '" height="6" fill="var(--line)"/>' +
+        '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (pad.t + ih - 10) + '" text-anchor="middle" font-size="8" fill="var(--muted)">n/a</text>';
+    } else {
+      const h = counts[i] / maxC * ih;
+      g += '<rect x="' + x.toFixed(1) + '" y="' + (pad.t + ih - h).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1, h).toFixed(1) + '" fill="var(--accent)" opacity="0.75"/>' +
+        '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (pad.t + ih - h - 3).toFixed(1) + '" text-anchor="middle" font-size="9" font-family="IBM Plex Mono, monospace" fill="var(--muted)">' + counts[i] + "</text>";
+    }
+    g += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="8.5" fill="var(--muted)">' + esc(String(qs[i]).replace(/^20/, "").replace("Q", " Q")) + "</text>";
+  }
+  const mv = (meds || []).map(x => x == null ? null : x);
+  const have = mv.filter(x => x != null);
+  if (have.length > 1) {
+    const lo = Math.min.apply(null, have), hi = Math.max.apply(null, have), span = (hi - lo) || 1;
+    let d = "", started = false;
+    for (let i = 0; i < n; i++) {
+      if (mv[i] == null) continue;
+      const x = pad.l + step * i + step / 2, y = pad.t + ih - (mv[i] - lo) / span * (ih * 0.72) - ih * 0.14;
+      d += (started ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1) + " "; started = true;
+      g += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="2.4" fill="var(--ochre)"/>';
+    }
+    g = '<path d="' + d + '" fill="none" stroke="var(--ochre)" stroke-width="1.8"/>' + g;
+    g += '<text x="' + (W - pad.r + 6) + '" y="' + (pad.t + 10) + '" font-size="9" fill="var(--ochre)">$' + (hi / 1000).toFixed(2) + "m</text>" +
+      '<text x="' + (W - pad.r + 6) + '" y="' + (pad.t + ih) + '" font-size="9" fill="var(--ochre)">$' + (lo / 1000).toFixed(2) + "m</text>";
+  }
+  g += '<text x="4" y="' + (pad.t + 10) + '" font-size="9" fill="var(--muted)">' + maxC + "</text>" +
+    '<text x="4" y="' + (pad.t + ih) + '" font-size="9" fill="var(--muted)">0</text>';
+  return '<div class="chartbox"><svg class="chart" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Quarterly sales volume with median price overlaid">' + g + "</svg></div>" +
+    '<p class="src" style="margin:4px 0 0">Bars are sales recorded in the quarter (left scale). The gold line is the median price over the same quarters (right scale, own range). Oct–Dec 2024 is missing because that edition of the report is not archived anywhere reachable.</p>';
 }
 function provBadge(k) {
   const t = provOf(k);
@@ -1539,12 +1604,28 @@ const TABS = [
           rows.push(["Rent reported for", titleCase(mk.rentGroup)]);
         }
         if (gnum("medianHouse") && gnum("rentWeek")) rows.push(["Implied gross yield on the median", pct(gv("rentWeek") * 52 / gv("medianHouse") * 100, 2)]);
+        const vv = mk.vol && mk.vol.trend;
+        if (vv) {
+          rows.push(["Sales, last four quarters", vv.recent + (vv.nRecent < 4 ? " (scaled from " + vv.nRecent + " quarters)" : "")]);
+          rows.push(["Sales, four quarters before", vv.prior + (vv.nPrior < 4 ? " (scaled from " + vv.nPrior + " quarters)" : "")]);
+          rows.push(["Volume change", pct(vv.pct, 1)]);
+          const sb0 = S._suburb;
+          if (sb0 && sb0.addresses) rows.push(["Turnover — sales as a share of all addresses", pct(vv.recent / sb0.addresses * 100, 1)]);
+        }
         h += panel("What the state actually publishes for " + esc(titleCase(mk.suburb)),
           "Not a portal estimate and not a guess — these are the government series, quoted with the quarter they describe. They set the suburb median, the sales count and the market rent above; overwrite any of them if you have something better.",
           table(["Measure", "Value"], rows.map(r => trow([esc(String(r[0])), esc(String(r[1]))])).join("")) +
           '<p class="src">Sales: ' + esc(M.sales.src) + ", " + esc(M.sales.asOf) + '. <a href="' + M.sales.url + '" target="_blank" rel="noopener">Source</a>. ' +
           "Rents: " + esc(M.rent.src) + ", " + esc(M.rent.asOf) + '. <a href="' + M.rent.url + '" target="_blank" rel="noopener">Source</a>. ' +
           "The rental report groups neighbouring suburbs, so the rent is for the group named above, not this locality alone.</p>");
+        if (mk.vol && mk.vol.counts) {
+          const v = mk.vol.trend;
+          h += panel("Sales volume in " + esc(titleCase(mk.suburb)) + " — " + esc(mk.vol.type) + "s",
+            v ? ("Volume is running at <b>" + v.recent + "</b> sales a year against <b>" + v.prior + "</b> over the four quarters before, " +
+              (v.pct >= 0 ? "up " : "down ") + "<b>" + pct(Math.abs(v.pct), 1) + "</b>. Turnover usually moves before price does, so this is the measure to watch when the median has not shifted yet.")
+              : "Not enough quarters on record to call a trend.",
+            volumeChart(mk.vol.qs, mk.vol.counts, mk.vol.meds));
+        }
       }
 
       const sb = S._suburb;
@@ -1889,6 +1970,12 @@ function renderBoard() {
   const items = [
     { k: "Price", v: gnum("price") ? k$(gv("price")) : dash, s: (gnum("price") && gnum("land")) ? money(gv("price") / gv("land")) + " / m² land" : (gs("suburb") || "enter an address"), lead: true, src: boardSrc(["price"]) },
     { k: "Suburb demand", v: d.total == null ? dash : d.total, s: scoreWord(d.total) + " · " + d.coverage, tone: scoreTone(d.total), src: boardSrc(BOARD_KEYS.suburb) },
+    (function () {
+      const v = S._market && S._market.vol && S._market.vol.trend;
+      return { k: "Sales volume", v: v ? (v.pct > 0 ? "+" : "") + pct(v.pct, 1) : dash,
+        s: v ? v.recent + " a yr vs " + v.prior : "look up an address",
+        tone: !v ? "m" : v.pct >= 8 ? "g" : v.pct <= -8 ? "b" : "w" };
+    })(),
     { k: "Street demand", v: ss.total == null ? dash : ss.total, s: scoreWord(ss.total), tone: scoreTone(ss.total), src: boardSrc(BOARD_KEYS.street) },
     { k: "Schools", v: sc.total == null ? dash : sc.total, s: scoreWord(sc.total), tone: scoreTone(sc.total), src: boardSrc(BOARD_KEYS.schools) },
     { k: "Duty + costs", v: gnum("price") ? k$(c.d.gross + c.other) : dash, s: gnum("price") ? "duty " + k$(c.d.gross) : "needs a price", tone: "m", src: boardSrc(["price"]) },
@@ -2194,21 +2281,80 @@ async function vmQuery(url, params, ms) {
 }
 const sqlq = s => String(s).replace(/'/g, "''").toUpperCase();
 
+/* Road-type words. Only used to guess where a street name ends, never sent to Vicmap. */
+const RTYPE = new Set(("ROAD RD STREET ST AVENUE AVE AV DRIVE DR COURT CT PLACE PL CRESCENT CRES CR PARADE PDE " +
+  "TERRACE TCE WAY WY CLOSE CL GROVE GR GV BOULEVARD BVD BLVD CIRCUIT CCT RISE WALK LANE LN LA TRACK TRK " +
+  "ESPLANADE ESP HIGHWAY HWY SQUARE SQ MEWS LINK RIDGE VIEW GARDENS GDNS GDN GREEN PARKWAY PWY PROMENADE PROM " +
+  "ROW CIRCUS CHASE GLADE LOOP MALL QUAY BEND BRAE BANK OUTLOOK POCKET RETREAT VISTA CROSSING CONCOURSE " +
+  "ENTRANCE GATE GULLY JUNCTION LOOKOUT NOOK PASS PATH PLAZA POINT PORT RUN SLOPE TRAIL TURN VALE VILLAGE WHARF WYND").split(" "));
+
+/* Vicmap indexes road_name and locality_name: equality on those answers in about 100ms,
+   while the LIKE '%...%' over ezi_address this used to send scans the whole state and has
+   been measured at 11-31 SECONDS. We cannot know where the street name ends and the suburb
+   begins, so every split of the typed words is offered in one OR and the index settles it.
+   Splits whose last road word is a road type are tried first. */
+function addrCandidates(text) {
+  const s = String(text).toUpperCase().replace(/[.,]/g, " ").replace(/\s+/g, " ").trim();
+  const m = s.match(/^(\d+)([A-Z]?)\s+(.*)$/);
+  const toks = (m ? m[3] : s).split(" ").filter(Boolean);
+  const splits = [], seen = {};
+  const add = (road, loc, pref) => {
+    if (!road || !loc) return;
+    const k = road + "|" + loc;
+    if (seen[k]) return; seen[k] = 1;
+    splits.push({ road: road, loc: loc, pref: pref });
+  };
+  /* Vicmap stores the road type in its own column, so "TAINTON ROAD BURWOOD EAST" is
+     road_name TAINTON, not "TAINTON ROAD". Drop the type word first; keep the plain
+     splits too, for streets with no type word and for names that contain one. */
+  for (let i = 1; i < toks.length - 1; i++) {
+    if (RTYPE.has(toks[i])) add(toks.slice(0, i).join(" "), toks.slice(i + 1).join(" "), 0);
+  }
+  for (let k = 1; k < toks.length; k++) add(toks.slice(0, k).join(" "), toks.slice(k).join(" "), 1);
+  splits.sort((a, b) => a.pref - b.pref);
+  return { num: m ? parseInt(m[1], 10) : null, suffix: m ? m[2] : "", toks: toks, splits: splits };
+}
+
 async function vmSearch(text) {
   const t = String(text).trim();
   if (t.length < 4) return [];
-  const numMatch = t.match(/^(\d+)/);
+  const fields = "pfi,property_pfi,ezi_address,postcode,locality_name";
+  const tidy = list => {
+    const seen = {}, out = [];
+    list.filter(x => x.geometry).forEach(x => {
+      const k = String(x.attributes.ezi_address || "");
+      if (!k || seen[k]) return; seen[k] = 1; out.push(x);
+    });
+    return out.sort((a, b) => String(a.attributes.ezi_address).localeCompare(String(b.attributes.ezi_address), undefined, { numeric: true })).slice(0, 8);
+  };
+
+  const c = addrCandidates(t);
+  if (c.splits.length) {
+    const ors = c.splits.slice(0, 8).map(x => "(road_name='" + sqlq(x.road) + "' AND locality_name='" + sqlq(x.loc) + "')").join(" OR ");
+    const where = (c.num != null ? "house_number_1=" + c.num + " AND " : "") + "(" + ors + ")";
+    try {
+      let f = await vmQuery(LAYER.address, { where: where, outFields: fields, returnGeometry: "true", outSR: "4326", resultRecordCount: "40" }, 15000);
+      if (c.suffix) {
+        const want = c.num + c.suffix;
+        const exact = f.filter(x => new RegExp("^" + want + "\\b").test(String(x.attributes.ezi_address || "")));
+        if (exact.length) f = exact;
+      }
+      if (f.length) return tidy(f);
+    } catch (_) { /* fall through to the slow but forgiving search */ }
+  }
+
+  /* Nothing matched on the indexed fields — a typo, an abbreviation Vicmap spells out, or
+     no suburb typed. This is the slow path and says so in the status line. */
   const words = t.replace(/^\d+\s*/, "").split(/[^A-Za-z0-9]+/).filter(w => w.length >= 3 && !STOP.has(w.toLowerCase()));
   if (!words.length) return [];
   const likes = words.map(w => "ezi_address LIKE '%" + sqlq(w) + "%'");
-  const fields = "pfi,property_pfi,ezi_address,postcode,locality_name";
-  const where = (numMatch ? "house_number_1=" + numMatch[1] + " AND " : "") + likes.join(" AND ");
-  let f = await vmQuery(LAYER.address, { where: where, outFields: fields, returnGeometry: "true", outSR: "4326", resultRecordCount: "12" }, 32000);
+  const where2 = (c.num != null ? "house_number_1=" + c.num + " AND " : "") + likes.join(" AND ");
+  let f = await vmQuery(LAYER.address, { where: where2, outFields: fields, returnGeometry: "true", outSR: "4326", resultRecordCount: "12" }, 32000);
   if (!f.length && words.length > 1) {
-    const relaxed = (numMatch ? "house_number_1=" + numMatch[1] + " AND " : "") + likes[0];
+    const relaxed = (c.num != null ? "house_number_1=" + c.num + " AND " : "") + likes[0];
     f = await vmQuery(LAYER.address, { where: relaxed, outFields: fields, returnGeometry: "true", outSR: "4326", resultRecordCount: "12" }, 32000);
   }
-  return f.filter(x => x.geometry).sort((a, b) => String(a.attributes.ezi_address).localeCompare(String(b.attributes.ezi_address))).slice(0, 8);
+  return tidy(f);
 }
 
 /* polygon area in square metres from EPSG:3111 rings (VicGrid94, projected metres) */
@@ -2397,7 +2543,7 @@ async function doLookup(text) {
   lstatus("Searching Vicmap…");
   const tick = setInterval(() => {
     const s = Math.round((Date.now() - t0) / 1000);
-    lstatus("Searching Vicmap… <b>" + s + "s</b>" + (s > 5 ? " — the state address service is slow right now, still waiting." : ""));
+    lstatus("Searching Vicmap… <b>" + s + "s</b>" + (s > 4 ? " — no match on street and suburb, so this is the slow scan of the whole address list. Adding the suburb makes it instant." : ""));
   }, 1000);
   try {
     const list = await vmSearch(text);
