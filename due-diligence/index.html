@@ -3265,19 +3265,36 @@ function paintMap() {
     ? { div: true, max: Math.max(Math.abs(q(0.05)), Math.abs(q(0.95))) || 1, dead: m[2] === METRICS.volPct[2] ? 5 : 2 }
     : { div: false, lo: q(0.05), hi: q(0.95) };
 
-  const bb = SUB.extent === "vic" ? VIC : MELB;
-  const W = 900, H = 640;
-  const midLat = (bb[1] + bb[3]) / 2, kx = Math.cos(midLat * Math.PI / 180);
-  const sx = W / ((bb[2] - bb[0]) * kx), sy = H / (bb[3] - bb[1]), s = Math.min(sx, sy);
-  const ox = (W - (bb[2] - bb[0]) * kx * s) / 2, oy = (H - (bb[3] - bb[1]) * s) / 2;
-  const px = p => (ox + (p[0] - bb[0]) * kx * s).toFixed(1);
-  const py = p => (oy + (bb[3] - p[1]) * s).toFixed(1);
+  /* Choose the suburbs first, then fit the drawing box to them. A fixed bounding box
+     left most of the canvas empty, because Melbourne's built-up area is far smaller
+     than the rectangle that contains it. */
+  const want = SUB.extent === "vic" ? VIC : MELB;
+  const keep = [];
+  for (const nm in SUB._geo) {
+    const ring = SUB._geo[nm];
+    const cx = ring.reduce((a, p) => a + p[0], 0) / ring.length, cy = ring.reduce((a, p) => a + p[1], 0) / ring.length;
+    if (cx < want[0] || cx > want[2] || cy < want[1] || cy > want[3]) continue;
+    keep.push(nm);
+  }
+  if (!keep.length) { host.innerHTML = '<div class="callout">No suburb outlines fall inside that extent.</div>'; return; }
+  let x0 = 999, y0 = 999, x1 = -999, y1 = -999;
+  keep.forEach(nm => SUB._geo[nm].forEach(p => {
+    if (p[0] < x0) x0 = p[0]; if (p[0] > x1) x1 = p[0];
+    if (p[1] < y0) y0 = p[1]; if (p[1] > y1) y1 = p[1];
+  }));
+  const mx = (x1 - x0) * 0.02, my = (y1 - y0) * 0.02;
+  const bb = [x0 - mx, y0 - my, x1 + mx, y1 + my];
+  const kx = Math.cos((bb[1] + bb[3]) / 2 * Math.PI / 180);
+  const wDeg = (bb[2] - bb[0]) * kx, hDeg = bb[3] - bb[1];
+  const W = 900, H = Math.round(Math.max(340, Math.min(760, W * hDeg / wDeg)));
+  const sc = Math.min(W / wDeg, H / hDeg);
+  const ox = (W - wDeg * sc) / 2, oy = (H - hDeg * sc) / 2;
+  const px = p => (ox + (p[0] - bb[0]) * kx * sc).toFixed(1);
+  const py = p => (oy + (bb[3] - p[1]) * sc).toFixed(1);
 
   let g = "", drawn = 0;
-  for (const nm in SUB._geo) {
+  for (const nm of keep) {
     const ring = SUB._geo[nm], r = byName[nm];
-    const cx = ring.reduce((a, p) => a + p[0], 0) / ring.length, cy = ring.reduce((a, p) => a + p[1], 0) / ring.length;
-    if (cx < bb[0] || cx > bb[2] || cy < bb[1] || cy > bb[3]) continue;
     const v = r ? m[2](r) : NaN;
     const d = "M" + ring.map(p => px(p) + " " + py(p)).join("L") + "Z";
     g += '<path d="' + d + '" fill="' + colorFor(v, scale) + '" stroke="var(--viz-stroke)" stroke-width="0.5" class="mpoly"' +
