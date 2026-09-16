@@ -2917,6 +2917,10 @@ function scoreBar(s) {
   return '<span class="sbar"><i style="width:' + s + '%"></i></span><span class="sbn">' + s + "</span>";
 }
 function signed(n, d) { return (isFinite(n) && n > 0 ? "+" : "") + pct(n, d); }
+function ord(n) {
+  const v = Math.round(n), t = v % 100;
+  return v + (t >= 11 && t <= 13 ? "th" : ["th", "st", "nd", "rd"][v % 10] || "th");
+}
 function toneOf(n, hi, lo) { return !isFinite(n) ? "" : n >= hi ? " up" : n <= lo ? " down" : ""; }
 
 /* ---------- 1. SCREENER ---------- */
@@ -3075,10 +3079,10 @@ function suburbReportHTML() {
     (r.score == null ? dash : r.score + " / 100") + '</div><div class="src">Rank ' + r.rank + " of " + rows.length + (cyc ? " · " + esc(cyc[0]) : "") + "</div>" +
     (cyc ? '<p class="note" style="padding:8px 0 0">' + esc(cyc[1]) + "</p>" : "") + "</div><div>" +
     kv([
-      ["Volume percentile", r.pVol == null ? dash : Math.round(r.pVol) + "th"],
-      ["Price growth percentile", r.pGrowth == null ? dash : Math.round(r.pGrowth) + "th"],
-      ["Yield percentile", r.pYield == null ? dash : Math.round(r.pYield) + "th"],
-      ["Consistency percentile", r.pConsist == null ? dash : Math.round(r.pConsist) + "th"]
+      ["Volume percentile", r.pVol == null ? dash : ord(r.pVol)],
+      ["Price growth percentile", r.pGrowth == null ? dash : ord(r.pGrowth)],
+      ["Yield percentile", r.pYield == null ? dash : ord(r.pYield)],
+      ["Consistency percentile", r.pConsist == null ? dash : ord(r.pConsist)]
     ]) + "</div></div>");
 
   h += panel("Sales volume, eight quarters", "Bars are sales the Valuer-General recorded in each quarter. Oct–Dec 2024 is not published.",
@@ -3465,7 +3469,7 @@ function valueEvidenceHTML() {
         ["Change over the year", signed(r.g1)],
         ["Compound over two years", isFinite(r.g2) ? signed(r.g2) + " a year" : dash],
         ["Quarters where the median rose", isFinite(r.consist) ? Math.round(r.consist / 100 * 7) + " of 7" : dash],
-        ["Rank for price growth", r.pGrowth == null ? dash : Math.round(r.pGrowth) + "th percentile of " + rowset.length + " markets"]
+        ["Rank for price growth", r.pGrowth == null ? dash : ord(r.pGrowth) + " percentile of " + rowset.length + " markets"]
       ]) +
       '<div class="btnrow" style="margin-top:12px"><button type="button" class="mini" data-sub="focus" data-v="' + esc(mk.suburb) + '">Open the full suburb report</button></div>');
   }
