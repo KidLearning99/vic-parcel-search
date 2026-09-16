@@ -18,16 +18,31 @@
   --verified:#23486F; --verified-soft:#E4EAF2;
   --shadow:0 1px 2px rgba(18,26,29,.06), 0 8px 24px -16px rgba(18,26,29,.22);
   --r:6px;
+  /* Chart roles. Categorical slots 1 and 2 for the two single-series panels; a
+     diverging blue<->red pair with a neutral midpoint for +/- measures on the map,
+     and a one-hue blue ramp for level measures. The two diverging arms are
+     lightness-matched, and the dark set is stepped for the dark surface rather
+     than flipped from the light one. */
+  --viz-1:#2a78d6; --viz-2:#eb6834; --viz-muted:#7C838A; --viz-axis:#C7C2B6; --viz-stroke:rgba(11,11,11,.18);
+  --viz-mid:#EFEDE8; --viz-none:#E3E0D8;
+  --viz-up-1:#9ec5f4; --viz-up-2:#6da7ec; --viz-up-3:#3987e5; --viz-up-4:#256abf;
+  --viz-dn-1:#f3ada7; --viz-dn-2:#e7837c; --viz-dn-3:#da5450; --viz-dn-4:#b43b3a;
+  --viz-s1:#cde2fb; --viz-s2:#9ec5f4; --viz-s3:#6da7ec; --viz-s4:#3987e5; --viz-s5:#256abf;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --paper:#111316; --surface:#1B1F24; --surface-2:#232830; --ink:#E9E7E1; --ink-2:#CFCDC6;
     --muted:#969CA3; --muted-2:#7C838A; --line:#2E343C; --line-2:#252A31;
     --accent:#89AEDC; --accent-soft:#1C2A3C; --accent-ink:#BCD2EC; --btn-ink:#0D1620;
-    --ochre:#D2A 654; --ochre-soft:#2E2617;
+    --ochre:#D2A654; --ochre-soft:#2E2617;
     --good:#68B98C; --good-soft:#18291F; --warn:#D6AC53; --warn-soft:#2B2415; --bad:#DE8378; --bad-soft:#2F1A18;
     --verified:#89AEDC; --verified-soft:#1C2A3C;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.7);
+    --viz-1:#3987e5; --viz-2:#d95926; --viz-muted:#8C9299; --viz-axis:#3A4048; --viz-stroke:rgba(255,255,255,.16);
+    --viz-mid:#383835; --viz-none:#2A2F36;
+    --viz-up-1:#cde2fb; --viz-up-2:#9ec5f4; --viz-up-3:#6da7ec; --viz-up-4:#3987e5;
+    --viz-dn-1:#fbd5d1; --viz-dn-2:#f3ada7; --viz-dn-3:#e7837c; --viz-dn-4:#da5450;
+    --viz-s1:#184f95; --viz-s2:#256abf; --viz-s3:#3987e5; --viz-s4:#6da7ec; --viz-s5:#9ec5f4;
   }
 }
 :root[data-theme="dark"]{
@@ -38,6 +53,11 @@
   --good:#68B98C; --good-soft:#18291F; --warn:#D6AC53; --warn-soft:#2B2415; --bad:#DE8378; --bad-soft:#2F1A18;
   --verified:#89AEDC; --verified-soft:#1C2A3C;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.7);
+  --viz-1:#3987e5; --viz-2:#d95926; --viz-muted:#8C9299; --viz-axis:#3A4048; --viz-stroke:rgba(255,255,255,.16);
+  --viz-mid:#383835; --viz-none:#2A2F36;
+  --viz-up-1:#cde2fb; --viz-up-2:#9ec5f4; --viz-up-3:#6da7ec; --viz-up-4:#3987e5;
+  --viz-dn-1:#fbd5d1; --viz-dn-2:#f3ada7; --viz-dn-3:#e7837c; --viz-dn-4:#da5450;
+  --viz-s1:#184f95; --viz-s2:#256abf; --viz-s3:#3987e5; --viz-s4:#6da7ec; --viz-s5:#9ec5f4;
 }
 *{box-sizing:border-box}
 body{
@@ -211,6 +231,52 @@ footer.foot{border-top:1px solid var(--line); padding-block:16px 30px; color:var
   .brand h1{font-size:22px}
 }
 @media (max-width:460px){ .addrbar{grid-template-columns:1fr} }
+/* ---- suburb explorer ---- */
+.modesw{display:inline-flex;gap:2px;padding:3px;margin:8px 0 0;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r)}
+.modesw button{appearance:none;border:0;background:transparent;color:var(--muted);font:inherit;font-size:13.5px;font-weight:600;padding:6px 14px;border-radius:4px;cursor:pointer}
+.modesw button:hover{color:var(--ink)}
+.modesw button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.filters{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 14px}
+.filters label{display:flex;flex-direction:column;gap:4px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.filters select,.filters input{font:inherit;font-size:14px;padding:7px 9px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--ink);min-width:150px}
+.pickbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;min-height:28px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent-ink);border-radius:20px;padding:3px 6px 3px 11px;font-size:13px;font-weight:600}
+.chip button{appearance:none;border:0;background:transparent;color:inherit;cursor:pointer;font-size:15px;line-height:1;padding:0 4px;opacity:.65}
+.chip button:hover{opacity:1}
+.mini{appearance:none;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--ink);cursor:pointer}
+.mini:hover{border-color:var(--accent);color:var(--accent)}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px}
+.linky{appearance:none;border:0;background:transparent;font:inherit;font-weight:600;color:var(--accent);cursor:pointer;padding:0;text-align:left}
+.linky:hover{text-decoration:underline}
+.sortb{appearance:none;border:0;background:transparent;font:inherit;font-size:inherit;font-weight:inherit;color:inherit;cursor:pointer;padding:0;letter-spacing:inherit;text-transform:inherit;white-space:nowrap}
+.sortb:hover{color:var(--accent)}
+.sortb.on{color:var(--accent)}
+table.screen{font-variant-numeric:tabular-nums}
+table.screen td.rk{color:var(--muted-2);font-size:12px}
+table.screen td.nm{white-space:nowrap}
+table.screen td.up{color:var(--good)}
+table.screen td.down{color:var(--bad)}
+table.screen td.spk{padding-top:6px;padding-bottom:2px}
+table.screen .cmp{font-size:11px;color:var(--muted);white-space:nowrap;cursor:pointer;display:inline-flex;gap:4px;align-items:center}
+.sc-cell{white-space:nowrap}
+.sbar{display:inline-block;width:52px;height:6px;border-radius:3px;background:var(--line-2);vertical-align:middle;overflow:hidden}
+.sbar i{display:block;height:100%;background:var(--viz-1);border-radius:3px}
+.sbn{margin-left:7px;font-size:12.5px;color:var(--ink-2)}
+td.best{font-weight:700;color:var(--good)}
+.cmpchart{margin:0 0 14px}
+.cmpchart .eyebrow{margin:0 0 2px}
+.maphold{background:var(--surface-2);border:1px solid var(--line-2);border-radius:var(--r);overflow:hidden}
+svg.vicmap{display:block;width:100%;height:auto}
+.mpoly{cursor:default}
+.mpoly[data-sub]{cursor:pointer}
+.mpoly[data-sub]:hover,.mpoly[data-sub]:focus{stroke:var(--ink);stroke-width:1.4;outline:none}
+.legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 0;font-size:12px;color:var(--muted)}
+.legend .swatches{display:flex;gap:2px}
+.legend .swatches i{display:block;width:26px;height:12px;border-radius:2px;border:1px solid var(--viz-stroke)}
+@media (max-width:640px){
+  .filters label{flex:1 1 100%}
+  .filters select,.filters input{min-width:0;width:100%}
+}
 </style>
 <style>
 html{color-scheme:light dark}
@@ -226,7 +292,7 @@ img{max-width:100%}
       <div class="brand">
         <div class="eyebrow">Australian residential due diligence</div>
         <h1>Paddock to Settlement</h1>
-        <p>One address in, the whole picture out: sale history, suburb and street demand, zoned schools, duty and land tax for every state, cashflow under the 2027 negative-gearing rules, and strategy comparisons.</p>
+        <p>Start from an address or from a suburb: sale history, suburb and street demand, zoned schools, duty and land tax for every state, cashflow under the 2027 negative-gearing rules, and strategy comparisons.</p>
       </div>
       <div class="topacts">
         <button class="btn ghost sm" id="btn-theme" type="button">Theme</button>
@@ -258,7 +324,7 @@ img{max-width:100%}
   <div class="board" id="board"></div>
 </header>
 
-<nav class="tabs"><div class="wrap"><div class="tabstrip" id="tabstrip" role="tablist"></div></div></nav>
+<nav class="tabs"><div class="wrap"><div class="modesw" id="modesw"></div><div class="tabstrip" id="tabstrip" role="tablist"></div></div></nav>
 
 <main class="wrap" id="main"></main>
 
@@ -723,44 +789,15 @@ async function applyMarket() {
   return out;
 }
 
-/* Eight quarterly sales counts as bars, with the median drawn over them on its own scale. */
+/* Volume and median, one panel each on a shared x axis. They were drawn together on
+   two y scales until 16 Sep 2026; a second axis lets the eye read a crossing point
+   that does not exist, so they are stacked instead. seriesChart does the drawing. */
 function volumeChart(qs, counts, meds) {
-  const W = 620, H = 180, pad = { l: 38, r: 46, t: 14, b: 26 };
-  const n = counts.length, iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
-  const maxC = Math.max.apply(null, counts.filter(x => x != null).concat([1]));
-  const bw = iw / n * 0.62, step = iw / n;
-  let g = "";
-  for (let i = 0; i < n; i++) {
-    const x = pad.l + step * i + (step - bw) / 2;
-    if (counts[i] == null) {
-      g += '<rect x="' + x.toFixed(1) + '" y="' + (pad.t + ih - 6) + '" width="' + bw.toFixed(1) + '" height="6" fill="var(--line)"/>' +
-        '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (pad.t + ih - 10) + '" text-anchor="middle" font-size="8" fill="var(--muted)">n/a</text>';
-    } else {
-      const h = counts[i] / maxC * ih;
-      g += '<rect x="' + x.toFixed(1) + '" y="' + (pad.t + ih - h).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1, h).toFixed(1) + '" fill="var(--accent)" opacity="0.75"/>' +
-        '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (pad.t + ih - h - 3).toFixed(1) + '" text-anchor="middle" font-size="9" font-family="IBM Plex Mono, monospace" fill="var(--muted)">' + counts[i] + "</text>";
-    }
-    g += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="8.5" fill="var(--muted)">' + esc(String(qs[i]).replace(/^20/, "").replace("Q", " Q")) + "</text>";
-  }
-  const mv = (meds || []).map(x => x == null ? null : x);
-  const have = mv.filter(x => x != null);
-  if (have.length > 1) {
-    const lo = Math.min.apply(null, have), hi = Math.max.apply(null, have), span = (hi - lo) || 1;
-    let d = "", started = false;
-    for (let i = 0; i < n; i++) {
-      if (mv[i] == null) continue;
-      const x = pad.l + step * i + step / 2, y = pad.t + ih - (mv[i] - lo) / span * (ih * 0.72) - ih * 0.14;
-      d += (started ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1) + " "; started = true;
-      g += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="2.4" fill="var(--ochre)"/>';
-    }
-    g = '<path d="' + d + '" fill="none" stroke="var(--ochre)" stroke-width="1.8"/>' + g;
-    g += '<text x="' + (W - pad.r + 6) + '" y="' + (pad.t + 10) + '" font-size="9" fill="var(--ochre)">$' + (hi / 1000).toFixed(2) + "m</text>" +
-      '<text x="' + (W - pad.r + 6) + '" y="' + (pad.t + ih) + '" font-size="9" fill="var(--ochre)">$' + (lo / 1000).toFixed(2) + "m</text>";
-  }
-  g += '<text x="4" y="' + (pad.t + 10) + '" font-size="9" fill="var(--muted)">' + maxC + "</text>" +
-    '<text x="4" y="' + (pad.t + ih) + '" font-size="9" fill="var(--muted)">0</text>';
-  return '<div class="chartbox"><svg class="chart" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Quarterly sales volume with median price overlaid">' + g + "</svg></div>" +
-    '<p class="src" style="margin:4px 0 0">Bars are sales recorded in the quarter (left scale). The gold line is the median price over the same quarters (right scale, own range). Oct–Dec 2024 is missing because that edition of the report is not archived anywhere reachable.</p>';
+  const bars = seriesChart(qs, counts, { bars: true, zero: true, h: 128, label: "Quarterly sales volume" });
+  const line = seriesChart(qs, meds || [], { axis: true, h: 132, fmt: v => "$" + (v / 1000).toFixed(2) + "m", label: "Quarterly median price" });
+  return bars +
+    (line ? '<div class="eyebrow" style="margin:10px 0 0">Median price over the same quarters</div>' + line : "") +
+    '<p class="src" style="margin:4px 0 0">Bars are sales recorded in the quarter; the line below is the median price over the same quarters, on its own chart so the two scales are never read against each other. Oct\u2013Dec 2024 is missing because that edition of the report is not archived anywhere reachable.</p>';
 }
 function provBadge(k) {
   const t = provOf(k);
@@ -1542,9 +1579,11 @@ const TABS = [
   },
   {
     id: "value", label: "Value & sales", title: "What it has sold for, and what it is worth now",
-    sub: "Past sale prices for this exact property, plus comparable evidence. Paste rows straight from a portal or a spreadsheet.",
+    sub: "The state publishes this suburb's median quarter by quarter — that leads. Per-address sale history is the one thing nobody gives away free, so the doors to it are at the bottom of this tab; paste what you find and the growth maths runs itself.",
     render() {
-      let h = panel("Sale history for this property", "", fieldsHTML(["saleHistory"], "wide"));
+      let h = "";
+      try { h += valueEvidenceHTML(); } catch (e) { console.error(e); }
+      h += panel("Sale history for this property", "Paste rows straight from a portal — date and price on each line. Everything below this box runs off what you put in it.", fieldsHTML(["saleHistory"], "wide"));
       const pc = propertyCAGR(), hist = history().filter(r => r.p > 0);
       if (hist.length) {
         let body = "";
@@ -1577,6 +1616,7 @@ const TABS = [
       }
       h += panel("Sales in this street", "Street-level evidence is the strongest comparable there is, and the thinnest. Count the dwellings so turnover means something.",
         fieldsHTML(["streetSales", "streetDwellings"], "wide"));
+      try { h += valueLinksHTML(); } catch (e) { console.error(e); }
       return h;
     }
   },
@@ -1965,6 +2005,7 @@ function boardSrc(keys) {
 }
 
 function renderBoard() {
+  if (typeof MODE !== "undefined" && MODE === "sub") { paintBoard(subBoardItems()); return; }
   const m = cashflowModel(), c = m.c, d = demandScore(), sc = schoolScore(), ss = streetScore();
   const pc = propertyCAGR();
   const items = [
@@ -1984,6 +2025,9 @@ function renderBoard() {
     { k: "After tax / week", v: (gnum("price") && gnum("rentWeek")) ? money(m.perWeek, 0) : dash, s: !(gnum("price") && gnum("rentWeek")) ? "needs price and rent" : m.quarantined ? "loss quarantined" : gb("newBuild") ? "new build, geared" : "currently deductible", tone: !(gnum("price") && gnum("rentWeek")) ? "m" : m.perWeek >= 0 ? "g" : m.perWeek > -150 ? "w" : "b", src: boardSrc(["price", "rentWeek"]) },
     { k: "History", v: pc ? pct(pc.rate) : dash, s: pc ? "p.a. since " + pc.from.y : "add past sales", tone: pc ? (pc.rate >= 5 ? "g" : pc.rate >= 2.5 ? "w" : "b") : "m", src: boardSrc(["saleHistory"]) }
   ];
+  paintBoard(items);
+}
+function paintBoard(items) {
   $("#board").innerHTML = items.map(i =>
     '<div class="sc' + (i.lead ? " lead" : "") + (i.src === "example" ? " ex" : "") + '"><div class="k">' + esc(i.k) +
     (i.src ? '<span class="ptag ' + i.src + '">' + i.src + "</span>" : "") +
@@ -1991,14 +2035,17 @@ function renderBoard() {
   ).join("");
 }
 function renderTabs() {
-  $("#tabstrip").innerHTML = TABS.map(t => '<button role="tab" type="button" data-tab="' + t.id + '" aria-selected="' + (t.id === activeTab) + '">' + esc(t.label) + "</button>").join("");
+  const set = typeof tabSet === "function" ? tabSet() : TABS, cur = typeof curTab === "function" ? curTab() : activeTab;
+  $("#tabstrip").innerHTML = set.map(t => '<button role="tab" type="button" data-tab="' + t.id + '" aria-selected="' + (t.id === cur) + '">' + esc(t.label) + "</button>").join("");
 }
 function renderMain() {
-  const t = TABS.find(x => x.id === activeTab) || TABS[0];
+  const set = typeof tabSet === "function" ? tabSet() : TABS, cur = typeof curTab === "function" ? curTab() : activeTab;
+  const t = set.find(x => x.id === cur) || set[0];
   let body = "";
   try { body = t.render(); } catch (e) { body = '<div class="panel"><div class="pb"><div class="callout">Something in this panel could not be calculated from the values entered. Check the number fields on this tab.</div></div></div>'; console.error(e); }
   $("#main").innerHTML = '<div class="sechead"><h2>' + esc(t.title) + '</h2><p>' + t.sub + "</p></div>" + body;
-  if (activeTab === "saved") { renderSaved(); wireSaved(); }
+  if (t.id === "saved") { renderSaved(); wireSaved(); }
+  if (t.after) { try { t.after(); } catch (e) { console.error(e); } }
 }
 function renderAll() { renderBoard(); renderTabs(); renderMain(); renderFoot(); saveLocal(); }
 function renderFoot() {
@@ -2033,7 +2080,7 @@ document.addEventListener("change", e => {
 document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.tagName === "INPUT") { e.target.blur(); e.target.focus(); } });
 document.addEventListener("click", e => {
   const b = e.target.closest("button[data-tab]");
-  if (b) { activeTab = b.dataset.tab; renderTabs(); renderMain(); window.scrollTo({ top: 0, behavior: "instant" }); }
+  if (b) { if (typeof setCurTab === "function") setCurTab(b.dataset.tab); else activeTab = b.dataset.tab; renderTabs(); renderMain(); window.scrollTo({ top: 0, behavior: "instant" }); }
 });
 
 /* ---------- header + buttons ---------- */
@@ -2734,6 +2781,718 @@ function histogram(all, mark, unit) {
     (clipped ? '<p class="src" style="margin:4px 0 0">' + clipped + " parcel" + (clipped > 1 ? "s" : "") + " outside this range (reserves, road strips or very large holdings) are excluded from the chart but counted in the figures below.</p>" : "");
 }
 /* =========================================================================
+   SUBURB EXPLORER — screen every Victorian suburb, read one closely, compare a
+   handful, or see them all on a map. Everything here runs off the two baked
+   state files; no network call is needed except the map's suburb outlines.
+
+   The point of this mode is that you do not have to start from an address. A
+   market is the thing that moves; the house is just where you enter it.
+   ========================================================================= */
+
+const SUB = {
+  kind: "h", sort: "score", dir: -1, minSales: 20, band: "all", region: "all", q: "",
+  focus: "", pick: [], metric: "volPct", extent: "melb", _cache: null, _geo: null, _geoState: "idle"
+};
+
+/* Percentile rank inside the cohort. A screener's job is relative, not absolute:
+   "top decile for volume growth" means something, "+10.9%" on its own does not. */
+function pctRankFn(vals) {
+  const s = vals.filter(v => isFinite(v)).sort((a, b) => a - b);
+  return v => {
+    if (!isFinite(v) || !s.length) return null;
+    let lo = 0, hi = s.length;
+    while (lo < hi) { const mid = (lo + hi) >> 1; if (s[mid] < v) lo = mid + 1; else hi = mid; }
+    return lo / s.length * 100;
+  };
+}
+
+/* One row per suburb, from the eight-quarter series plus the latest quarterly
+   file and the rental report. Suburbs without enough quarters are dropped
+   rather than shown with a number that cannot mean anything. */
+function subRows(kind) {
+  const M = MARKET;
+  if (!M || !M.ts || !M.ts[kind]) return [];
+  if (SUB._cache && SUB._cache.kind === kind) return SUB._cache.rows;
+  const base = kind === "u" ? (M.u || {}) : (M.h || {});
+  const rows = [];
+  for (const name in M.ts[kind]) {
+    const t = M.ts[kind][name], c = t.c || [], m = t.m || [];
+    const recA = c.slice(4).filter(x => x != null), priA = c.slice(0, 4).filter(x => x != null);
+    if (recA.length < 3 || priA.length < 3) continue;
+    const volR = Math.round(recA.reduce((a, x) => a + x, 0) / recA.length * 4);
+    const volP = Math.round(priA.reduce((a, x) => a + x, 0) / priA.length * 4);
+    if (!volP || !volR) continue;
+    const mv = m.filter(x => x != null);
+    if (mv.length < 6 || m[7] == null) continue;
+    const b = base[name];
+    const med = b && b[0] ? b[0] : m[7] * 1000;
+    const g1 = m[3] ? (m[7] - m[3]) / m[3] * 100 : NaN;
+    const g2 = m[0] ? (Math.pow(m[7] / m[0], 1 / 2) - 1) * 100 : NaN;
+    let up = 0, n = 0;
+    for (let i = 1; i < m.length; i++) if (m[i] != null && m[i - 1] != null) { n++; if (m[i] > m[i - 1]) up++; }
+    const rg = rentGroupFor(name);
+    const rr = rg ? (rg[1][kind === "u" ? "f2" : "h3"] || rg[1].h3 || rg[1].f2 || rg[1].h4) : null;
+    const rent = rr ? rr[1] : null;
+    /* A 20-sale suburb can print +80% on four extra sales. The score is built on a
+       shrunk version of the change — pulled towards zero in proportion to how thin
+       the base is — so thin markets have to be genuinely strong to rank. The raw
+       change is what gets displayed; only the ranking uses the shrunk one. */
+    const volPct = (volR - volP) / volP * 100;
+    rows.push({
+      name: name, med: med, c: c, m: m, volR: volR, volP: volP,
+      volPct: volPct, volAdj: volPct * (volP / (volP + 45)),
+      g1: g1, g2: g2, consist: n ? up / n * 100 : NaN,
+      rent: rent, rentG: rr && rr[2] != null ? rr[2] : NaN,
+      rentGroup: rg ? rg[0] : null,
+      yld: (rent && med) ? rent * 52 / med * 100 : NaN,
+      thin: !!(b && b[5])
+    });
+  }
+  const rv = pctRankFn(rows.map(r => r.volAdj)), rg1 = pctRankFn(rows.map(r => r.g1));
+  const ry = pctRankFn(rows.map(r => r.yld)), rc = pctRankFn(rows.map(r => r.consist));
+  rows.forEach(r => {
+    r.pVol = rv(r.volAdj); r.pGrowth = rg1(r.g1); r.pYield = ry(r.yld); r.pConsist = rc(r.consist);
+    const parts = [[r.pVol, 40], [r.pGrowth, 25], [r.pYield, 20], [r.pConsist, 15]];
+    let s = 0, w = 0;
+    parts.forEach(p => { if (p[0] != null) { s += p[0] * p[1]; w += p[1]; } });
+    r.score = w >= 60 ? Math.round(s / w) : null;
+  });
+  rows.sort((a, b) => (b.score == null ? -1 : b.score) - (a.score == null ? -1 : a.score));
+  rows.forEach((r, i) => { r.rank = i + 1; });
+  SUB._cache = { kind: kind, rows: rows };
+  return rows;
+}
+const BANDS = {
+  all: [0, Infinity, "any price"], a: [0, 700000, "under $700k"], b: [700000, 1000000, "$700k – $1m"],
+  c: [1000000, 1500000, "$1m – $1.5m"], d: [1500000, Infinity, "over $1.5m"]
+};
+/* Metro vs regional is not in either data file, so it is worked out from the suburb
+   outlines once they have been fetched. Until then the filter says so rather than
+   quietly returning everything. */
+function centroidOf(name) {
+  const ring = SUB._geo && SUB._geo[name];
+  if (!ring) return null;
+  let x = 0, y = 0;
+  for (let i = 0; i < ring.length; i++) { x += ring[i][0]; y += ring[i][1]; }
+  return [x / ring.length, y / ring.length];
+}
+function inMelb(name) {
+  const c = centroidOf(name);
+  if (!c) return null;
+  return c[0] >= MELB[0] && c[0] <= MELB[2] && c[1] >= MELB[1] && c[1] <= MELB[3];
+}
+function subFiltered() {
+  const rows = subRows(SUB.kind), band = BANDS[SUB.band] || BANDS.all;
+  const q = SUB.q.trim().toUpperCase();
+  let out = rows.filter(r => r.volR >= SUB.minSales && r.med >= band[0] && r.med < band[1] && (!q || r.name.indexOf(q) >= 0));
+  if (SUB.region !== "all" && SUB._geo) {
+    out = out.filter(r => { const m = inMelb(r.name); return m == null ? false : (SUB.region === "melb" ? m : !m); });
+  }
+  const key = SUB.sort;
+  out = out.slice().sort((a, b) => {
+    if (key === "name") return SUB.dir * String(a.name).localeCompare(String(b.name));
+    const x = a[key], y = b[key];
+    const xv = isFinite(x) ? x : -Infinity, yv = isFinite(y) ? y : -Infinity;
+    return SUB.dir * (xv - yv);
+  });
+  return out;
+}
+
+/* ---------- small pieces of chart furniture ---------- */
+function spark(counts) {
+  const v = counts.map(x => x == null ? null : x), have = v.filter(x => x != null);
+  if (have.length < 2) return "";
+  const max = Math.max.apply(null, have), W = 62, H = 18, step = W / v.length;
+  let g = "";
+  for (let i = 0; i < v.length; i++) {
+    if (v[i] == null) continue;
+    const h = Math.max(1, v[i] / max * (H - 2));
+    g += '<rect x="' + (i * step + 0.6).toFixed(1) + '" y="' + (H - h).toFixed(1) +
+      '" width="' + (step - 1.2).toFixed(1) + '" height="' + h.toFixed(1) + '" rx="1" fill="var(--viz-1)" opacity="0.85"/>';
+  }
+  return '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H + '" aria-hidden="true">' + g + "</svg>";
+}
+function scoreBar(s) {
+  if (s == null) return '<span class="src">—</span>';
+  return '<span class="sbar"><i style="width:' + s + '%"></i></span><span class="sbn">' + s + "</span>";
+}
+function signed(n, d) { return (isFinite(n) && n > 0 ? "+" : "") + pct(n, d); }
+function toneOf(n, hi, lo) { return !isFinite(n) ? "" : n >= hi ? " up" : n <= lo ? " down" : ""; }
+
+/* ---------- 1. SCREENER ---------- */
+function screenerControls() {
+  const opt = (v, l, cur) => '<option value="' + v + '"' + (v === cur ? " selected" : "") + ">" + esc(l) + "</option>";
+  return '<div class="filters">' +
+    '<label>Type<select data-sub="kind">' + opt("h", "Houses", SUB.kind) + opt("u", "Units", SUB.kind) + "</select></label>" +
+    '<label>Price band<select data-sub="band">' + Object.keys(BANDS).map(k => opt(k, BANDS[k][2], SUB.band)).join("") + "</select></label>" +
+    '<label>Where<select data-sub="region">' + opt("all", "Anywhere in Victoria", SUB.region) + opt("melb", "Greater Melbourne", SUB.region) + opt("reg", "Regional Victoria", SUB.region) + "</select></label>" +
+    '<label>Minimum sales a year<select data-sub="minSales">' + [0, 10, 20, 40, 80].map(n => opt(String(n), n === 0 ? "no minimum" : n + "+", String(SUB.minSales))).join("") + "</select></label>" +
+    '<label>Find<input type="search" id="sub_q" placeholder="suburb name" value="' + esc(SUB.q) + '"></label>' +
+    "</div>";
+}
+const SCOLS = [
+  ["rank", "#", "rank"], ["name", "Suburb", "name"], ["med", "Median", "med"],
+  ["g1", "Price 1yr", "g1"], ["volR", "Sales / yr", "volR"], ["volPct", "Volume change", "volPct"],
+  ["yld", "Gross yield", "yld"], ["consist", "Quarters up", "consist"], ["score", "Momentum", "score"]
+];
+function screenerBody() {
+  const rows = subFiltered();
+  if (!rows.length) return '<tr><td colspan="11">Nothing matches those filters. Lower the minimum sales, or widen the price band.</td></tr>';
+  return rows.slice(0, 250).map(r => {
+    const picked = SUB.pick.indexOf(r.name) >= 0;
+    return '<tr class="srow">' +
+      '<td class="rk">' + r.rank + "</td>" +
+      '<td class="nm"><button type="button" class="linky" data-sub="focus" data-v="' + esc(r.name) + '">' + esc(titleCase(r.name)) + "</button>" +
+      (r.thin ? ' <span class="src">thin</span>' : "") + "</td>" +
+      '<td class="n">' + k$(r.med) + "</td>" +
+      '<td class="n' + toneOf(r.g1, 5, 0) + '">' + signed(r.g1) + "</td>" +
+      '<td class="n">' + r.volR + "</td>" +
+      '<td class="n' + toneOf(r.volPct, 8, -8) + '">' + signed(r.volPct) + "</td>" +
+      '<td class="n">' + (isFinite(r.yld) ? pct(r.yld, 2) : dash) + "</td>" +
+      '<td class="n">' + (isFinite(r.consist) ? Math.round(r.consist / 100 * 7) + " of 7" : dash) + "</td>" +
+      '<td class="n sc-cell">' + scoreBar(r.score) + "</td>" +
+      '<td class="spk">' + spark(r.c) + "</td>" +
+      '<td class="n"><label class="cmp"><input type="checkbox" data-sub="pick" data-v="' + esc(r.name) + '"' + (picked ? " checked" : "") + (!picked && SUB.pick.length >= 4 ? " disabled" : "") + "> compare</label></td>" +
+      "</tr>";
+  }).join("");
+}
+function paintScreener() {
+  const b = document.getElementById("screenbody");
+  if (b) b.innerHTML = screenerBody();
+  const c = document.getElementById("screencount");
+  if (c) {
+    const n = subFiltered().length;
+    const pend = SUB.region !== "all" && !SUB._geo;
+    c.textContent = (n > 250 ? "Showing the top 250 of " + n + " suburbs that pass the filters." : n + " suburbs pass the filters.") +
+      (pend ? " The metro/regional filter is not applied yet — the suburb outlines it needs are still loading." : "");
+  }
+  const p = document.getElementById("pickbar");
+  if (p) p.innerHTML = pickbarHTML();
+}
+function pickbarHTML() {
+  if (!SUB.pick.length) return '<span class="src">Tick up to four suburbs to compare them side by side.</span>';
+  return SUB.pick.map(n => '<span class="chip">' + esc(titleCase(n)) + '<button type="button" data-sub="unpick" data-v="' + esc(n) + '" aria-label="Remove">×</button></span>').join("") +
+    ' <button type="button" class="mini" data-sub="gocompare">Compare these ' + SUB.pick.length + "</button>";
+}
+function screenerHTML() {
+  const M = MARKET;
+  if (!M || !M.ts) return panel("Market data has not loaded", "", '<div class="callout">The suburb series file could not be read. Reload the page; if it keeps failing the data file is missing from the server.</div>');
+  const rows = subRows(SUB.kind);
+  return panel("How the momentum score is built",
+    "Every suburb is ranked against every other suburb of the same type, then the four ranks are weighted. It is a <b>relative</b> score: 90 means top decile in this state, not that the suburb is good. Volume carries the most weight because turnover turns before price does.",
+    kv([
+      ["Sales volume, last 4 quarters vs the 4 before", "40% <span class=\"src\">shrunk for thin markets</span>"],
+      ["Median price change over the year", "25%"],
+      ["Gross rental yield on the median", "20%"],
+      ["Quarters out of seven where the median rose", "15%"]
+    ]) + '<p class="src">Cohort: ' + rows.length + " " + (SUB.kind === "u" ? "unit" : "house") + " markets with at least three usable quarters either side. A suburb selling 20 a year can print +80% on four extra sales, so the volume change is shrunk towards zero in proportion to how thin the base is before it is ranked — the column still shows the real change. Sales counts are what the Valuer-General recorded and later editions revise them up, so recent quarters run slightly low. Oct–Dec 2024 is missing from the source and is excluded from both windows.</p>") +
+    panel("Screen every Victorian suburb", "",
+      screenerControls() +
+      '<div id="pickbar" class="pickbar">' + pickbarHTML() + "</div>" +
+      '<p class="src" id="mapstatus"></p><p class="src" id="screencount"></p>' +
+      '<div class="tscroll"><table class="screen"><thead><tr>' +
+      SCOLS.map((c, i) => '<th' + (i > 1 ? ' class="n"' : "") + '><button type="button" class="sortb' + (SUB.sort === c[2] ? " on" : "") + '" data-sub="sort" data-v="' + c[2] + '">' + esc(c[1]) + (SUB.sort === c[2] ? (SUB.dir < 0 ? " ↓" : " ↑") : "") + "</button></th>").join("") +
+      '<th class="n">8 quarters</th><th class="n"></th></tr></thead><tbody id="screenbody"></tbody></table></div>');
+}
+
+/* ---------- 2. ONE SUBURB, CLOSELY ---------- */
+/* Two stacked panels sharing one x axis rather than one chart with two y scales:
+   volume and price are different units and a second axis invites a false reading
+   of where the lines cross. */
+function seriesChart(qs, vals, opt) {
+  const o = opt || {}, W = 640, H = o.h || 132, pad = { l: 46, r: 12, t: 12, b: o.axis ? 24 : 8 };
+  const n = vals.length, iw = W - pad.l - pad.r, ih = H - pad.t - pad.b, step = iw / n;
+  const have = vals.filter(x => x != null);
+  if (have.length < 2) return "";
+  const hi = o.max || Math.max.apply(null, have), lo = o.zero ? 0 : Math.min.apply(null, have);
+  const span = (hi - lo) || 1;
+  const y = v => pad.t + ih - (v - lo) / span * ih;
+  let g = '<line x1="' + pad.l + '" y1="' + (pad.t + ih) + '" x2="' + (W - pad.r) + '" y2="' + (pad.t + ih) + '" stroke="var(--viz-axis)" stroke-width="1"/>';
+  g += '<text x="' + (pad.l - 6) + '" y="' + (pad.t + 8) + '" text-anchor="end" font-size="9.5" fill="var(--viz-muted)">' + esc(o.fmt ? o.fmt(hi) : hi) + "</text>";
+  g += '<text x="' + (pad.l - 6) + '" y="' + (pad.t + ih) + '" text-anchor="end" font-size="9.5" fill="var(--viz-muted)">' + esc(o.fmt ? o.fmt(lo) : lo) + "</text>";
+  if (o.bars) {
+    const bw = Math.min(34, step * 0.5);
+    for (let i = 0; i < n; i++) {
+      const x = pad.l + step * i + (step - bw) / 2;
+      if (vals[i] == null) {
+        g += '<rect x="' + x.toFixed(1) + '" y="' + (pad.t + ih - 4) + '" width="' + bw.toFixed(1) + '" height="4" fill="var(--viz-axis)"/>' +
+          '<title>' + esc(qs[i]) + ": not published</title>";
+        continue;
+      }
+      const yy = y(vals[i]), h = Math.max(2, pad.t + ih - yy);
+      g += '<rect x="' + x.toFixed(1) + '" y="' + yy.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h.toFixed(1) +
+        '" rx="3" fill="var(--viz-1)"><title>' + esc(qs[i]) + ": " + esc(o.fmt ? o.fmt(vals[i]) : vals[i]) + "</title></rect>";
+    }
+  } else {
+    let d = "", started = false;
+    for (let i = 0; i < n; i++) {
+      if (vals[i] == null) continue;
+      const x = pad.l + step * i + step / 2;
+      d += (started ? "L" : "M") + x.toFixed(1) + " " + y(vals[i]).toFixed(1) + " "; started = true;
+    }
+    g += '<path d="' + d + '" fill="none" stroke="var(--viz-2)" stroke-width="2" stroke-linejoin="round"/>';
+    for (let i = 0; i < n; i++) {
+      if (vals[i] == null) continue;
+      const x = pad.l + step * i + step / 2;
+      g += '<circle cx="' + x.toFixed(1) + '" cy="' + y(vals[i]).toFixed(1) + '" r="4" fill="var(--viz-2)" stroke="var(--surface)" stroke-width="2">' +
+        "<title>" + esc(qs[i]) + ": " + esc(o.fmt ? o.fmt(vals[i]) : vals[i]) + "</title></circle>";
+    }
+  }
+  if (o.axis) for (let i = 0; i < n; i++) {
+    g += '<text x="' + (pad.l + step * i + step / 2).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="9" fill="var(--viz-muted)">' +
+      esc(String(qs[i]).replace(/^20/, "").replace("Q", " Q")) + "</text>";
+  }
+  return '<div class="chartbox"><svg class="chart" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(o.label || "") + '">' + g + "</svg></div>";
+}
+
+/* Where a market sits in its own cycle, said in words. Volume leads, price follows;
+   the four combinations of the two are the whole read. */
+function cycleRead(r) {
+  const v = r.volPct, p = r.g1;
+  if (!isFinite(v) || !isFinite(p)) return null;
+  if (v >= 8 && p >= 5) return ["Running", "Both turnover and price are up. The move is already visible to everyone — you are paying for it, and the question is how much is left.", "g"];
+  if (v >= 8 && p < 5) return ["Turning", "More sales than a year ago but price has not followed yet. This is the combination worth attention: buyers are arriving before the median has repriced.", "g"];
+  if (v < -8 && p >= 5) return ["Thinning", "Price is up but on fewer sales. A rising median on falling volume is often composition — bigger or better homes selling — rather than broad strength.", "w"];
+  if (v < -8 && p < 5) return ["Cooling", "Fewer sales and little price movement. Sellers are holding rather than meeting the market; quiet markets are where negotiation works.", "b"];
+  return ["Steady", "Neither volume nor price is doing anything unusual. The suburb is tracking, not turning.", "w"];
+}
+function suburbReportHTML() {
+  const M = MARKET;
+  if (!M || !M.ts) return panel("Market data has not loaded", "", '<div class="callout">Reload the page.</div>');
+  const name = (SUB.focus || S.suburb || "").toUpperCase().trim();
+  let h = panel("Pick a suburb", "Start typing. Everything below is the published state data for that suburb — no estimate, no portal figure.",
+    '<div class="filters"><label>Suburb<input type="search" id="sub_focus" list="sublist" placeholder="e.g. Burwood East" value="' + esc(name ? titleCase(name) : "") + '"></label>' +
+    '<label>Type<select data-sub="kind"><option value="h"' + (SUB.kind === "h" ? " selected" : "") + ">Houses</option><option value=\"u\"" + (SUB.kind === "u" ? " selected" : "") + ">Units</option></select></label>" +
+    '<datalist id="sublist">' + subRows(SUB.kind).slice(0, 900).map(r => '<option value="' + esc(titleCase(r.name)) + '">').join("") + "</datalist></div>");
+  if (!name) return h + panel("Nothing chosen yet", "", '<p class="note">Pick a suburb above, or open one from the screener.</p>');
+  const rows = subRows(SUB.kind), r = rows.find(x => x.name === name);
+  if (!r) return h + panel("No series for " + esc(titleCase(name)), "",
+    '<div class="callout">The Valuer-General does not publish enough quarters for ' + esc(titleCase(name)) + " as a " + (SUB.kind === "u" ? "unit" : "house") + " market — usually too few sales. Try the other type, or a neighbouring suburb.</div>");
+
+  const cyc = cycleRead(r);
+  h += panel("Where " + esc(titleCase(r.name)) + " sits", "",
+    '<div class="cols"><div><div class="eyebrow">Momentum, ranked against ' + rows.length + " " + (SUB.kind === "u" ? "unit" : "house") + ' markets</div><div class="big">' +
+    (r.score == null ? dash : r.score + " / 100") + '</div><div class="src">Rank ' + r.rank + " of " + rows.length + (cyc ? " · " + esc(cyc[0]) : "") + "</div>" +
+    (cyc ? '<p class="note" style="padding:8px 0 0">' + esc(cyc[1]) + "</p>" : "") + "</div><div>" +
+    kv([
+      ["Volume percentile", r.pVol == null ? dash : Math.round(r.pVol) + "th"],
+      ["Price growth percentile", r.pGrowth == null ? dash : Math.round(r.pGrowth) + "th"],
+      ["Yield percentile", r.pYield == null ? dash : Math.round(r.pYield) + "th"],
+      ["Consistency percentile", r.pConsist == null ? dash : Math.round(r.pConsist) + "th"]
+    ]) + "</div></div>");
+
+  h += panel("Sales volume, eight quarters", "Bars are sales the Valuer-General recorded in each quarter. Oct–Dec 2024 is not published.",
+    seriesChart(M.qs, r.c, { bars: true, zero: true, h: 128, label: "Quarterly sales volume" }) +
+    kv([["Last four quarters, annualised", r.volR], ["The four before", r.volP], ["Change", signed(r.volPct)]]));
+
+  h += panel("Median price, the same eight quarters", "Drawn separately and on its own scale — volume and price are different units and crossing them on one chart invites a reading that is not there.",
+    seriesChart(M.qs, r.m, { axis: true, h: 150, fmt: v => "$" + (v / 1000).toFixed(2) + "m", label: "Quarterly median price" }) +
+    kv([
+      ["Median now", money(r.med, 0) + (r.thin ? " (few sales — treat with care)" : "")],
+      ["Change over the year", signed(r.g1)],
+      ["Compound over two years", isFinite(r.g2) ? signed(r.g2) + " a year" : dash],
+      ["Quarters where the median rose", isFinite(r.consist) ? Math.round(r.consist / 100 * 7) + " of 7" : dash]
+    ]));
+
+  h += panel("Rent and yield", r.rentGroup ? "The rental report groups neighbouring suburbs, so this rent is for <b>" + esc(titleCase(r.rentGroup)) + "</b>, not this locality alone." : "",
+    kv([
+      ["Median weekly rent, " + (SUB.kind === "u" ? "2 bed flat" : "3 bed house"), r.rent ? money(r.rent, 0) : dash],
+      ["Rent change on a year earlier", isFinite(r.rentG) ? signed(r.rentG) : dash],
+      ["Gross yield on the median", isFinite(r.yld) ? pct(r.yld, 2) : dash],
+      ["Annual rent at that median", r.rent ? money(r.rent * 52, 0) : dash]
+    ]));
+
+  const peers = rows.filter(x => x.name !== r.name && Math.abs(x.med - r.med) / r.med < 0.12 && x.volR >= 20)
+    .sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 6);
+  if (peers.length) {
+    h += panel("Suburbs at a similar price, ranked", "Same money, different markets. Within 12% of this median and at least 20 sales a year.",
+      table(["Suburb", "Median", "Price 1yr", "Volume change", "Yield", "Momentum"],
+        peers.map(p => trow([
+          '<button type="button" class="linky" data-sub="focus" data-v="' + esc(p.name) + '">' + esc(titleCase(p.name)) + "</button>",
+          k$(p.med), signed(p.g1), signed(p.volPct), isFinite(p.yld) ? pct(p.yld, 2) : dash, p.score == null ? dash : p.score
+        ])).join("")));
+  }
+  h += panel("Take it further", "",
+    '<div class="btnrow"><button type="button" class="mini" data-sub="pickone" data-v="' + esc(r.name) + '">Add to comparison</button>' +
+    '<button type="button" class="mini" data-sub="useaddr" data-v="' + esc(r.name) + '">Use this suburb on the property side</button></div>' +
+    '<p class="src">' + esc(M.sales ? M.sales.src + ", " + M.sales.asOf : "") + ". " + esc(M.rent ? M.rent.src + ", " + M.rent.asOf : "") + ".</p>");
+  return h;
+}
+
+/* ---------- 3. COMPARE ---------- */
+function compareHTML() {
+  const rows = subRows(SUB.kind);
+  const picked = SUB.pick.map(n => rows.find(r => r.name === n)).filter(Boolean);
+  let h = panel("Choose up to four", "Tick them on the screener, or add them from a suburb page.",
+    '<div id="pickbar" class="pickbar">' + pickbarHTML() + "</div>");
+  if (picked.length < 2) return h + panel("Pick at least two", "", '<p class="note">A comparison needs two suburbs. Go to the screener and tick a few.</p>');
+  const M = MARKET;
+  const metrics = [
+    ["Median price", r => r.med, r => k$(r.med), 1],
+    ["Price, change over the year", r => r.g1, r => signed(r.g1), 1],
+    ["Price, compound over two years", r => r.g2, r => isFinite(r.g2) ? signed(r.g2) : dash, 1],
+    ["Sales a year", r => r.volR, r => String(r.volR), 1],
+    ["Volume change", r => r.volPct, r => signed(r.volPct), 1],
+    ["Median weekly rent", r => r.rent, r => r.rent ? money(r.rent, 0) : dash, 1],
+    ["Gross yield", r => r.yld, r => isFinite(r.yld) ? pct(r.yld, 2) : dash, 1],
+    ["Quarters up, of seven", r => r.consist, r => isFinite(r.consist) ? Math.round(r.consist / 100 * 7) + " of 7" : dash, 1],
+    ["Momentum score", r => r.score, r => r.score == null ? dash : String(r.score), 1],
+    ["Rank", r => -r.rank, r => r.rank + " of " + rows.length, 1]
+  ];
+  let body = "";
+  metrics.forEach(mt => {
+    const vals = picked.map(mt[1]);
+    const fin = vals.filter(v => isFinite(v));
+    const best = fin.length ? (mt[0] === "Median price" ? Math.min.apply(null, fin) : Math.max.apply(null, fin)) : null;
+    body += "<tr><td>" + esc(mt[0]) + "</td>" +
+      picked.map((r, i) => '<td class="n' + (best != null && vals[i] === best ? " best" : "") + '">' + mt[2](r) + "</td>").join("") + "</tr>";
+  });
+  h += panel("Side by side", "The strongest value in each row is marked. Lowest wins on price, highest on everything else.",
+    table(["Measure"].concat(picked.map(r => esc(titleCase(r.name)))), body));
+  h += panel("Sales volume, eight quarters",
+    "One panel each, drawn on a shared scale so the heights mean the same thing across suburbs.",
+    (function () {
+      const max = Math.max.apply(null, picked.map(r => Math.max.apply(null, r.c.filter(x => x != null).concat([1]))));
+      return picked.map(r => '<div class="cmpchart"><div class="eyebrow">' + esc(titleCase(r.name)) + " · " + signed(r.volPct) + "</div>" +
+        seriesChart(M.qs, r.c.map(x => x), { bars: true, zero: true, h: 96, label: "Quarterly sales in " + titleCase(r.name), max: max }) + "</div>").join("");
+    })());
+  h += panel("Median price path", "Each on its own scale — these are different price levels, so the shape is the comparable thing, not the height.",
+    picked.map(r => '<div class="cmpchart"><div class="eyebrow">' + esc(titleCase(r.name)) + " · " + k$(r.med) + " · " + signed(r.g1) + "</div>" +
+      seriesChart(M.qs, r.m, { axis: true, h: 120, fmt: v => "$" + (v / 1000).toFixed(2) + "m", label: "Median price in " + titleCase(r.name) }) + "</div>").join(""));
+  return h;
+}
+
+/* ---------- 4. MAP ---------- */
+/* Suburb outlines are not baked in — there are thousands and they are large. They
+   come from Vicmap on demand, heavily generalised, and are kept for the session. */
+const MELB = [144.35, -38.55, 145.95, -37.35];
+const VIC = [140.9, -39.2, 150.1, -33.9];
+async function loadGeo() {
+  if (SUB._geo) return SUB._geo;
+  if (SUB._geoState === "loading") return null;
+  SUB._geoState = "loading";
+  const names = subRows(SUB.kind).map(r => r.name);
+  const all = {};
+  try {
+    for (let i = 0; i < names.length; i += 90) {
+      const chunk = names.slice(i, i + 90);
+      const where = "locality_name IN (" + chunk.map(n => "'" + sqlq(n) + "'").join(",") + ")";
+      const f = await vmQuery(LAYER.locality, {
+        where: where, outFields: "locality_name", returnGeometry: "true", outSR: "4326",
+        maxAllowableOffset: "0.003", resultRecordCount: "200"
+      }, 30000);
+      f.forEach(x => {
+        const nm = String(x.attributes.locality_name || "").toUpperCase();
+        if (!nm || !x.geometry || !x.geometry.rings) return;
+        const ring = x.geometry.rings.slice().sort((a, b) => b.length - a.length)[0];
+        if (!all[nm] || ring.length > all[nm].length) all[nm] = ring;
+      });
+      const st = document.getElementById("mapstatus");
+      if (st) st.textContent = "Fetching suburb outlines from Vicmap… " + Math.min(names.length, i + 90) + " of " + names.length;
+    }
+    SUB._geo = all; SUB._geoState = "ready";
+  } catch (e) {
+    SUB._geoState = "error"; SUB._geoErr = e.message || String(e);
+  }
+  const st = document.getElementById("mapstatus");
+  if (st) {
+    st.textContent = SUB._geoState === "error"
+      ? (SUB.region === "all" ? "" : "Vicmap did not answer, so the metro/regional filter is off — " + (SUB._geoErr || "no answer") + ".")
+      : "";
+  }
+  if (curTab() === "map") paintMap(); else paintScreener();
+  return SUB._geo;
+}
+const METRICS = {
+  volPct: ["Volume change", true, r => r.volPct, v => signed(v)],
+  g1: ["Price change over the year", true, r => r.g1, v => signed(v)],
+  yld: ["Gross yield", false, r => r.yld, v => pct(v, 2)],
+  med: ["Median price", false, r => r.med, v => k$(v)],
+  score: ["Momentum score", false, r => r.score, v => String(Math.round(v))],
+  volR: ["Sales a year", false, r => r.volR, v => String(Math.round(v))]
+};
+/* Diverging blue↔red with a neutral midpoint for the +/- measures, one-hue blue for
+   the level measures. Steps are lightness-matched across the two arms, and the dark
+   set is stepped for the dark surface rather than flipped. */
+const RAMP = {
+  divUp: ["--viz-up-1", "--viz-up-2", "--viz-up-3", "--viz-up-4"],
+  divDown: ["--viz-dn-1", "--viz-dn-2", "--viz-dn-3", "--viz-dn-4"],
+  seq: ["--viz-s1", "--viz-s2", "--viz-s3", "--viz-s4", "--viz-s5"]
+};
+function colorFor(v, scale) {
+  if (!isFinite(v)) return "var(--viz-none)";
+  if (scale.div) {
+    if (Math.abs(v) < scale.dead) return "var(--viz-mid)";
+    const arm = v > 0 ? RAMP.divUp : RAMP.divDown;
+    const t = Math.min(1, (Math.abs(v) - scale.dead) / (scale.max - scale.dead || 1));
+    return "var(" + arm[Math.min(arm.length - 1, Math.floor(t * arm.length))] + ")";
+  }
+  const t = Math.min(1, Math.max(0, (v - scale.lo) / ((scale.hi - scale.lo) || 1)));
+  return "var(" + RAMP.seq[Math.min(RAMP.seq.length - 1, Math.floor(t * RAMP.seq.length))] + ")";
+}
+function mapLegend(scale, fmtv) {
+  if (scale.div) {
+    const cells = RAMP.divDown.slice().reverse().map((c, i) => '<i style="background:var(' + c + ')"></i>')
+      .concat(['<i style="background:var(--viz-mid)"></i>'])
+      .concat(RAMP.divUp.map(c => '<i style="background:var(' + c + ')"></i>')).join("");
+    return '<div class="legend"><span>' + esc(fmtv(-scale.max)) + '</span><div class="swatches">' + cells + "</div><span>" + esc(fmtv(scale.max)) + "</span>" +
+      '<span class="src">flat within ' + esc(fmtv(scale.dead)) + "</span></div>";
+  }
+  return '<div class="legend"><span>' + esc(fmtv(scale.lo)) + '</span><div class="swatches">' +
+    RAMP.seq.map(c => '<i style="background:var(' + c + ')"></i>').join("") + "</div><span>" + esc(fmtv(scale.hi)) + "</span></div>";
+}
+function paintMap() {
+  const host = document.getElementById("mapbox");
+  if (!host) return;
+  const st = document.getElementById("mapstatus");
+  if (SUB._geoState === "loading") { if (st) st.textContent = "Loading suburb outlines from Vicmap…"; return; }
+  if (SUB._geoState === "error") {
+    host.innerHTML = '<div class="callout">Vicmap did not return the suburb outlines — ' + esc(SUB._geoErr || "no answer") +
+      ". The screener and the suburb pages do not need them, so everything else still works. Try the map again in a minute.</div>";
+    if (st) st.textContent = "";
+    return;
+  }
+  if (!SUB._geo) { host.innerHTML = ""; return; }
+  if (st) st.textContent = "";
+  const rows = subFiltered(), byName = {};
+  rows.forEach(r => { byName[r.name] = r; });
+  const m = METRICS[SUB.metric] || METRICS.volPct;
+  const vals = rows.map(m[2]).filter(v => isFinite(v));
+  if (!vals.length) { host.innerHTML = '<div class="callout">No suburbs pass the current filters.</div>'; return; }
+  const sorted = vals.slice().sort((a, b) => a - b);
+  const q = p => sorted[Math.min(sorted.length - 1, Math.max(0, Math.floor(p * sorted.length)))];
+  const scale = m[1]
+    ? { div: true, max: Math.max(Math.abs(q(0.05)), Math.abs(q(0.95))) || 1, dead: m[2] === METRICS.volPct[2] ? 5 : 2 }
+    : { div: false, lo: q(0.05), hi: q(0.95) };
+
+  const bb = SUB.extent === "vic" ? VIC : MELB;
+  const W = 900, H = 640;
+  const midLat = (bb[1] + bb[3]) / 2, kx = Math.cos(midLat * Math.PI / 180);
+  const sx = W / ((bb[2] - bb[0]) * kx), sy = H / (bb[3] - bb[1]), s = Math.min(sx, sy);
+  const ox = (W - (bb[2] - bb[0]) * kx * s) / 2, oy = (H - (bb[3] - bb[1]) * s) / 2;
+  const px = p => (ox + (p[0] - bb[0]) * kx * s).toFixed(1);
+  const py = p => (oy + (bb[3] - p[1]) * s).toFixed(1);
+
+  let g = "", drawn = 0;
+  for (const nm in SUB._geo) {
+    const ring = SUB._geo[nm], r = byName[nm];
+    const cx = ring.reduce((a, p) => a + p[0], 0) / ring.length, cy = ring.reduce((a, p) => a + p[1], 0) / ring.length;
+    if (cx < bb[0] || cx > bb[2] || cy < bb[1] || cy > bb[3]) continue;
+    const v = r ? m[2](r) : NaN;
+    const d = "M" + ring.map(p => px(p) + " " + py(p)).join("L") + "Z";
+    g += '<path d="' + d + '" fill="' + colorFor(v, scale) + '" stroke="var(--viz-stroke)" stroke-width="0.5" class="mpoly"' +
+      (r ? ' data-sub="focus" data-v="' + esc(nm) + '" tabindex="0" role="button"' : "") + ">" +
+      "<title>" + esc(titleCase(nm)) + (r ? " — " + esc(m[0]) + ": " + esc(isFinite(v) ? m[3](v) : "no data") + "\n" + k$(r.med) + " median · " + r.volR + " sales a year" : " — outside the filters") + "</title></path>";
+    drawn++;
+  }
+  host.innerHTML = '<div class="maphold"><svg viewBox="0 0 ' + W + " " + H + '" class="vicmap" role="img" aria-label="Victorian suburbs shaded by ' + esc(m[0]) + '">' + g + "</svg></div>" +
+    mapLegend(scale, m[3]) +
+    '<p class="src">' + drawn + " suburbs drawn. Grey means the suburb is outside the current filters or has no published series. Outlines are Vicmap locality boundaries, generalised for drawing — they are not a cadastral boundary. Click a suburb to open it.</p>";
+}
+function mapHTML() {
+  const opt = (v, l, cur) => '<option value="' + v + '"' + (v === cur ? " selected" : "") + ">" + esc(l) + "</option>";
+  const h = panel("Victoria, shaded", "Pick what to shade by. Change measures and the filters carry over from the screener.",
+    '<div class="filters">' +
+    "<label>Shade by<select data-sub=\"metric\">" + Object.keys(METRICS).map(k => opt(k, METRICS[k][0], SUB.metric)).join("") + "</select></label>" +
+    '<label>Extent<select data-sub="extent">' + opt("melb", "Greater Melbourne", SUB.extent) + opt("vic", "All of Victoria", SUB.extent) + "</select></label>" +
+    '<label>Type<select data-sub="kind">' + opt("h", "Houses", SUB.kind) + opt("u", "Units", SUB.kind) + "</select></label>" +
+    '<label>Minimum sales a year<select data-sub="minSales">' + [0, 10, 20, 40, 80].map(n => opt(String(n), n === 0 ? "no minimum" : n + "+", String(SUB.minSales))).join("") + "</select></label>" +
+    "</div>" +
+    '<p class="src" id="mapstatus"></p><div id="mapbox"></div>');
+  return h;
+}
+
+/* ---------- the suburb-mode board ---------- */
+function subBoardItems() {
+  const rows = subRows(SUB.kind);
+  const name = (SUB.focus || S.suburb || "").toUpperCase().trim();
+  const r = name ? rows.find(x => x.name === name) : null;
+  const passing = subFiltered().length;
+  if (!r) {
+    const top = rows.filter(x => x.volR >= 20)[0];
+    return [
+      { k: "Cohort", v: String(rows.length), s: (SUB.kind === "u" ? "unit" : "house") + " markets with a usable series", tone: "m", lead: true },
+      { k: "Passing filters", v: String(passing), s: "on the current screen", tone: "m" },
+      { k: "Top of the screen", v: top ? titleCase(top.name) : dash, s: top ? "momentum " + top.score : "—", tone: "g" },
+      { k: "Its volume change", v: top ? signed(top.volPct) : dash, s: top ? top.volR + " a yr vs " + top.volP : "—", tone: "g" },
+      { k: "Data to", v: MARKET && MARKET.qs ? MARKET.qs[MARKET.qs.length - 1].replace("Q", " Q") : dash, s: "Valuer-General quarterly", tone: "m" }
+    ];
+  }
+  const cyc = cycleRead(r);
+  return [
+    { k: "Suburb", v: titleCase(r.name), s: (SUB.kind === "u" ? "units" : "houses") + " · rank " + r.rank + " of " + rows.length, tone: "m", lead: true },
+    { k: "Momentum", v: r.score == null ? dash : String(r.score), s: cyc ? cyc[0] : "of 100", tone: cyc ? cyc[2] : "m" },
+    { k: "Median", v: k$(r.med), s: signed(r.g1) + " over the year", tone: r.g1 >= 5 ? "g" : r.g1 <= 0 ? "b" : "w" },
+    { k: "Sales volume", v: signed(r.volPct), s: r.volR + " a yr vs " + r.volP, tone: r.volPct >= 8 ? "g" : r.volPct <= -8 ? "b" : "w" },
+    { k: "Gross yield", v: isFinite(r.yld) ? pct(r.yld, 2) : dash, s: r.rent ? money(r.rent, 0) + " a week" : "no rent published", tone: r.yld >= 4 ? "g" : r.yld >= 3 ? "w" : "b" },
+    { k: "Quarters up", v: isFinite(r.consist) ? Math.round(r.consist / 100 * 7) + " / 7" : dash, s: "median rose", tone: r.consist >= 70 ? "g" : r.consist >= 40 ? "w" : "b" }
+  ];
+}
+
+const SUBTABS = [
+  { id: "screener", label: "Screener", title: "Every Victorian suburb, ranked", sub: "Turnover leads price, so the screen is weighted towards it. Sort any column, then open a suburb or tick a few to compare.", render: screenerHTML, after: paintScreener },
+  { id: "suburb", label: "Suburb report", title: "One suburb, closely", sub: "Eight quarters of volume and price, rent and yield, and where it sits against every other market of the same type.", render: suburbReportHTML },
+  { id: "compare", label: "Compare", title: "Two to four suburbs, side by side", sub: "The same measures for each, with the strongest in every row marked.", render: compareHTML },
+  { id: "map", label: "Map", title: "Victoria, shaded by what you choose", sub: "Suburb outlines come from Vicmap the first time you open this tab, then stay for the session.", render: mapHTML, after: () => { if (!SUB._geo && SUB._geoState !== "loading") loadGeo(); else paintMap(); } }
+];
+
+/* ---------- mode plumbing ---------- */
+let MODE = "prop", activeSubTab = "screener";
+function tabSet() { return MODE === "sub" ? SUBTABS : TABS; }
+function curTab() { return MODE === "sub" ? activeSubTab : activeTab; }
+function setCurTab(id) { if (MODE === "sub") activeSubTab = id; else activeTab = id; }
+function renderMode() {
+  const n = document.getElementById("modesw");
+  if (!n) return;
+  n.innerHTML = [["prop", "One property"], ["sub", "Suburb explorer"]].map(m =>
+    '<button type="button" data-mode="' + m[0] + '"' + (MODE === m[0] ? ' class="on" aria-current="true"' : "") + ">" + esc(m[1]) + "</button>").join("");
+}
+function setMode(m) {
+  MODE = m;
+  try { localStorage.setItem("pts-mode", m); } catch (_) { }
+  renderMode(); renderTabs(); renderBoard(); renderMain();
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
+/* Screener and map controls. Kept off the generic input handler so typing in the
+   search box never triggers a full re-render and loses the caret. */
+document.addEventListener("input", e => {
+  const n = e.target;
+  if (n.id === "sub_q") { SUB.q = n.value; paintScreener(); }
+});
+document.addEventListener("change", e => {
+  const n = e.target;
+  if (n.id === "sub_focus") { SUB.focus = String(n.value || "").toUpperCase().trim(); renderBoard(); renderMain(); return; }
+  const k = n.dataset && n.dataset.sub;
+  if (!k) return;
+  if (k === "pick") {
+    const v = n.dataset.v, i = SUB.pick.indexOf(v);
+    if (n.checked && i < 0) { if (SUB.pick.length < 4) SUB.pick.push(v); }
+    else if (!n.checked && i >= 0) SUB.pick.splice(i, 1);
+    paintScreener();
+    return;
+  }
+  if (k === "kind") { SUB.kind = n.value; SUB._cache = null; SUB._geo = null; SUB._geoState = "idle"; renderBoard(); renderMain(); return; }
+  if (k === "minSales") { SUB.minSales = num(n.value); }
+  else if (k === "band") { SUB.band = n.value; }
+  else if (k === "region") {
+    SUB.region = n.value;
+    if (SUB.region !== "all" && !SUB._geo && SUB._geoState !== "loading") { loadGeo(); }
+  }
+  else if (k === "metric") { SUB.metric = n.value; }
+  else if (k === "extent") { SUB.extent = n.value; }
+  else return;
+  if (curTab() === "map") paintMap(); else paintScreener();
+});
+document.addEventListener("click", e => {
+  const m = e.target.closest("button[data-mode]");
+  if (m) { setMode(m.dataset.mode); return; }
+  const b = e.target.closest("[data-sub]");
+  if (!b || b.tagName === "SELECT" || b.tagName === "INPUT") return;
+  const k = b.dataset.sub, v = b.dataset.v;
+  if (k === "sort") {
+    if (SUB.sort === v) SUB.dir = -SUB.dir; else { SUB.sort = v; SUB.dir = v === "name" || v === "rank" ? 1 : -1; }
+    renderMain(); return;
+  }
+  if (k === "focus") { SUB.focus = v; MODE = "sub"; activeSubTab = "suburb"; renderMode(); renderTabs(); renderBoard(); renderMain(); window.scrollTo({ top: 0, behavior: "instant" }); return; }
+  if (k === "unpick") { const i = SUB.pick.indexOf(v); if (i >= 0) SUB.pick.splice(i, 1); renderMain(); return; }
+  if (k === "pickone") { if (SUB.pick.indexOf(v) < 0 && SUB.pick.length < 4) SUB.pick.push(v); activeSubTab = "compare"; renderTabs(); renderMain(); return; }
+  if (k === "gocompare") { activeSubTab = "compare"; renderTabs(); renderMain(); window.scrollTo({ top: 0, behavior: "instant" }); return; }
+  if (k === "useaddr") {
+    S.suburb = titleCase(v); S.state = "VIC"; setProv("suburb", "u");
+    applyMarket().then(() => { setMode("prop"); paintHeaderFields(); renderAll(); });
+    return;
+  }
+});
+
+/* =========================================================================
+   VALUE & SALES — the evidence that does exist.
+   Vicmap carries no prices and the state publishes no per-address sale history,
+   so this tab used to sit empty until you typed something into it. What the
+   state DOES publish is the suburb's median quarter by quarter, and that plus
+   the lot size is enough for an honest indicative range — clearly labelled as
+   derived, never presented as a valuation.
+   ========================================================================= */
+function lotAdjustedRange() {
+  const mk = S._market;
+  if (!mk || !mk.sales || !mk.sales[0]) return null;
+  const med = mk.sales[0];
+  const lot = gv("land"), stt = S._street && S._street.st;
+  let factor = 1, basis = "the suburb median as published";
+  if (lot > 0 && stt && stt.median > 0) {
+    factor = Math.pow(lot / stt.median, 0.35);
+    basis = "the suburb median, adjusted for a " + Math.round(lot).toLocaleString("en-AU") + " m² lot against the " +
+      Math.round(stt.median).toLocaleString("en-AU") + " m² median on " + esc(titleCase(gs("street") || "this street"));
+  }
+  const mid = med * factor;
+  return { med: med, mid: mid, lo: mid * 0.88, hi: mid * 1.12, factor: factor, basis: basis, type: mk.salesType };
+}
+function valueEvidenceHTML() {
+  const mk = S._market, M = MARKET;
+  let h = "";
+  if (!mk || !mk.suburb) {
+    return panel("No suburb set yet", "",
+      '<p class="note">Look up an address, or type a suburb into the header, and the published price series for that market fills in here. You can also start from the <b>Suburb explorer</b> and come back.</p>');
+  }
+  const kind = mk.salesType === "unit" ? "u" : "h";
+  const rowset = (typeof subRows === "function") ? subRows(kind) : [];
+  const r = rowset.find(x => x.name === mk.suburb);
+
+  if (r && M && M.qs) {
+    h += panel("What " + esc(titleCase(mk.suburb)) + " " + (kind === "u" ? "units" : "houses") + " have actually done",
+      "The Valuer-General's median for this market, quarter by quarter. This is the strongest free evidence there is about what a property here is worth — it is the whole market, not a portal's model of one house.",
+      seriesChart(M.qs, r.m, { axis: true, h: 150, fmt: v => "$" + (v / 1000).toFixed(2) + "m", label: "Quarterly median price in " + titleCase(mk.suburb) }) +
+      kv([
+        ["Median now", money(r.med, 0)],
+        ["A year ago", r.m[3] != null ? money(r.m[3] * 1000, 0) : dash],
+        ["Change over the year", signed(r.g1)],
+        ["Compound over two years", isFinite(r.g2) ? signed(r.g2) + " a year" : dash],
+        ["Quarters where the median rose", isFinite(r.consist) ? Math.round(r.consist / 100 * 7) + " of 7" : dash],
+        ["Rank for price growth", r.pGrowth == null ? dash : Math.round(r.pGrowth) + "th percentile of " + rowset.length + " markets"]
+      ]) +
+      '<div class="btnrow" style="margin-top:12px"><button type="button" class="mini" data-sub="focus" data-v="' + esc(mk.suburb) + '">Open the full suburb report</button></div>');
+  }
+
+  const rng = lotAdjustedRange();
+  if (rng) {
+    const price = gv("price");
+    h += panel("Indicative range for this lot",
+      "Derived, not a valuation. It takes " + rng.basis + ", and damps the land adjustment (a lot twice the size is not worth twice as much). Treat it as the first sentence of an argument, not the answer — a real number needs comparables and an inspection.",
+      '<div class="cols"><div><div class="eyebrow">Indicative range</div><div class="big">' + k$(rng.lo) + " – " + k$(rng.hi) + "</div>" +
+      '<div class="src">Midpoint ' + money(rng.mid, 0) + (rng.factor !== 1 ? " · land factor " + rng.factor.toFixed(2) + "×" : "") + "</div>" +
+      (price > 0 ? '<p class="note" style="padding:8px 0 0">Your price of ' + money(price, 0) + " sits " +
+        (price > rng.hi ? "<b>above</b> the top of that range" : price < rng.lo ? "<b>below</b> the bottom of it" : "<b>inside</b> it") +
+        " — " + (price >= rng.mid ? signed((price / rng.mid - 1) * 100) + " against the midpoint." : signed((price / rng.mid - 1) * 100) + " against the midpoint.") + "</p>" : "") +
+      "</div><div>" + kv([
+        ["Suburb median, " + (rng.type === "unit" ? "units" : "houses"), money(rng.med, 0)],
+        ["This lot", gv("land") ? Math.round(gv("land")).toLocaleString("en-AU") + " m²" : "not set"],
+        ["Street median lot", S._street && S._street.st ? Math.round(S._street.st.median).toLocaleString("en-AU") + " m²" : (S._street && S._street.pending ? "measuring…" : "look up the address to measure the street")],
+        ["Your price per m² of land", gv("price") && gv("land") ? money(gv("price") / gv("land")) : dash],
+        ["Range at the median per m²", gv("land") ? money(rng.mid / gv("land")) : dash]
+      ]) + "</div></div>");
+  }
+  return h;
+}
+
+/* The per-address sale history has to be gathered by hand, so put the doors on
+   this tab rather than making you go looking for them on another one. */
+function valueLinksHTML() {
+  const st = gs("state") || "VIC", sub = gs("suburb"), pc = gs("postcode"), ad = gs("address");
+  const full = [ad, sub, st, pc].filter(Boolean).join(" ");
+  const q = encodeURIComponent(full);
+  const g = lookupGroups().find(x => /price and sale history/i.test(x.t));
+  let items = g ? g.items.slice() : [];
+  if (st === "VIC") {
+    items = items.concat([
+      ["Victorian property report (free)", "https://www.land.vic.gov.au/property-reports/property-report-search", "The state's own per-address report — title particulars, valuation and planning in one PDF."],
+      ["Council rates valuation", "https://www.google.com/search?q=" + encodeURIComponent((gs("council") || "") + " rates notice capital improved value"), "The CIV and site value on the rates notice are the numbers land tax and the levy are assessed on."]
+    ]);
+  }
+  items = items.concat([["Search this exact address", "https://www.google.com/search?q=" + q + "+sold", "Sometimes the fastest route to an old sale is the agent's own archived listing."]]);
+  return linksHTML({ t: "Get the sale history for this exact address", n: "Nobody publishes per-address sale prices in bulk for free — the Valuer-General releases suburb aggregates only. These are the free doors, prefilled with this address. Paste what you find into the box above and the growth maths below runs itself.", items: items });
+}
+
+/* =========================================================================
    15. BOOT
    ========================================================================= */
 (function boot() {
@@ -2742,7 +3501,9 @@ function histogram(all, mark, unit) {
   if (!had) { Object.assign(S, EXAMPLE); S._prov = {}; Object.keys(EXAMPLE).forEach(k => setProv(k, ASSUMPTIONS.has(k) ? "a" : "x")); }
   markAssumptions();
   if (!S.state) S.state = "VIC";
+  try { const md = localStorage.getItem("pts-mode"); if (md === "sub") MODE = "sub"; } catch (_) { }
   paintHeaderFields();
+  renderMode();
   renderAll();
   if (!had) {
     const note = el("div", "panel", '<div class="pb"><div class="callout"><strong>These are example figures, not a real property.</strong> They show what a filled-in analysis looks like for a growth-corridor house in Melbourne\'s west. Press <b>Clear</b> and put your own address in, or overwrite as you go.</div></div>');
