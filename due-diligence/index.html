@@ -2794,6 +2794,33 @@ const SUB = {
   focus: "", pick: [], metric: "volPct", extent: "melb", _cache: null, _geo: null, _geoState: "idle"
 };
 
+/* The suburb side needs the two state files, and nothing here used to ask for them:
+   loadMarket() only ran inside applyMarket(), which only runs on an address lookup.
+   So opening the Suburb explorer without looking an address up first showed
+   "Market data has not loaded" forever — and blamed the server for it. Every test
+   had called loadMarket() by hand, which is exactly why it was not caught.
+   Ask for the files when suburb mode needs them, and repaint when they land. */
+let marketPending = false;
+function ensureMarket() {
+  if (MARKET) return MARKET;
+  if (!marketPending) {
+    marketPending = true;
+    loadMarket().then(() => {
+      marketPending = false; SUB._cache = null;
+      if (MODE === "sub") { renderBoard(); renderMain(); }
+    }).catch(() => { marketPending = false; if (MODE === "sub") renderMain(); });
+  }
+  return null;
+}
+function marketWaitPanel() {
+  const failed = marketTried && !marketPending;
+  return panel(failed ? "The market data did not load" : "Loading the state market data",
+    "",
+    failed
+      ? '<div class="callout">The suburb series could not be read. Check your connection and reload the page \u2014 everything on this side of the tool is built from those two files.</div>'
+      : '<p class="note">Fetching the Valuer-General quarterly series and the rental report. This takes a moment the first time and is then cached for the session.</p>');
+}
+
 /* Percentile rank inside the cohort. A screener's job is relative, not absolute:
    "top decile for volume growth" means something, "+10.9%" on its own does not. */
 function pctRankFn(vals) {
@@ -2979,8 +3006,8 @@ function pickbarHTML() {
     ' <button type="button" class="mini" data-sub="gocompare">Compare these ' + SUB.pick.length + "</button>";
 }
 function screenerHTML() {
-  const M = MARKET;
-  if (!M || !M.ts) return panel("Market data has not loaded", "", '<div class="callout">The suburb series file could not be read. Reload the page; if it keeps failing the data file is missing from the server.</div>');
+  const M = ensureMarket();
+  if (!M || !M.ts) return marketWaitPanel();
   const rows = subRows(SUB.kind);
   return panel("How the momentum score is built",
     "Every suburb is ranked against every other suburb of the same type, then the four ranks are weighted. It is a <b>relative</b> score: 90 means top decile in this state, not that the suburb is good. Volume carries the most weight because turnover turns before price does.",
@@ -3061,9 +3088,9 @@ function cycleRead(r) {
   return ["Steady", "Neither volume nor price is doing anything unusual. The suburb is tracking, not turning.", "w"];
 }
 function suburbReportHTML() {
-  const M = MARKET;
-  if (!M || !M.ts) return panel("Market data has not loaded", "", '<div class="callout">Reload the page.</div>');
-  const name = (SUB.focus || S.suburb || "").toUpperCase().trim();
+  const M = ensureMarket();
+  if (!M || !M.ts) return marketWaitPanel();
+  const name = (SUB.focus || (provOf("suburb") === "x" ? "" : String(S.suburb || ""))).toUpperCase().trim();
   let h = panel("Pick a suburb", "Start typing. Everything below is the published state data for that suburb — no estimate, no portal figure.",
     '<div class="filters"><label>Suburb<input type="search" id="sub_focus" list="sublist" placeholder="e.g. Burwood East" value="' + esc(name ? titleCase(name) : "") + '"></label>' +
     '<label>Type<select data-sub="kind"><option value="h"' + (SUB.kind === "h" ? " selected" : "") + ">Houses</option><option value=\"u\"" + (SUB.kind === "u" ? " selected" : "") + ">Units</option></select></label>" +
@@ -3125,6 +3152,7 @@ function suburbReportHTML() {
 
 /* ---------- 3. COMPARE ---------- */
 function compareHTML() {
+  if (!ensureMarket()) return marketWaitPanel();
   const rows = subRows(SUB.kind);
   const picked = SUB.pick.map(n => rows.find(r => r.name === n)).filter(Boolean);
   let h = panel("Choose up to four", "Tick them on the screener, or add them from a suburb page.",
@@ -3311,6 +3339,7 @@ function paintMap() {
     '<p class="src">' + drawn + " suburbs drawn. Grey means the suburb is outside the current filters or has no published series. Outlines are Vicmap locality boundaries, generalised for drawing — they are not a cadastral boundary. Click a suburb to open it.</p>";
 }
 function mapHTML() {
+  if (!ensureMarket()) return marketWaitPanel();
   const opt = (v, l, cur) => '<option value="' + v + '"' + (v === cur ? " selected" : "") + ">" + esc(l) + "</option>";
   const h = panel("Victoria, shaded", "Pick what to shade by. Change measures and the filters carry over from the screener.",
     '<div class="filters">' +
@@ -3325,8 +3354,12 @@ function mapHTML() {
 
 /* ---------- the suburb-mode board ---------- */
 function subBoardItems() {
+  if (!ensureMarket()) return [{ k: "Suburb explorer", v: marketTried && !marketPending ? dash : "Loading", s: marketTried && !marketPending ? "the market data did not load" : "reading the state market data", tone: "m", lead: true }];
   const rows = subRows(SUB.kind);
-  const name = (SUB.focus || S.suburb || "").toUpperCase().trim();
+  /* Only follow the header suburb when it is really yours. On a fresh load it holds
+     the worked example, and a board reading "Truganina" implies a choice nobody made. */
+  const carried = provOf("suburb") === "x" ? "" : String(S.suburb || "");
+  const name = (SUB.focus || carried).toUpperCase().trim();
   const r = name ? rows.find(x => x.name === name) : null;
   const passing = subFiltered().length;
   if (!r) {
@@ -3354,7 +3387,7 @@ const SUBTABS = [
   { id: "screener", label: "Screener", title: "Every Victorian suburb, ranked", sub: "Turnover leads price, so the screen is weighted towards it. Sort any column, then open a suburb or tick a few to compare.", render: screenerHTML, after: paintScreener },
   { id: "suburb", label: "Suburb report", title: "One suburb, closely", sub: "Eight quarters of volume and price, rent and yield, and where it sits against every other market of the same type.", render: suburbReportHTML },
   { id: "compare", label: "Compare", title: "Two to four suburbs, side by side", sub: "The same measures for each, with the strongest in every row marked.", render: compareHTML },
-  { id: "map", label: "Map", title: "Victoria, shaded by what you choose", sub: "Suburb outlines come from Vicmap the first time you open this tab, then stay for the session.", render: mapHTML, after: () => { if (!SUB._geo && SUB._geoState !== "loading") loadGeo(); else paintMap(); } }
+  { id: "map", label: "Map", title: "Victoria, shaded by what you choose", sub: "Suburb outlines come from Vicmap the first time you open this tab, then stay for the session.", render: mapHTML, after: () => { if (!MARKET) return; if (!SUB._geo && SUB._geoState !== "loading") loadGeo(); else paintMap(); } }
 ];
 
 /* ---------- mode plumbing ---------- */
@@ -3370,6 +3403,7 @@ function renderMode() {
 }
 function setMode(m) {
   MODE = m;
+  if (m === "sub") ensureMarket();
   try { localStorage.setItem("pts-mode", m); } catch (_) { }
   renderMode(); renderTabs(); renderBoard(); renderMain();
   window.scrollTo({ top: 0, behavior: "instant" });
@@ -3523,6 +3557,7 @@ function valueLinksHTML() {
   markAssumptions();
   if (!S.state) S.state = "VIC";
   try { const md = localStorage.getItem("pts-mode"); if (md === "sub") MODE = "sub"; } catch (_) { }
+  if (MODE === "sub") ensureMarket();
   paintHeaderFields();
   renderMode();
   renderAll();
